@@ -1,4 +1,6 @@
-﻿namespace Ariadne.Kernel
+﻿using System;
+
+namespace Ariadne.Kernel
 {
     /// <summary>
     /// Abstract class of the element
@@ -86,6 +88,10 @@
             else if (type == "CTRIA3")
             {
                 creator = new CTRIA3Creator(parameters);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("Unknown type of element");
             }
 
             // TODO: Insert new type of elements
