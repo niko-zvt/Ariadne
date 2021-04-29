@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="FeResPost">
       <HintPath>Libs\FeResPost.dll</HintPath>
     </Reference>

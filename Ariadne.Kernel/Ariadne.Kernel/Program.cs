@@ -7,33 +7,27 @@ namespace Ariadne.Kernel
 {
     class Program
     {
-        private const string pathToDAT = @"E:\Ariadne\00_Test_Problem\SolverOutput\PlateWithEllipse\model-000.dat";
-        private const string pathToOP2 = @"E:\Ariadne\00_Test_Problem\SolverOutput\PlateWithEllipse\model-000.op2";
-        private const string pathToSES = @"E:\Ariadne\00_Test_Problem\SolverOutput\PlateWithEllipse\model-000.ses";
-        private const string pathToXDB = @"E:\Ariadne\00_Test_Problem\SolverOutput\PlateWithEllipse\model-000.xdb";
+        // Paths to the sample files
+        private const string pathToDAT = @"..\..\..\..\Examples\Ex-000\model-000.dat";
+        private const string pathToOP2 = @"..\..\..\..\Examples\Ex-000\model-000.op2";
+        //private const string pathToSES = @"..\..\..\..\Examples\Ex-000\model-000.ses";
+        //private const string pathToXDB = @"..\..\..\..\Examples\Ex-000\model-000.xdb";
+
         static void Main(string[] args)
         {
+            // Configuring the standard output stream
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             StreamWriter stdout = new StreamWriter(Console.OpenStandardOutput());
             stdout.AutoFlush = true;
             
+            // Create database
             var database = DB.Create(pathToDAT, pathToOP2);
 
-            // Get all materials
-            var materialIDs = database.GetAllMaterialIDs();
-            var materials = database.BuildMaterials(materialIDs);
+            // Create model
+            var model = Model.CreateByDatabase(database);
 
-            // Get all properties
-            var propertyIDs = database.GetAllPropertyIDs();
-            var properties = database.BuildProperties(propertyIDs);
-
-            // Get all nodes
-            var nodeIDs = database.GetAllNodeIDs();
-            var nodes = database.BuildNodes(nodeIDs);
-
-            // Get all elements
-            var elementIDs = database.GetAllElementIDs();
-            var elements = database.BuildElements(elementIDs);
+            // Print results
+            database.TEMP_PrintResult(ref stdout, ref model);
         }
     }
 }

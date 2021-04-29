@@ -5,41 +5,41 @@ using System.Collections.Generic;
 namespace Ariadne.Kernel
 {
     /// <summary>
-    /// Class for storing a generalized set of properties.
+    /// Class for storing a generalized set of results.
     /// A generalized set is needed to hide a specific implementation of the object storage mechanism. 
     /// The source mechanism can be an array, a list, a tree, or other structure.
     /// </summary>
-    class PropertySet : IEnumerable
+    class ResultSet : IEnumerable
     {
         /// <summary>
         /// Specific storage collection
         /// </summary>
-        private Dictionary<int, Property> _collection;
+        private Dictionary<int, Result> _collection;
 
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public PropertySet()
+        public ResultSet()
         {
-            _collection = new Dictionary<int, Property>();
+            _collection = new Dictionary<int, Result>();
         }
 
         /// <summary>
-        /// The method returns the property according to its ID
+        /// The method returns the result according to its ID
         /// </summary>
-        /// <param name="id">Property ID</param>
-        /// <returns>Specific property</returns>
-        public Property GetByID(int id)
+        /// <param name="id">Result ID</param>
+        /// <returns>Specific result</returns>
+        public Result GetByID(int id)
         {
-            return _collection.TryGetValue(id, out Property value) ? value : null;
+            return _collection.TryGetValue(id, out Result value) ? value : null;
         }
 
         /// <summary>
-        /// The method returns the node according to its ordinal index in the collection
+        /// The method returns the result according to its ordinal index in the collection
         /// </summary>
         /// <param name="index">Index</param>
-        /// <returns>Specific property</returns>
-        public Property GetByIndex(int index)
+        /// <returns>Specific result</returns>
+        public Result GetByIndex(int index)
         {
             if (index < 0 || index >= _collection.Count)
                 return null;
@@ -56,9 +56,9 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the Dictionary<int, Property>
+        /// Returns an enumerator that iterates through the Dictionary<int, Result>
         /// </summary>
-        /// <returns>A Dictionary<int, Property>.Enumerator structure for the Dictionary<int, Property></returns>
+        /// <returns>A Dictionary<int, Result>.Enumerator structure for the Dictionary<int, Result></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -67,18 +67,18 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Implementation for the GetEnumerator method
         /// </summary>
-        /// <returns>Property enumerator</returns>
-        public PropertyEnumerator GetEnumerator()
+        /// <returns>Result enumerator</returns>
+        public ResultEnumerator GetEnumerator()
         {
-            return new PropertyEnumerator(_collection);
+            return new ResultEnumerator(_collection);
         }
 
         /// <summary>
         /// Adds the specified key and value to the collection
         /// </summary>
-        /// <param name="id">Property ID</param>
-        /// <param name="value">Specific property</param>
-        public void Add(int id, Property value)
+        /// <param name="id">Result ID</param>
+        /// <param name="value">Specific result</param>
+        public void Add(int id, Result value)
         {
             _collection.Add(id, value);
         }
@@ -86,16 +86,16 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Indexer declaration
         /// </summary>
-        /// <param name="id">Property ID</param>
-        /// <returns>Specific property</returns>
-        public Property this[int id]
+        /// <param name="id">Result ID</param>
+        /// <returns>Specific result</returns>
+        public Result this[int id]
         {
             get { return GetByID(id); }
             set { Add(id, value); }
         }
 
         /// <summary>
-        /// Gets the number of ID/Properties pairs contained in the collection
+        /// Gets the number of ID/Results pairs contained in the collection
         /// </summary>
         public int Count
         {
@@ -104,14 +104,14 @@ namespace Ariadne.Kernel
     }
 
     /// <summary>
-    /// Property enumerator class
+    /// Result enumerator class
     /// </summary>
-    class PropertyEnumerator : IEnumerator
+    class ResultEnumerator : IEnumerator
     {
         /// <summary>
         /// Array for enumeration
         /// </summary>
-        private KeyValuePair<int, Property>[] _array;
+        private KeyValuePair<int, Result>[] _array;
 
         /// <summary>
         /// Position
@@ -122,9 +122,9 @@ namespace Ariadne.Kernel
         /// Сonstructor for enumerator
         /// </summary>
         /// <param name="dic">Input dictionary</param>
-        public PropertyEnumerator(Dictionary<int, Property> dic)
+        public ResultEnumerator(Dictionary<int, Result> dic)
         {
-            var list = new List<KeyValuePair<int, Property>>(dic);
+            var list = new List<KeyValuePair<int, Result>>(dic);
             _array = list.ToArray();
         }
 
@@ -160,7 +160,7 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Returns the current specific object
         /// </summary>
-        public Property Current
+        public Result Current
         {
             get
             {
