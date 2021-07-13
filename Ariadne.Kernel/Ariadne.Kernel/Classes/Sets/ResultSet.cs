@@ -101,6 +101,22 @@ namespace Ariadne.Kernel
         {
             get { return _collection.Count; }
         }
+
+        /// <summary>
+        /// Overriding the convert method to a string
+        /// </summary>
+        /// <returns>Returns a string representation of the result set</returns>
+        public override string ToString()
+        {
+            var str = "";
+            str += $"{this.GetType()}\n{this.Count} items in the set.\n";
+
+            foreach (var element in _collection)
+            {
+                str += $"\t{element.Key}\t{element.Value}\n";
+            }
+            return str;
+        }
     }
 
     /// <summary>

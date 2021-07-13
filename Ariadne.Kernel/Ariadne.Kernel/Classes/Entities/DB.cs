@@ -232,7 +232,7 @@ namespace Ariadne.Kernel
             if (!IsValid())
                 return results;
 
-            List<ResultCreator> creators = new List<ResultCreator>();
+            List<ResultCreator> resultCreators = new List<ResultCreator>();
             ResultParams parameters;
             ResultID resultID;
 
@@ -252,14 +252,14 @@ namespace Ariadne.Kernel
                         parameters.TypeName = "FRPResult";       
                         parameters.Data = db.getResultCopy(lcName, scName, resName);
 
-                        var creator = ResultCreator.GetResultCreatorByParams(parameters);
-                        creators.Add(creator);
+                        ResultCreator resultCreator = ResultCreator.GetResultCreatorByParams(parameters);
+                        resultCreators.Add(resultCreator);
                     }
                 }
             }
 
             int idx = 0;
-            foreach (var creator in creators)
+            foreach (var creator in resultCreators)
             {
                 var result = creator.BuildResult();
                 results.Add(idx, result);

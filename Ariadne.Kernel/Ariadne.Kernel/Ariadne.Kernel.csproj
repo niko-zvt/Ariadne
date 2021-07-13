@@ -6,6 +6,29 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Classes\Materials\**" />
+    <Compile Remove="Classes\Properties\**" />
+    <EmbeddedResource Remove="Classes\Materials\**" />
+    <EmbeddedResource Remove="Classes\Properties\**" />
+    <None Remove="Classes\Materials\**" />
+    <None Remove="Classes\Properties\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Classes\DB.cs" />
+    <Compile Remove="Classes\Element.cs" />
+    <Compile Remove="Classes\Material.cs" />
+    <Compile Remove="Classes\Node.cs" />
+    <Compile Remove="Classes\Property.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Libs\" />
   </ItemGroup>

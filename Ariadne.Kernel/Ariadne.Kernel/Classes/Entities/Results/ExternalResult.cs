@@ -58,6 +58,20 @@ namespace Ariadne.Kernel
         {
             return data != null;
         }
+
+        /// <summary>
+        /// Overriding the convert method to a string
+        /// </summary>
+        /// <returns>Returns a string representation of the result</returns>
+        public override string ToString()
+        {
+            var str = $"{this.GetType()}";
+            if(data != null)
+            {
+                str += $"\t{data}";
+            }
+            return str;
+        }
     }
 
     /// <summary>
