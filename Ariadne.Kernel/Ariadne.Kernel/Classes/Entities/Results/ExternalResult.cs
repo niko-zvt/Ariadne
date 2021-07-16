@@ -4,6 +4,7 @@
     /// FeResPost result.
     /// This class defines a FeResPost result
     /// </summary>
+    // TODO: Change the implementation
     class ExternalResult : Result
     {
         /// <summary>
