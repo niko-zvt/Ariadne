@@ -22,11 +22,6 @@ namespace Ariadne.Kernel
         public ResultID ID { get; protected set; }
 
         /// <summary>
-        /// Name of the specific result
-        /// </summary>
-        public string Name { get; protected set; }
-
-        /// <summary>
         /// Virtual method to return the result data
         /// </summary>
         /// <returns>Result data</returns>
