@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Ariadne.Kernel.Math;
 
 namespace Ariadne.Kernel
 {
@@ -169,6 +170,55 @@ namespace Ariadne.Kernel
                 return false;
 
             return true;
+        }
+
+
+        public Matrix3x3 GetNodalStress(int nodeID)
+        {
+            if (Results == null || Results.Count <= 0)
+                return null;
+
+            var result = Results[9];
+            if (result == null || !(result is ExternalResult))
+                return null;
+
+            var data = ((ExternalResult)result).GetData();
+            if (data == null || !(data is FeResPost.Result))
+                return null;
+
+            var array = ((FeResPost.Result)data).getData("Nodes");
+
+            int a = array.GetLength(0);
+            int b = array.GetLength(1);
+
+            for (int i = 0; i < a; i++)
+            {
+                /*
+                 * In the array of results of the FeResPost library,
+                 * the node ID is listed under the index [i, 1].
+                 * If it is an element, then the object is NULL
+                 */
+                var nID = array[i, 1];
+                if (!(nID is int) || ((nID is int) && (int)nID != nodeID))
+                    continue;
+
+                /*
+                 * 
+                 * 
+                 * 
+                 */
+                var Sxx = (array[i, 5] is float || array[i, 5] is double) ? (float)array[i, 5] : 0.0;
+                var Syy = (array[i, 6] is float || array[i, 6] is double) ? (float)array[i, 6] : 0.0;
+                var Szz = (array[i, 7] is float || array[i, 7] is double) ? (float)array[i, 7] : 0.0;
+
+                var Sxy = (array[i, 8] is float || array[i, 8] is double) ? (float)array[i, 8] : 0.0;
+                var Syz = (array[i, 9] is float || array[i, 9] is double) ? (float)array[i, 9] : 0.0;
+                var Szx = (array[i, 10] is float || array[i, 10] is double) ? (float)array[i, 10] : 0.0;
+
+                return new Matrix3x3(Sxx, Syy, Szz, Sxy, Syz, Szx);
+            }
+
+            return null;
         }
     }
 }

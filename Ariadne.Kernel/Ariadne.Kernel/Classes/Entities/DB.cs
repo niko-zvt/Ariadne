@@ -249,8 +249,9 @@ namespace Ariadne.Kernel
                     {
                         resultID = ResultID.CreateByNames(lcName, scName, resName);
                         parameters.ID = resultID;
-                        parameters.TypeName = "FRPResult";       
-                        parameters.Data = db.getResultCopy(lcName, scName, resName);
+                        parameters.TypeName = "FRPResult";
+                        var result = db.getResultCopy(lcName, scName, resName);
+                        parameters.Data = result.modifyRefCoordSys(db, 0);
 
                         ResultCreator resultCreator = ResultCreator.GetResultCreatorByParams(parameters);
                         resultCreators.Add(resultCreator);

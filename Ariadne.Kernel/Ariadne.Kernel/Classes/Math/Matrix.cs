@@ -29,6 +29,44 @@
         }
 
         /// <summary>
+        /// Constructor by symmetry float values
+        /// </summary>
+        /// <param name="xx">Component [0, 0]</param>
+        /// <param name="yy">Component [1, 1]</param>
+        /// <param name="zz">Component [2, 2]</param>
+        /// <param name="xy">Component [0, 1]</param>
+        /// <param name="yz">Component [2, 3]</param>
+        /// <param name="zx">Component [3, 1]</param>
+        public Matrix3x3(float xx, float yy, float zz,
+                         float xy, float yz, float zx)
+        {
+            float[,] values = { { xx, xy, zx },
+                                { xy, yy, yz },
+                                { zx, yz, zz }};
+
+            _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
+        }
+
+        /// <summary>
+        /// Constructor by symmetry double values
+        /// </summary>
+        /// <param name="xx">Component [0, 0]</param>
+        /// <param name="yy">Component [1, 1]</param>
+        /// <param name="zz">Component [2, 2]</param>
+        /// <param name="xy">Component [0, 1]</param>
+        /// <param name="yz">Component [2, 3]</param>
+        /// <param name="zx">Component [3, 1]</param>
+        public Matrix3x3(double xx, double yy, double zz,
+                         double xy, double yz, double zx)
+        {
+            float[,] values = { { (float)xx, (float)xy, (float)zx },
+                                { (float)xy, (float)yy, (float)yz },
+                                { (float)zx, (float)yz, (float)zz }};
+
+            _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
+        }
+
+        /// <summary>
         /// Constructor by float values
         /// </summary>
         /// <param name="xx">Component [0, 0]</param>
@@ -45,8 +83,8 @@
                          float zx, float zy, float zz)
         {
             float[,] values = { { xx, xy, xz },
-                                 { yx, yy, yz },
-                                 { zx, zy, zz }};
+                                { yx, yy, yz },
+                                { zx, zy, zz }};
 
             _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
         }

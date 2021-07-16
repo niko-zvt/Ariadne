@@ -1,6 +1,4 @@
-﻿using FeResPost;
-
-namespace Ariadne.Kernel
+﻿namespace Ariadne.Kernel
 {
     /// <summary>
     /// FeResPost result.
@@ -11,7 +9,7 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Data collection
         /// </summary>
-        private FeResPost.Result data;
+        private FeResPost.Result _data;
 
         /// <summary>
         /// Constructor by parameters
@@ -22,11 +20,11 @@ namespace Ariadne.Kernel
             var resData = parameters.Data;
             if (resData != null)
             {
-                data = (FeResPost.Result)resData;
+                _data = (FeResPost.Result)resData;
             }
             else
             {
-                data = null;
+                _data = null;
             }
         }
 
@@ -36,7 +34,7 @@ namespace Ariadne.Kernel
         /// <returns>Result data</returns>
         public override object GetData()
         {
-            return data;
+            return _data;
         }
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace Ariadne.Kernel
         /// </returns>
         public override bool IsValid()
         {
-            return data != null;
+            return _data != null;
         }
 
         /// <summary>
@@ -66,9 +64,9 @@ namespace Ariadne.Kernel
         public override string ToString()
         {
             var str = $"{this.GetType()}";
-            if(data != null)
+            if(_data != null)
             {
-                str += $"\t{data}";
+                str += $"\t{_data}";
             }
             return str;
         }
