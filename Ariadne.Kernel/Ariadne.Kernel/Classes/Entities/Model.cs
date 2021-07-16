@@ -185,19 +185,15 @@ namespace Ariadne.Kernel
             if (Results == null || Results.Count <= 0)
                 return false;
 
-            // TODO:
-            // You need to change the implementation of the ExternalResult class to remove
-            // the library data from it. In addition, it is worth changing access by index Result[9]
-            // to access according to the StressTensorResult type.
             var result = Results[9];
             if (result == null || !(result is ExternalResult))
                 return false;
 
             var data = ((ExternalResult)result).GetData();
-            if (data == null || !(data is FeResPost.Result))
+            if (data == null || !(data is object[,]))
                 return false;
 
-            var array = ((FeResPost.Result)data).getData("Nodes");
+            var array = (object[,])data;
 
             int length = array.GetLength(0);
 
@@ -246,19 +242,15 @@ namespace Ariadne.Kernel
             if (Results == null || Results.Count <= 0)
                 return false;
 
-            // TODO:
-            // You need to change the implementation of the ExternalResult class to remove
-            // the library data from it. In addition, it is worth changing access by index Result[9]
-            // to access according to the StressTensorResult type.
             var result = Results[9];
             if (result == null || !(result is ExternalResult))
                 return false;
 
             var data = ((ExternalResult)result).GetData();
-            if (data == null || !(data is FeResPost.Result))
+            if (data == null || !(data is object[,]))
                 return false;
 
-            var array = ((FeResPost.Result)data).getData("Nodes");
+            var array = (object[,])data;
 
             int length = array.GetLength(0);
 

@@ -10,7 +10,7 @@
         /// <summary>
         /// Data collection
         /// </summary>
-        private FeResPost.Result _data;
+        private object[,] _data;
 
         /// <summary>
         /// Constructor by parameters
@@ -21,7 +21,7 @@
             var resData = parameters.Data;
             if (resData != null)
             {
-                _data = (FeResPost.Result)resData;
+                _data = (object[,])resData;
             }
             else
             {

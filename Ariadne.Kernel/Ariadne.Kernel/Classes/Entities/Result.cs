@@ -71,7 +71,7 @@ namespace Ariadne.Kernel
             var type = parameters.TypeName;
 
             // TODO: Hide the implementation of selecting a specific creator, so that the registration of a specific type occurs somewhere in a separate place
-            if (type == "FRPResult")
+            if (type == "ExternalResult")
             {
                 creator = new ExternalResultCreator(parameters);
             }
