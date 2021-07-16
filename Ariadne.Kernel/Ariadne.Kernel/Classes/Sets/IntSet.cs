@@ -9,8 +9,6 @@ namespace Ariadne.Kernel
     /// </summary>
     class IntSet : List<int>
     {
-        // TODO: Change the implementation
-
         /// <summary>
         /// Convert an array of numbers to a set of numbers
         /// </summary>

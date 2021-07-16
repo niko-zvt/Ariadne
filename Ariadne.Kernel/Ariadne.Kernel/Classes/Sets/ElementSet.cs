@@ -78,10 +78,12 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="id">Element ID</param>
         /// <param name="value">Specific element</param>
-        public void Add(int id, Element value)
+        public bool TryAdd(int id, Element value)
         {
-            // TODO: Check result
-            _collection.TryAdd(id, value);
+            if (_collection is null)
+                return false;
+
+            return _collection.TryAdd(id, value);
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace Ariadne.Kernel
         public Element this[int id]
         {
             get { return GetByID(id); }
-            set { Add(id, value); }
+            set { TryAdd(id, value); }
         }
 
         /// <summary>

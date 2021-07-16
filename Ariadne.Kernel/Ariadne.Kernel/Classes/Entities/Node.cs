@@ -87,7 +87,7 @@ namespace Ariadne.Kernel
                 foreach (var elementID in ParentElementIDs)
                 {
                     if (elementID == modelElement.ID)
-                        _parentElements.Add(modelElement.ID, modelElement);
+                        _parentElements.TryAdd(modelElement.ID, modelElement);
                 }
             }
 

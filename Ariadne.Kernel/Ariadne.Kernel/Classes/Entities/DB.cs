@@ -215,7 +215,7 @@ namespace Ariadne.Kernel
             foreach (var creator in creators)
             {
                 var element = creator.BuildElement();
-                elements.Add(element.ID, element);
+                elements.TryAdd(element.ID, element);
             }
 
             return elements;
