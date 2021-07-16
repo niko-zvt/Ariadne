@@ -1,4 +1,5 @@
 ﻿using System;
+using Ariadne.Kernel.Math;
 
 namespace Ariadne.Kernel
 {
@@ -35,8 +36,7 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Coordinates
         /// </summary>
-        // TODO: Change data type
-        public float[] Coords { get; protected set; } 
+        public Vector3D Coords { get; protected set; } 
 
         /// <summary>
         /// Constructor by parameters
@@ -48,7 +48,7 @@ namespace Ariadne.Kernel
             ID = parameters.ID;
             RefCSysID = parameters.RefCSysID;
             AnalysisCSysID = parameters.AnalysisCSysID;
-            Coords = parameters.Coords;
+            Coords = new Vector3D(parameters.Coords);
             ParentElementIDs = IntSet.FromArray(parameters.ParentElementIDs);
             // Type = parameters.TypeName;
         }

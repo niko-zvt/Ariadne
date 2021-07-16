@@ -26,15 +26,9 @@ namespace Ariadne.Kernel
             // Create model
             var model = Model.CreateByDatabase(database);
 
-            // Test ToString
-            Console.WriteLine(model.Results.ToString());
-
-            // Test method
-            var a = model.GetNodalStress(39);
-            Console.WriteLine(a);
-
-            // Print results
-            database.TEMP_PrintResult(ref stdout, ref model);
+            // Test methods
+            var resultNode = model.GetStressInNode(39, out var nStress, out var nCoords);
+            var resultElement = model.GetStressInElement(39, out var eStress, out var eCoords);
         }
     }
 }

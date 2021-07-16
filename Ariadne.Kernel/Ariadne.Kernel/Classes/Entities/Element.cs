@@ -1,4 +1,5 @@
 ﻿using System;
+using Ariadne.Kernel.Math;
 
 namespace Ariadne.Kernel
 {
@@ -34,7 +35,7 @@ namespace Ariadne.Kernel
             CornerNodeIDs = IntSet.FromArray(parameters.CornerNodes);
             NodeIDs = IntSet.FromArray(parameters.Nodes);
             PropertyID = parameters.PropertyID;
-            Coords = parameters.Coords;
+            Coords = new Vector3D(parameters.Coords);
         }
 
         /// <summary>
@@ -56,8 +57,7 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Coordinates
         /// </summary>
-        // TODO: Change data type
-        public float[] Coords { get; protected set; }
+        public Vector3D Coords { get; protected set; }
 
         /// <summary>
         /// Identifier of the element property

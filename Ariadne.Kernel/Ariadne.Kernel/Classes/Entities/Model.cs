@@ -172,26 +172,32 @@ namespace Ariadne.Kernel
             return true;
         }
 
-
-        public Matrix3x3 GetNodalStress(int nodeID)
+        /// <summary>
+        /// The method returns the stresses at the node in the form of a 3x3 matrix
+        /// </summary>
+        /// <param name="nodeID">Node ID</param>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        public bool GetStressInNode(int nodeID, out Matrix3x3 stress, out Vector3D coords)
         {
+            stress = new Matrix3x3();
+            coords = Nodes[nodeID].Coords;
+
             if (Results == null || Results.Count <= 0)
-                return null;
+                return false;
 
             var result = Results[9];
             if (result == null || !(result is ExternalResult))
-                return null;
+                return false;
 
             var data = ((ExternalResult)result).GetData();
             if (data == null || !(data is FeResPost.Result))
-                return null;
+                return false;
 
             var array = ((FeResPost.Result)data).getData("Nodes");
 
-            int a = array.GetLength(0);
-            int b = array.GetLength(1);
+            int length = array.GetLength(0);
 
-            for (int i = 0; i < a; i++)
+            for (int i = 0; i < length; i++)
             {
                 /*
                  * In the array of results of the FeResPost library,
@@ -202,10 +208,10 @@ namespace Ariadne.Kernel
                 if (!(nID is int) || ((nID is int) && (int)nID != nodeID))
                     continue;
 
-                /*
-                 * 
-                 * 
-                 * 
+                /* 
+                 * In the array of results of the FeResPost library,
+                 * the stress components is listed under the indexes [i, 5] - [i, 10].
+                 * If it is a number, then the object is FLOAT
                  */
                 var Sxx = (array[i, 5] is float || array[i, 5] is double) ? (float)array[i, 5] : 0.0;
                 var Syy = (array[i, 6] is float || array[i, 6] is double) ? (float)array[i, 6] : 0.0;
@@ -215,10 +221,75 @@ namespace Ariadne.Kernel
                 var Syz = (array[i, 9] is float || array[i, 9] is double) ? (float)array[i, 9] : 0.0;
                 var Szx = (array[i, 10] is float || array[i, 10] is double) ? (float)array[i, 10] : 0.0;
 
-                return new Matrix3x3(Sxx, Syy, Szz, Sxy, Syz, Szx);
+                stress = new Matrix3x3(Sxx, Syy, Szz, Sxy, Syz, Szx);
+
+                return true;
             }
 
-            return null;
+            return false;
+        }
+
+        /// <summary>
+        /// The method returns the stresses at the element in the form of a 3x3 matrix
+        /// </summary>
+        /// <param name="elementID">Element ID</param>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        public bool GetStressInElement(int elementID, out Matrix3x3 stress, out Vector3D coords)
+        {
+            stress = new Matrix3x3();
+            coords = Elements[elementID].Coords;
+
+            if (Results == null || Results.Count <= 0)
+                return false;
+
+            var result = Results[9];
+            if (result == null || !(result is ExternalResult))
+                return false;
+
+            var data = ((ExternalResult)result).GetData();
+            if (data == null || !(data is FeResPost.Result))
+                return false;
+
+            var array = ((FeResPost.Result)data).getData("Nodes");
+
+            int length = array.GetLength(0);
+
+            for (int i = 0; i < length; i++)
+            {
+                /*
+                 * In the array of results of the FeResPost library,
+                 * the element ID is listed under the index [i, 0] and
+                 * the node ID is listed under the index [i, 1].
+                 */
+                var eID = array[i, 0];
+                var nID = array[i, 1];
+
+                if (!(eID is int) || 
+                    (eID is int && (int)eID != elementID))
+                    continue;
+
+                if (nID is int)
+                    continue;
+
+                /* 
+                 * In the array of results of the FeResPost library,
+                 * the stress components is listed under the indexes [i, 5] - [i, 10].
+                 * If it is a number, then the object is FLOAT
+                 */
+                var Sxx = (array[i, 5] is float || array[i, 5] is double) ? (float)array[i, 5] : 0.0;
+                var Syy = (array[i, 6] is float || array[i, 6] is double) ? (float)array[i, 6] : 0.0;
+                var Szz = (array[i, 7] is float || array[i, 7] is double) ? (float)array[i, 7] : 0.0;
+
+                var Sxy = (array[i, 8] is float || array[i, 8] is double) ? (float)array[i, 8] : 0.0;
+                var Syz = (array[i, 9] is float || array[i, 9] is double) ? (float)array[i, 9] : 0.0;
+                var Szx = (array[i, 10] is float || array[i, 10] is double) ? (float)array[i, 10] : 0.0;
+
+                stress = new Matrix3x3(Sxx, Syy, Szz, Sxy, Syz, Szx);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

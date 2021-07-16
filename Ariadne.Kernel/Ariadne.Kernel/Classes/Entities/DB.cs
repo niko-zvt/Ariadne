@@ -466,9 +466,9 @@ namespace Ariadne.Kernel
                 if (node != null)
                 {
                     var nodeCoords = node.Coords;
-                    coords[0] += nodeCoords[0];
-                    coords[1] += nodeCoords[1];
-                    coords[2] += nodeCoords[2];
+                    coords[0] += nodeCoords.X;
+                    coords[1] += nodeCoords.Y;
+                    coords[2] += nodeCoords.Z;
                 }
             }
 
@@ -534,104 +534,6 @@ namespace Ariadne.Kernel
         {
             // TODO: Remove this feature
             return IsValid() ? db : null;
-        }
-
-        // TODO: Delete this method
-        public void TEMP_PrintResult(ref StreamWriter stdout, ref Model model)
-        {
-            if (stdout == null)
-                throw new ArgumentNullException("Stream writer is null");
-
-            string separator = " ";
-
-            var data = model.Results[9].GetData();
-            //Group targetGroup = db.getElementsAssociatedToMaterials(1);
-            FeResPost.Group targetGroup = db.getGroupAllElements();
-            targetGroup.Name = "TEST_GROUP";
-
-            if (data is FeResPost.Result)
-            {
-                var stress = ((FeResPost.Result)data);
-                var stress0 = stress.modifyRefCoordSys(db, 0);
-
-                var scalar = stress0.deriveTensorToOneScal("VonMises");
-                var test = stress0.getData("Nodes");
-
-                int a = test.GetLength(0);
-                int b = test.GetLength(1);
-
-                var tempstr = "";
-
-                stdout.WriteLine("№" + separator +
-                    "ElementID" + separator +
-                    "ElementType" + separator +
-                    "NodeID" + separator +
-                    "CoordX" + separator +
-                    "CoordY" + separator +
-                    "CoordZ" + separator +
-                    "LayerID" + separator +
-                    "SubLayerID" + separator +
-                    "CoordinateSystem" + separator +
-                    "Sx" + separator +
-                    "Sy" + separator +
-                    "Sz" + separator +
-                    "Sxy" + separator +
-                    "Syz" + separator +
-                    "Szx" + separator);
-
-                for (int i = 0; i < a; i++)
-                {
-                    tempstr = i.ToString() + separator; // №
-
-                    var x = 0.0;
-                    var y = 0.0;
-                    var z = 0.0;
-
-                    var eID = 0;
-
-                    for (int j = 0; j < b; j++)
-                    {
-                        var value = test[i, j];
-
-                        if (value != null)
-                            tempstr += value.ToString() + separator;
-                        else
-                            tempstr += "NULL" + separator;
-
-                        switch (j)
-                        {
-                            case 0:
-                                {
-                                    eID = (int)value;
-                                    tempstr += model.Elements[eID].GetElementType().ToString() + separator; // Type
-                                    var nn = model.Elements[eID].GetNodesAsRef();
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    if (value is string && (string)value == "NONE")
-                                    {
-                                        var elementCoords = model.Elements[eID].Coords;
-                                        x = elementCoords[0];
-                                        y = elementCoords[1];
-                                        z = elementCoords[2];
-                                    }
-                                    else
-                                    {
-                                        var nodeCoords = model.Nodes[(int)value].Coords;
-                                        x = nodeCoords[0];
-                                        y = nodeCoords[1];
-                                        z = nodeCoords[2];
-                                    }
-                                    tempstr += x + separator + y + separator + z + separator;
-                                    break;
-                                }
-                        }
-                    }
-                    stdout.WriteLine(tempstr);
-                }
-            }
-
         }
     }
 }
