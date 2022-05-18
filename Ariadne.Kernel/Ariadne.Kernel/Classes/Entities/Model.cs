@@ -332,13 +332,35 @@ namespace Ariadne.Kernel
         /// The method returns ID element by the point location
         /// </summary>
         /// <param name="location">Point location</param>
-        /// <param name="id">Element ID</param>
+        /// <param name="elementID">Element ID</param>
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        public bool GetElementIDFromPoint(Vector3D location, out int id)
+        public bool GetElementIDFromPoint(Vector3D location, out int elementID)
         {
-            id = -1;
+            elementID = -1;
 
-            // TODO: STUB - Get ElementID by points by algorithm
+            // Create list of distances
+            List<(int ID, float Distance)> listOfDistances = new List<(int, float)> ();
+            foreach (var node in Nodes)
+            {
+                var distance = (new Vector3D(location, node.Coords)).Length;
+                listOfDistances.Add((node.ID, distance));
+            }
+            listOfDistances.Sort((s1, s2) => s1.Distance.CompareTo(s2.Distance));
+
+            // We go through the list of distances and check elements
+            foreach(var tuple in listOfDistances)
+            {
+                var elementIDs = Nodes.GetByID(tuple.ID).ParentElementIDs;
+                foreach (var parentElementID in elementIDs)
+                {
+                    var res = CheckPointBelongElement(parentElementID, location);
+                    if (res == true)
+                    {
+                        elementID = parentElementID;
+                        return true;
+                    }
+                }
+            }
 
             return false;
         }
@@ -346,17 +368,54 @@ namespace Ariadne.Kernel
         /// <summary>
         /// The method returns the stress matrix by ID element and point location
         /// </summary>
-        /// <param name="eID">Element ID</param>
+        /// <param name="elementID">Element ID</param>
         /// <param name="location">Point location</param>
         /// <param name="stress">Stress matrix</param>
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        private bool GetStressInElementByIDAndPoint(int eID, Vector3D location, out Matrix3x3 stress)
+        private bool GetStressInElementByIDAndPoint(int elementID, Vector3D location, out Matrix3x3 stress)
         {
             stress = new Matrix3x3();
 
             // TODO: STUB - Find stress matrix in parent element by location
 
             return false;
+        }
+
+        /// <summary>
+        /// The method tries to check whether the point belongs to the specified element
+        /// </summary>
+        /// <param name="elementID">Element ID</param>
+        /// <param name="location">Point location</param>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        private bool CheckPointBelongElement(int elementID, Vector3D location)
+        {
+            // TODO: Bad code. Send code to element (+ref parentModel)
+
+            var element = Elements.GetByID(elementID);
+
+            var elementCornerNodes = Nodes.GetByIDs(element.CornerNodeIDs);
+
+            Polygon3D polygon = null;
+            if (elementCornerNodes.Count > 2)
+            {
+                polygon = new Polygon3D(
+                    elementCornerNodes.GetByIndex(0).Coords,
+                    elementCornerNodes.GetByIndex(1).Coords,
+                    elementCornerNodes.GetByIndex(2).Coords);
+            }
+
+            if (polygon == null)
+                return false;
+
+            var distance = polygon.SignedDistanceTo(location);
+
+            if (distance > Math.Utils.Tolerance ||
+               distance < -1 * Math.Utils.Tolerance)
+                return false;
+
+            throw new NotImplementedException();
+            // TODO: Check the location inside the polygon. By means of bypassing the line.
+            //return true;
         }
     }
 }
