@@ -8,6 +8,11 @@ namespace Ariadne.Kernel.Math
     static class Utils
     {
         /// <summary>
+        /// Global tolerance
+        /// </summary>
+        public const float Tolerance = 0.000001f;
+
+        /// <summary>
         /// Calculate the principal invariants
         /// </summary>
         /// <param name="squareMatrix">Second-rank tensor / 3x3 matrix</param>
