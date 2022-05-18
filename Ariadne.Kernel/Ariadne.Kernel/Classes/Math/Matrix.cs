@@ -9,6 +9,20 @@
         /// Matrix specific data
         /// </summary>
         protected MathNet.Numerics.LinearAlgebra.Matrix<float> _values;
+
+        /// <summary>
+        /// Virtual method to return the type of the matrix
+        /// </summary>
+        /// <returns>Type of matrix</returns>
+        public abstract MatrixType GetMatrixType();
+    }
+
+    /// <summary>
+    /// Enumeration of all available types of matrix
+    /// </summary>
+    enum MatrixType
+    {
+        Matrix3x3,
     }
 
     /// <summary>
@@ -265,5 +279,23 @@
         /// Component ZZ
         /// </summary>
         public float ZZ { get { return _values[2, 2]; } set { _values[2, 2] = value; } }
+
+        /// <summary>
+        /// Returns the matrix type
+        /// </summary>
+        /// <returns>Matrix type</returns>
+        public override MatrixType GetMatrixType()
+        {
+            return MatrixType.Matrix3x3;
+        }
+
+        /// <summary>
+        /// The method returns representations of the specific result ID as a string
+        /// </summary>
+        /// <returns>A string that represents the current object</returns>
+        public override string ToString()
+        {
+            return GetMatrixType().ToString();
+        }
     }
 }
