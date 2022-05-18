@@ -22,6 +22,18 @@
         {
             return ElementType.CQUAD4;
         }
+
+        /// <summary>
+        /// Return the result of validate the element
+        /// </summary>
+        /// <returns>Returns true if the element is valid, otherwise - false</returns>
+        public override bool IsValid()
+        {
+            if (NodeIDs.Count < 0 || CornerNodeIDs.Count < 0)
+                return false;
+
+            return true;
+        }
     }
 
     /// <summary>

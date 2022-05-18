@@ -45,6 +45,12 @@ namespace Ariadne.Kernel
         public abstract ElementType GetElementType();
 
         /// <summary>
+        /// Virtual method to return the result of validate the element
+        /// </summary>
+        /// <returns>Returns true if the element is valid, otherwise - false</returns>
+        public abstract bool IsValid();
+
+        /// <summary>
         /// Element identifier
         /// </summary>
         public int ID { get; protected set; }
