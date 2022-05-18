@@ -35,6 +35,22 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
+        /// The method returns the nodes according to its IDs
+        /// </summary>
+        /// <param name="ids">Node IDs</param>
+        /// <returns>Specific nodes</returns>
+        public NodeSet GetByIDs(IntSet ids)
+        {
+            var list = new NodeSet();
+            foreach (int id in ids)
+            {
+                var item = _collection.TryGetValue(id, out Node value) ? value : null;
+                list.Add(id, item);
+            }
+            return list;
+        }
+
+        /// <summary>
         /// The method returns the node according to its ordinal index in the collection
         /// </summary>
         /// <param name="index">Index</param>
