@@ -91,6 +91,21 @@
         }
 
         /// <summary>
+        /// Constructor by two points
+        /// </summary>
+        /// <param name="startPoint">Start point</param>
+        /// <param name="endPoint">End point</param>
+        public Vector3D(Vector3D startPoint, Vector3D endPoint)
+        {
+            _vectorData = endPoint._vectorData - startPoint._vectorData;
+        }
+
+        /// <summary>
+        /// Vector length
+        /// </summary>
+        public float Length { get { return (float)_vectorData.L2Norm(); } }
+
+        /// <summary>
         /// Component X
         /// </summary>
         public float X { get { return _vectorData[0]; } set { _vectorData[0] = value; } }
