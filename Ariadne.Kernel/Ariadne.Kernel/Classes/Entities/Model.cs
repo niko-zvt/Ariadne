@@ -176,11 +176,13 @@ namespace Ariadne.Kernel
         /// The method returns the stresses at the node in the form of a 3x3 matrix
         /// </summary>
         /// <param name="nodeID">Node ID</param>
+        /// <param name="stress">Stress matrix</param>
+        /// <param name="location">Point location</param>
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        public bool GetStressInNode(int nodeID, out Matrix3x3 stress, out Vector3D coords)
+        public bool GetStressInNode(int nodeID, out Matrix3x3 stress, out Vector3D location)
         {
             stress = new Matrix3x3();
-            coords = Nodes[nodeID].Coords;
+            location = Nodes[nodeID].Coords;
 
             if (Results == null || Results.Count <= 0)
                 return false;
@@ -233,11 +235,13 @@ namespace Ariadne.Kernel
         /// The method returns the stresses at the element in the form of a 3x3 matrix
         /// </summary>
         /// <param name="elementID">Element ID</param>
+        /// <param name="stress">Stress matrix</param>
+        /// <param name="location">Point location</param>
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        public bool GetStressInElement(int elementID, out Matrix3x3 stress, out Vector3D coords)
+        public bool GetStressInElement(int elementID, out Matrix3x3 stress, out Vector3D location)
         {
             stress = new Matrix3x3();
-            coords = Elements[elementID].Coords;
+            location = Elements[elementID].Coords;
 
             if (Results == null || Results.Count <= 0)
                 return false;
@@ -288,6 +292,69 @@ namespace Ariadne.Kernel
 
                 return true;
             }
+
+            return false;
+        }
+
+        /// <summary>
+        /// The method returns the stresses at the point in the form of a 3x3 matrix
+        /// </summary>
+        /// <param name="location">Point location</param>
+        /// <param name="stress">Stress matrix</param>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        public bool GetStressInPoint(Vector3D location, out Matrix3x3 stress)
+        {
+            stress = new Matrix3x3();
+
+            if (Results == null || Results.Count <= 0)
+                return false;
+
+            var result = Results[9];
+            if (result == null || !(result is ExternalResult))
+                return false;
+
+            var data = ((ExternalResult)result).GetData();
+            if (data == null || !(data is object[,]))
+                return false;
+
+            var IsElementIDFound = GetElementIDFromPoint(location, out int eID);
+            if (IsElementIDFound == false)
+                return false;
+
+            var IsStressFound = GetStressInElementByIDAndPoint(eID, location, out stress);
+            if (IsStressFound == false)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// The method returns ID element by the point location
+        /// </summary>
+        /// <param name="location">Point location</param>
+        /// <param name="id">Element ID</param>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        public bool GetElementIDFromPoint(Vector3D location, out int id)
+        {
+            id = -1;
+
+            // TODO: STUB - Get ElementID by points by algorithm
+
+            return false;
+        }
+
+        /// <summary>
+        /// The method returns the stress matrix by ID element and point location
+        /// </summary>
+        /// <param name="eID">Element ID</param>
+        /// <param name="location">Point location</param>
+        /// <param name="stress">Stress matrix</param>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        private bool GetStressInElementByIDAndPoint(int eID, Vector3D location, out Matrix3x3 stress)
+        {
+            stress = new Matrix3x3();
+
+            // TODO: STUB - Find stress matrix in parent element by location
 
             return false;
         }

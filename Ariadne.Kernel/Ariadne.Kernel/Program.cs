@@ -29,6 +29,7 @@ namespace Ariadne.Kernel
             // Test methods
             var resultNode = model.GetStressInNode(39, out var nStress, out var nCoords);
             var resultElement = model.GetStressInElement(39, out var eStress, out var eCoords);
+            var resultPoint = model.GetStressInPoint(new Math.Vector3D(1.0, 1.0, 0.0), out var pStress);
         }
     }
 }
