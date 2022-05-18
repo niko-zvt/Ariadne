@@ -13,7 +13,7 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Nastran database
         /// </summary>
-        private NastranDb db { get; set; }
+        private NastranDb ExternalDB { get; set; }
 
         /// <summary>
         /// Private constructor of database object
@@ -28,27 +28,27 @@ namespace Ariadne.Kernel
             if (String.IsNullOrEmpty(pathToBDF) || !File.Exists(pathToBDF))
                 throw new ArgumentException("Parameter cannot be null or empty", nameof(pathToBDF));
 
-            db = new NastranDb();
-            db.Name = Path.GetFileNameWithoutExtension(pathToBDF);
-            db.readBdf(pathToBDF);
+            ExternalDB = new NastranDb();
+            ExternalDB.Name = Path.GetFileNameWithoutExtension(pathToBDF);
+            ExternalDB.readBdf(pathToBDF);
 
             if (!String.IsNullOrEmpty(pathToXDB) && File.Exists(pathToXDB))
             {
-                db.readXdb(pathToXDB);
+                ExternalDB.readXdb(pathToXDB);
             }
 
             if (!String.IsNullOrEmpty(pathToSES) && File.Exists(pathToSES))
             {
-                db.readGroupsFromPatranSession(pathToSES);
+                ExternalDB.readGroupsFromPatranSession(pathToSES);
             }
 
             if (!String.IsNullOrEmpty(pathToOP2) && File.Exists(pathToOP2))
             {
-                db.readOp2(pathToOP2, "Results");
+                ExternalDB.readOp2(pathToOP2, "Results");
 
                 // TODO: WTF?!
-                //db.generateCoordResults();
-                //db.generateCoordResults("Fake Coords Case", "No SubCase", "coords");
+                //ExternalDB.generateCoordResults();
+                //ExternalDB.generateCoordResults("Fake Coords Case", "No SubCase", "coords");
             }
         }
 
@@ -84,7 +84,7 @@ namespace Ariadne.Kernel
 
             foreach (int id in ids)
             {
-                var card = db.fillCard("Material", id);
+                var card = ExternalDB.fillCard("Material", id);
 
                 if (card != null && card[0] is string)
                 {
@@ -124,7 +124,7 @@ namespace Ariadne.Kernel
 
             foreach (int id in ids)
             {
-                var card = db.fillCard("Property", id);
+                var card = ExternalDB.fillCard("Property", id);
 
                 if (card != null && card[0] is string)
                 {
@@ -165,9 +165,9 @@ namespace Ariadne.Kernel
             {
                 parameters.ID = id;
                 parameters.TypeName = null; // TODO: Node type
-                parameters.RefCSysID = db.getNodeRcId(id);
-                parameters.AnalysisCSysID = db.getNodeAcId(id);
-                parameters.Coords = db.getNodeCoords(id);
+                parameters.RefCSysID = ExternalDB.getNodeRcId(id);
+                parameters.AnalysisCSysID = ExternalDB.getNodeAcId(id);
+                parameters.Coords = ExternalDB.getNodeCoords(id);
                 parameters.ParentElementIDs = GetParentElementIDsForNode(id);
 
                 var creator = NodeCreator.GetNodeCreatorByParams(parameters);
@@ -201,11 +201,11 @@ namespace Ariadne.Kernel
             foreach (int id in ids)
             {
                 parameters.ID = id;
-                parameters.TypeName = db.getElementTypeName(id);
-                parameters.Nodes = db.getElementNodes(id);
-                parameters.Dim = db.getElementDim(id);
-                parameters.CornerNodes = db.getElementCornerNodes(id);
-                parameters.PropertyID = db.getElementPropertyId(id);
+                parameters.TypeName = ExternalDB.getElementTypeName(id);
+                parameters.Nodes = ExternalDB.getElementNodes(id);
+                parameters.Dim = ExternalDB.getElementDim(id);
+                parameters.CornerNodes = ExternalDB.getElementCornerNodes(id);
+                parameters.PropertyID = ExternalDB.getElementPropertyId(id);
                 parameters.Coords = GetElementCoords(id);
 
                 var creator = ElementCreator.GetElementCreatorByParams(parameters);
@@ -236,9 +236,9 @@ namespace Ariadne.Kernel
             ResultParams parameters;
             ResultID resultID;
 
-            string[] lcNames = db.getResultLoadCaseNames();
-            string[] scNames = db.getResultSubCaseNames();
-            string[] resNames = db.getResultTypeNames();
+            string[] lcNames = ExternalDB.getResultLoadCaseNames();
+            string[] scNames = ExternalDB.getResultSubCaseNames();
+            string[] resNames = ExternalDB.getResultTypeNames();
 
             // TODO: Remove nesting and design a normal class of results
             foreach (string lcName in lcNames)
@@ -250,8 +250,8 @@ namespace Ariadne.Kernel
                         resultID = ResultID.CreateByNames(lcName, scName, resName);
                         parameters.ID = resultID;
                         parameters.TypeName = "ExternalResult";
-                        var result = db.getResultCopy(lcName, scName, resName);
-                        parameters.Data = (result.modifyRefCoordSys(db, 0)).getData();
+                        var result = ExternalDB.getResultCopy(lcName, scName, resName);
+                        parameters.Data = (result.modifyRefCoordSys(ExternalDB, 0)).getData();
 
                         ResultCreator resultCreator = ResultCreator.GetResultCreatorByParams(parameters);
                         resultCreators.Add(resultCreator);
@@ -280,7 +280,7 @@ namespace Ariadne.Kernel
 
             if (this.IsValid())
             {
-                var iters = db.iter_materialId();
+                var iters = ExternalDB.iter_materialId();
                 foreach (var iter in iters)
                 {
                     if (iter is int)
@@ -320,7 +320,7 @@ namespace Ariadne.Kernel
 
             if(this.IsValid())
             {
-                var iters = db.iter_propertyId();
+                var iters = ExternalDB.iter_propertyId();
                 foreach(var iter in iters)
                 {
                     if(iter is int)
@@ -360,7 +360,7 @@ namespace Ariadne.Kernel
 
             if (this.IsValid())
             {
-                var iters = db.iter_nodeId();
+                var iters = ExternalDB.iter_nodeId();
                 foreach (var iter in iters)
                 {
                     if (iter is int)
@@ -384,7 +384,7 @@ namespace Ariadne.Kernel
 
             if (IsValid())
             {
-                nbrNodes = db.getNbrNodes();
+                nbrNodes = ExternalDB.getNbrNodes();
             }
 
             return nbrNodes;
@@ -400,7 +400,7 @@ namespace Ariadne.Kernel
             
             if(this.IsValid())
             {
-                var iters = db.iter_elemId();
+                var iters = ExternalDB.iter_elemId();
                 foreach (var iter in iters)
                 {
                     if(iter is int)
@@ -424,7 +424,7 @@ namespace Ariadne.Kernel
 
             if(IsValid())
             {
-                nbrElements = db.getNbrElements();
+                nbrElements = ExternalDB.getNbrElements();
             }
 
             return nbrElements;
@@ -439,8 +439,8 @@ namespace Ariadne.Kernel
         {
             var coords = new float[3] { 0.0f, 0.0f, 0.0f };
 
-            var typeName = db.getElementTypeName(eID);
-            var cornerNodeIDs = db.getElementCornerNodes(eID);
+            var typeName = ExternalDB.getElementTypeName(eID);
+            var cornerNodeIDs = ExternalDB.getElementCornerNodes(eID);
             var cornerNodes = BuildNodes(IntSet.FromArray(cornerNodeIDs));
 
             var cornerNodesCount = cornerNodes.Count;
@@ -495,8 +495,8 @@ namespace Ariadne.Kernel
 
             foreach (var elementID in elementIDs)
             {
-                var nodeIDs = db.getElementNodes(elementID);
-                var cornerNodeIDs = db.getElementCornerNodes(elementID);
+                var nodeIDs = ExternalDB.getElementNodes(elementID);
+                var cornerNodeIDs = ExternalDB.getElementCornerNodes(elementID);
 
                 foreach (var nodeID in nodeIDs)
                 {
@@ -522,7 +522,7 @@ namespace Ariadne.Kernel
         /// </returns>
         public bool IsValid()
         {
-            return db == null ? false : true;
+            return ExternalDB == null ? false : true;
         }
 
         /// <summary>
@@ -533,7 +533,7 @@ namespace Ariadne.Kernel
         public NastranDb TEMP_GetDataBase()
         {
             // TODO: Remove this feature
-            return IsValid() ? db : null;
+            return IsValid() ? ExternalDB : null;
         }
     }
 }
