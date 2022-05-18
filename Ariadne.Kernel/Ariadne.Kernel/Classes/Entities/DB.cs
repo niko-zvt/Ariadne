@@ -28,8 +28,11 @@ namespace Ariadne.Kernel
             if (String.IsNullOrEmpty(pathToBDF) || !File.Exists(pathToBDF))
                 throw new ArgumentException("Parameter cannot be null or empty", nameof(pathToBDF));
 
-            ExternalDB = new NastranDb();
-            ExternalDB.Name = Path.GetFileNameWithoutExtension(pathToBDF);
+            ExternalDB = new NastranDb
+            {
+                Name = Path.GetFileNameWithoutExtension(pathToBDF)
+            };
+
             ExternalDB.readBdf(pathToBDF);
 
             if (!String.IsNullOrEmpty(pathToXDB) && File.Exists(pathToXDB))
@@ -522,7 +525,7 @@ namespace Ariadne.Kernel
         /// </returns>
         public bool IsValid()
         {
-            return ExternalDB == null ? false : true;
+            return ExternalDB != null;
         }
 
         /// <summary>
