@@ -290,7 +290,7 @@
         }
 
         /// <summary>
-        /// The method returns representations of the specific result ID as a string
+        /// The method returns representations of the specific matrix as a string
         /// </summary>
         /// <returns>A string that represents the current object</returns>
         public override string ToString()
