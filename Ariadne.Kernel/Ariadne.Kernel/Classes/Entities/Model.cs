@@ -395,10 +395,10 @@ namespace Ariadne.Kernel
 
             var elementCornerNodes = Nodes.GetByIDs(element.CornerNodeIDs);
 
-            Polygon3D polygon = null;
+            Plane3D polygon = null;
             if (elementCornerNodes.Count > 2)
             {
-                polygon = new Polygon3D(
+                polygon = new Plane3D(
                     elementCornerNodes.GetByIndex(0).Coords,
                     elementCornerNodes.GetByIndex(1).Coords,
                     elementCornerNodes.GetByIndex(2).Coords);
