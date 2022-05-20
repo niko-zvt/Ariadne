@@ -89,11 +89,11 @@ namespace Ariadne.Kernel
             {
                 var card = ExternalDB.fillCard("Material", id);
 
-                if (card != null && card[0] is string)
+                if (card != null && card[0] is string @string)
                 {
                     parameters.ID = id;
-                    parameters.TypeName = MaterialCreator.GetMaterialTypeNameBySubtype((string)card[0]);
-                    parameters.SubtypeName = (string)card[0];
+                    parameters.TypeName = MaterialCreator.GetMaterialTypeNameBySubtype(@string);
+                    parameters.SubtypeName = @string;
                     parameters.Data = card;
 
                     var creator = MaterialCreator.GetMaterialCreatorByParams(parameters);
@@ -129,10 +129,10 @@ namespace Ariadne.Kernel
             {
                 var card = ExternalDB.fillCard("Property", id);
 
-                if (card != null && card[0] is string)
+                if (card != null && card[0] is string @string)
                 {
                     parameters.ID = id;
-                    parameters.TypeName = (string)card[0];
+                    parameters.TypeName = @string;
                     parameters.Data = card;
 
                     var creator = PropertyCreator.GetPropertyCreatorByParams(parameters);
@@ -286,9 +286,9 @@ namespace Ariadne.Kernel
                 var iters = ExternalDB.iter_materialId();
                 foreach (var iter in iters)
                 {
-                    if (iter is int)
+                    if (iter is int @int)
                     {
-                        var mID = (int)iter;
+                        var mID = @int;
                         mIDs.Add(mID);
                     }
                 }
@@ -326,9 +326,9 @@ namespace Ariadne.Kernel
                 var iters = ExternalDB.iter_propertyId();
                 foreach(var iter in iters)
                 {
-                    if(iter is int)
+                    if(iter is int @int)
                     {
-                        var pID = (int)iter;
+                        var pID = @int;
                         pIDs.Add(pID);
                     }
                 }
@@ -366,9 +366,9 @@ namespace Ariadne.Kernel
                 var iters = ExternalDB.iter_nodeId();
                 foreach (var iter in iters)
                 {
-                    if (iter is int)
+                    if (iter is int @int)
                     {
-                        var eID = (int)iter;
+                        var eID = @int;
                         nIDs.Add(eID);
                     }
                 }
@@ -406,9 +406,9 @@ namespace Ariadne.Kernel
                 var iters = ExternalDB.iter_elemId();
                 foreach (var iter in iters)
                 {
-                    if(iter is int)
+                    if(iter is int @int)
                     {
-                        var eID = (int)iter;
+                        var eID = @int;
                         eIDs.Add(eID);
                     }
                 }
