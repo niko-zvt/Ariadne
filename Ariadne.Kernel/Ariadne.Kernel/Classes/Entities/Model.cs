@@ -417,6 +417,7 @@ namespace Ariadne.Kernel
                distance < -1 * Math.Utils.Tolerance)
                 return false;
 
+            return false;
             throw new NotImplementedException();
             // TODO: Check the location inside the polygon. By means of bypassing the line.
             //return true;

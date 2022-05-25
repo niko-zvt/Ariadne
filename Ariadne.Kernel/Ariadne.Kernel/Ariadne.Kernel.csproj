@@ -30,10 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Libs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
     <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
   </ItemGroup>
@@ -45,6 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Libs\Ariadne.CGAL.x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Libs\FeResPost.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -8,8 +8,9 @@ namespace Ariadne.Kernel
     class Program
     {
         // Paths to the sample files
-        private const string pathToDAT = @"..\..\..\Examples\Ex-000\model-000.dat";
-        private const string pathToOP2 = @"..\..\..\Examples\Ex-000\model-000.op2";
+        private const string pathToLibs = @"..\..\..\..\Libs\";
+        private const string pathToDAT = @"..\..\..\..\Examples\Ex-000\model-000.dat";
+        private const string pathToOP2 = @"..\..\..\..\Examples\Ex-000\model-000.op2";
         //private const string pathToSES = @"..\..\..\..\Examples\Ex-000\model-000.ses";
         //private const string pathToXDB = @"..\..\..\..\Examples\Ex-000\model-000.xdb";
 
@@ -30,6 +31,10 @@ namespace Ariadne.Kernel
             var resultNode = model.GetStressInNode(39, out var nStress, out var nCoords);
             var resultElement = model.GetStressInElement(39, out var eStress, out var eCoords);
             var resultPoint = model.GetStressInPoint(new Math.Vector3D(1.0, 1.0, 0.0), out var pStress);
+
+            Directory.SetCurrentDirectory(pathToLibs);
+            CGAL.ILibraryImport cgal = CGAL.LibraryImport.Select();
+            cgal.GetOptimalOrientedBoundingBox(1, 3, s => Console.WriteLine(s));
         }
     }
 }
