@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Ariadne.Kernel": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
