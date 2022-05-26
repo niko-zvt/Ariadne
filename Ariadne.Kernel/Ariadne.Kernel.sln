@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ariadne.Kernel", "Ariadne.Kernel\Ariadne.Kernel.csproj", "{91E5E920-5ED7-41B3-B4D6-178833ECB22D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F5BBE571-3E0F-4322-BAE3-00B252521126} = {F5BBE571-3E0F-4322-BAE3-00B252521126}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ariadne.CGAL", "Ariadne.CGAL\Ariadne.CGAL.vcxproj", "{F5BBE571-3E0F-4322-BAE3-00B252521126}"
 EndProject
