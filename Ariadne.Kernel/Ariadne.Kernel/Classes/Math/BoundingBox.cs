@@ -117,6 +117,9 @@ namespace Ariadne.Kernel.Math
         /// <returns>Optimal oriented bounding box</returns>
         private static OOBoundingBox GetBoundingBoxByJSON(string jsonBox)
         {
+            // TODO: Fix Debug
+            System.Console.WriteLine(jsonBox);
+
             // 1. Find CSYS
             CoordinateSystem cs = GlobalCSys.Instance;
 
