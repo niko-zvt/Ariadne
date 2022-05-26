@@ -7,6 +7,6 @@ namespace Ariadne.Kernel.CGAL
 
     public interface ILibraryImport
     {
-        int GetOptimalOrientedBoundingBox(int start, int count, Notification notification);
+        int GetOOBB(CGAL_Point[] points, int size);
     }
 }

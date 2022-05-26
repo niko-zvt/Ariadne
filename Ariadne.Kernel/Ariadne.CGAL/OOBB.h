@@ -14,4 +14,12 @@
 
 typedef void(__stdcall* Notification)(const char*);
 
-extern "C" int32_t CGAL_OOBB_API __stdcall GetOptimalOrientedBoundingBox(int32_t start, int32_t count, Notification notification);
+// Ariadne.Kernel Point3D
+typedef struct _AriadnePoint3D
+{
+    float x;
+    float y;
+    float z;
+} AriadnePoint3D;
+
+extern "C" int32_t CGAL_OOBB_API __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D * points, int size);

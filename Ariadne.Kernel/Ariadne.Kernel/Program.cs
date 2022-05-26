@@ -34,7 +34,15 @@ namespace Ariadne.Kernel
 
             Directory.SetCurrentDirectory(pathToLibs);
             CGAL.ILibraryImport cgal = CGAL.LibraryImport.Select();
-            cgal.GetOptimalOrientedBoundingBox(1, 3, s => Console.WriteLine(s));
+
+            CGAL.CGAL_Point[] points = new CGAL.CGAL_Point[]
+            {
+                new CGAL.CGAL_Point(1.5f, 0.0f, 0.0f),
+                new CGAL.CGAL_Point(0.0f, 1.5f, 0.0f),
+                new CGAL.CGAL_Point(0.0f, 0.0f, 1.5f)
+            };
+            var test = cgal.GetOOBB(points, points.Length);
+            stdout.WriteLine("C++ say: {0}", test);
         }
     }
 }

@@ -1,23 +1,18 @@
 // OOBB.cpp : Defines the exported functions for the DLL application.
-//
+
 #include "pch.h"
 #include "OOBB.h"
 #include <Windows.h>
 #include <stdio.h>
 
-int32_t __stdcall GetOptimalOrientedBoundingBox(int32_t start, int32_t count, Notification notification)
+// Manual test of FLOAT marshalling
+int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size)
 {
-    if (notification == nullptr)
-    {
-        return 0;
+    float res = 0.0f;
+
+    for (int32_t i = 0; i < size; i++) {
+        res += points[i].x + points[i].y + points[i].z;
     }
-    int32_t result = 0;
-    for (int32_t i = 0; i < count; ++i)
-    {
-        char buffer[64];
-        result += sprintf_s(buffer, "OOBB - Notification %d from C++", i + start);
-        notification(buffer);
-        Sleep(500);
-    }
-    return result;
+
+    return int32_t(res);
 }
