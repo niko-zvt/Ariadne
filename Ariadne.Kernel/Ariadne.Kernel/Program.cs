@@ -34,10 +34,10 @@ namespace Ariadne.Kernel
 
             // Test OOBB
             var points = new List<Math.Vector3D>();
-            points.Add(new Math.Vector3D(1.0, 0.0, 0.0));
-            points.Add(new Math.Vector3D(2.0, 0.0, 0.0));
-            points.Add(new Math.Vector3D(3.0, 0.0, 0.0));
-            points.Add(new Math.Vector3D(4.0, 0.0, 0.0));
+            points.Add(new Math.Vector3D(1.0, 1.0, 0.0));
+            points.Add(new Math.Vector3D(-1.0, 2.0, 0.0));
+            points.Add(new Math.Vector3D(-0.5, -0.5, 0.0));
+            points.Add(new Math.Vector3D(0.5, -0.5, 0.0));
             var test = Math.OOBoundingBox.CreateByPoints(points);
         }
     }
