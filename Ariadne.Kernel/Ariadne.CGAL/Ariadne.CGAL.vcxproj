@@ -80,8 +80,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Ariadne.Kernel\Libs\</OutDir>
     <TargetName>$(ProjectName).$(PlatformShortName)</TargetName>
-    <ExternalIncludePath>D:\Repos\vcpkg\installed\x64-windows\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
-    <LibraryPath>D:\Repos\vcpkg\installed\x64-windows\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <ExternalIncludePath>D:\Repos\vcpkg\installed\x64-windows\include\;$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\Repos\vcpkg\installed\x64-windows\lib\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
