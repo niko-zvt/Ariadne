@@ -11,6 +11,19 @@
 #endif
 
 #include <cstdint>
+#include <string>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Point_set_3.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/convex_hull_3.h>
+#include <CGAL/optimal_bounding_box.h>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel    Kernel;
+typedef Kernel::Point_3                                        Point3D;
+typedef CGAL::Polyhedron_3<Kernel>                             Polyhedron3D;
+typedef CGAL::Surface_mesh<Point3D>                            Surface_mesh;
 
 typedef void(__stdcall* Notification)(const char*);
 
@@ -22,4 +35,6 @@ typedef struct _AriadnePoint3D
     float z;
 } AriadnePoint3D;
 
-extern "C" int32_t CGAL_OOBB_API __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D * points, int size);
+std::string GetJSONByPointVector(const std::vector<Point3D>& points);
+
+extern "C" int32_t CGAL_OOBB_API __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D * points, int size, Notification notification);

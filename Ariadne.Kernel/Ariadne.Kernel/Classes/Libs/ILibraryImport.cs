@@ -1,12 +1,9 @@
-﻿using System.Runtime.InteropServices;
+﻿using Ariadne.Kernel.CGAL;
+using System.Runtime.InteropServices;
 
-namespace Ariadne.Kernel.CGAL
+namespace Ariadne.Kernel.Libs
 {
-    [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
-    public delegate void Notification(string value);
-
     public interface ILibraryImport
     {
-        int GetOOBB(CGAL_Point[] points, int size);
     }
 }
