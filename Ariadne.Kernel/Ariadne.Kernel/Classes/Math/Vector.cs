@@ -120,5 +120,14 @@
         /// </summary>
         public float Z { get { return _vectorData[2]; } set { _vectorData[2] = value; } }
 
+        /// <summary>
+        /// Indicates whether the current vector is equal to another vector of the same type.
+        /// </summary>
+        /// <param name="vector3d">Another vector</param>
+        /// <returns>true if the current vector is equal to the other vector; otherwise, false.</returns>
+        public bool Equals(Vector3D vector3d)
+        {
+            return _vectorData.Equals(vector3d._vectorData);
+        }
     }
 }
