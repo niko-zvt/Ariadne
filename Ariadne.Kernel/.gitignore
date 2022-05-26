@@ -364,3 +364,4 @@ FodyWeavers.xsd
 # C++ Libs
 *.lib
 *.exp
+*.pdb
