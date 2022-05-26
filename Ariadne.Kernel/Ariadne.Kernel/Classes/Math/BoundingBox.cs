@@ -98,6 +98,7 @@ namespace Ariadne.Kernel.Math
             foreach(var point in points)
             {
                 cgalPoints[index] = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
+                index++;
             }
 
             var jsonBox = string.Empty;
