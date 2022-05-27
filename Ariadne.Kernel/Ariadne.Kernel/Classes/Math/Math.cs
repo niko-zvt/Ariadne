@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ariadne.Kernel.Libs;
+using System;
+using System.Collections.Generic;
 
 namespace Ariadne.Kernel.Math
 {
@@ -118,5 +120,55 @@ namespace Ariadne.Kernel.Math
 
             return new Vector3D(I1, I2, I3);
         }
+
+
+        public enum BoundedSide
+        {
+            OnUnboundedSide,
+            OnBoundedSide,
+            OnBoundary
+        }
+
+        public static BoundedSide CalculatePositionRelativelyMesh(Vector3D point, List<Vector3D> points)
+        {
+            // 1. Load CGAL lib
+            var cgal = LibraryImport.SelectCGAL();
+
+            // 2. Create CGAL points
+            CGAL.CGAL_Point targetPoint = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
+            CGAL.CGAL_Point[] meshPoints = new CGAL.CGAL_Point[points.Count];
+            int index = 0;
+            foreach (var currentPoint in points)
+            {
+                meshPoints[index] = new CGAL.CGAL_Point(currentPoint.X, currentPoint.Y, currentPoint.Z);
+                index++;
+            }
+
+            // 3. Calculate
+            var jsonResult = string.Empty;
+            var result = cgal.IsBelongToMesh(targetPoint, meshPoints, points.Count, str => { jsonResult = str; });
+
+            if (string.IsNullOrEmpty(jsonResult) || result == false)
+                throw new System.Exception("CGAL lib is fail!");
+
+            if (jsonResult == "ON_UNBOUNDED_SIDE") 
+            { 
+                return BoundedSide.OnUnboundedSide; 
+            }
+            else if (jsonResult == "ON_BOUNDED_SIDE") 
+            { 
+                return BoundedSide.OnBoundedSide; 
+            }
+            else if (jsonResult == "ON_BOUNDARY")
+            { 
+                return BoundedSide.OnBoundary;
+            }
+            else
+            {
+                throw new System.Exception("CGAL lib is fail!");
+            }
+        }
+
+
     }
 }
