@@ -30,7 +30,11 @@ namespace Ariadne.Kernel
             // Test methods
             var resultNode = model.GetStressInNode(39, out var nStress, out var nCoords);
             var resultElement = model.GetStressInElement(39, out var eStress, out var eCoords);
-            var resultPoint = model.GetStressInPoint(new Math.Vector3D(1.0, 1.0, 0.0), out var pStress);
+            
+            var resultCQUAD4 = model.GetStressInPoint(new Math.Vector3D(-30.29, 16.39, 0.0), out var pStress1); //CQUAD4 eID = 52
+            var resultCTRIA3 = model.GetStressInPoint(new Math.Vector3D(-29.8,-33.49, 0.0), out var pStress2);  //CTRIA3 eID = 126
+            var resultVOID1 = model.GetStressInPoint(new Math.Vector3D(37.75, 0.2, 0.0), out var pStress3);     //VOID VOLUME
+            var resultVOID2 = model.GetStressInPoint(new Math.Vector3D(7.89, -50, 0.0), out var pStress4);      //VOID VOLUME
         }
     }
 }
