@@ -1,8 +1,8 @@
 // The following ifdef block is the standard way of creating macros which make exporting 
-// from a DLL simpler. All files within this DLL are compiled with the ARIADNE_CGAL_EXPORTS
+// from a DLL simpler. All files within this DLL are compiled with the CGAL_AABB_EXPORTS
 // symbol defined on the command line. This symbol should not be defined on any project
 // that uses this DLL. This way any other project whose source files include this file see 
-// ARIADNE_CGAL_API functions as being imported from a DLL, whereas this DLL sees symbols
+// CGAL_AABB_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 #pragma once
 #ifdef ARIADNE_CGAL_EXPORTS
@@ -13,4 +13,4 @@
 
 #include "Ariadne.h"
 
-extern "C" int32_t ARIADNE_CGAL_API __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D * points, int size, Notification notification);
+extern "C" int32_t ARIADNE_CGAL_API __stdcall GetAxisAlignedBoundingBox(AriadnePoint3D * points, int size, Notification notification);

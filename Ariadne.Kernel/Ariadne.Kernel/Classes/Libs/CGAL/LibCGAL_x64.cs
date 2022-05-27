@@ -14,6 +14,21 @@ namespace Ariadne.Kernel.CGAL
         {
             int res = GetOptimalOrientedBoundingBox(points, size, notification);
 
+            if (res != 0)
+                return false;
+
+            return true;
+        }
+
+        [DllImport("Ariadne.CGAL.x64", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "GetAxisAlignedBoundingBox")]
+        private static extern int GetAxisAlignedBoundingBox([In] CGAL_Point[] points, [In] int size, Notification notification);
+        public bool GetAABB(CGAL_Point[] points, int size, Notification notification)
+        {
+            int res = GetAxisAlignedBoundingBox(points, size, notification);
+
+            if (res != 0)
+                return false;
+
             return true;
         }
     }

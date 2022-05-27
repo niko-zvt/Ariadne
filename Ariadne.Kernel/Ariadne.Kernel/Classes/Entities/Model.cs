@@ -393,34 +393,12 @@ namespace Ariadne.Kernel
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
         private bool CheckPointBelongElement(int elementID, Vector3D location)
         {
-            // TODO: Bad code. Send code to element (+ref parentModel)
-
+            // 1. Get element
             var element = Elements.GetByID(elementID);
+            var elementCornerNodes = element.GetCornerNodesAsRef();
 
-            var elementCornerNodes = Nodes.GetByIDs(element.CornerNodeIDs);
-
-            Plane3D polygon = null;
-            if (elementCornerNodes.Count > 2)
-            {
-                polygon = new Plane3D(
-                    elementCornerNodes.GetByIndex(0).Coords,
-                    elementCornerNodes.GetByIndex(1).Coords,
-                    elementCornerNodes.GetByIndex(2).Coords);
-            }
-
-            if (polygon == null)
-                return false;
-
-            var distance = polygon.SignedDistanceTo(location);
-
-            if (distance > Math.Utils.Tolerance ||
-               distance < -1 * Math.Utils.Tolerance)
-                return false;
-
-            return false;
-            throw new NotImplementedException();
-            // TODO: Check the location inside the polygon. By means of bypassing the line.
-            //return true;
+            // 2. Check bounding box;
+            return element.IsPointBelong(location);
         }
     }
 }

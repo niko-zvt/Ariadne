@@ -1,12 +1,6 @@
 // OOBB.cpp : Defines the exported functions for the DLL application.
-
 #include "pch.h"
 #include "OOBB.h"
-
-#include <Windows.h>
-#include <stdio.h>
-#include <string>
-#include <vector>
 
 // Manual test of FLOAT marshalling
 int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size, Notification notification)
@@ -31,16 +25,18 @@ int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size
     std::array<Point3D, boxSize> obb_points;
     CGAL::oriented_bounding_box(element_mesh, obb_points, CGAL::parameters::use_convex_hull(true));
 
-    std::string str = "I'm JSON!\n";
+    std::string str = "";
     
     for (int32_t i = 0; i < boxSize; i++)
     {
         auto x = obb_points[i].x();
         auto y = obb_points[i].y();
         auto z = obb_points[i].z();
-        str += "x = " + std::to_string(x) + ", " +
-                "y = " + std::to_string(y) + ", " +
-                "z = " + std::to_string(z) + ";\n";
+        auto length = std::sqrt(x * x + y * y + z * z);
+        str += "{\"Length\":" + std::to_string(length) +
+            ",\"X\":" + std::to_string(x) +
+            ",\"Y\":" + std::to_string(y) +
+            ",\"Z\":" + std::to_string(z) + "}\n";
     }
 
     notification(str.c_str());

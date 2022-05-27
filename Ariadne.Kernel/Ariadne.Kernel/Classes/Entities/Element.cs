@@ -24,6 +24,11 @@ namespace Ariadne.Kernel
         private NodeSet _cornerNodes = new NodeSet();
 
         /// <summary>
+        /// Bounding box of element
+        /// </summary>
+        private BoundingBox _boundingBox;
+
+        /// <summary>
         /// Protected constructor with parameters
         /// </summary>
         /// <param name="parameters">Element parameters</param>
@@ -49,6 +54,12 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <returns>Returns true if the element is valid, otherwise - false</returns>
         public abstract bool IsValid();
+
+        /// <summary>
+        /// Virtual method for checking whether a point belongs to a element
+        /// </summary>
+        /// <returns>true if point belong to element; otherwise return - false</returns>
+        public abstract bool IsPointBelong(Vector3D point);
 
         /// <summary>
         /// Element identifier
@@ -96,6 +107,15 @@ namespace Ariadne.Kernel
         public ref NodeSet GetCornerNodesAsRef()
         {
             return ref _cornerNodes;
+        }
+
+        /// <summary>
+        /// The method returns a reference to a bounding box of element
+        /// </summary>
+        /// <returns>Reference to a bounding box of element</returns>
+        public ref BoundingBox GetBoundingBoxAsRef()
+        {
+            return ref _boundingBox;
         }
 
         /// <summary>
@@ -153,6 +173,29 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
+        /// The method tries to form a bounding box for the current element
+        /// </summary>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        private bool TryBuildBoundingBoxesToElements()
+        {
+            if (_parentModel == null)
+                throw new ArgumentNullException("The parent model of element is null");
+
+            if (!(_parentModel is Model))
+                throw new InvalidCastException("The parent model object is not the model type");
+
+            if (NodeIDs == null || NodeIDs.Count <= 0)
+                throw new ArgumentNullException("Set of node IDs is null or empty");
+
+            _boundingBox = Math.AABoundingBox.CreateByNodeSet(ref _cornerNodes);
+
+            if(_boundingBox == null)
+                throw new ArgumentNullException("Bounding box of element is null");
+
+            return true;
+        }
+
+        /// <summary>
         /// The method returns a reference to the parent model of the element
         /// </summary>
         /// <returns>Reference to the parent model</returns>
@@ -174,7 +217,8 @@ namespace Ariadne.Kernel
             _parentModel = parentModel;
 
             return TryLinkNodesToElements() &&
-                TryLinkCornerNodesToElements();
+                   TryLinkCornerNodesToElements() &&
+                   TryBuildBoundingBoxesToElements();
         }
     }
 

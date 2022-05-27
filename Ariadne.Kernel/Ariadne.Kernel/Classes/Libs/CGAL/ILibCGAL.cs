@@ -9,5 +9,6 @@ namespace Ariadne.Kernel.Libs
     public interface ILibCGAL : ILibraryImport
     {
         bool GetOOBB(CGAL_Point[] points, int size, Notification notification);
+        bool GetAABB(CGAL_Point[] points, int size, Notification notification);
     }
 }

@@ -31,14 +31,6 @@ namespace Ariadne.Kernel
             var resultNode = model.GetStressInNode(39, out var nStress, out var nCoords);
             var resultElement = model.GetStressInElement(39, out var eStress, out var eCoords);
             var resultPoint = model.GetStressInPoint(new Math.Vector3D(1.0, 1.0, 0.0), out var pStress);
-
-            // Test OOBB
-            var points = new List<Math.Vector3D>();
-            points.Add(new Math.Vector3D(1.0, 1.0, 0.0));
-            points.Add(new Math.Vector3D(-1.0, 2.0, 0.0));
-            points.Add(new Math.Vector3D(-0.5, -0.5, 0.0));
-            points.Add(new Math.Vector3D(0.5, -0.5, 0.0));
-            var test = Math.OOBoundingBox.CreateByPoints(points);
         }
     }
 }
