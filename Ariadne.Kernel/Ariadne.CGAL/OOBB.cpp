@@ -18,7 +18,7 @@ int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size
     // Compute convex hull of element
     Surface_mesh element_mesh;
     CGAL::convex_hull_3(element_points.begin(), element_points.end(), element_mesh);
-    if (element_mesh.is_empty())
+    if (element_mesh.is_empty() && !element_mesh.is_valid())
         return 1;
     // Compute the extreme points of the mesh, and then a tightly fitted oriented bounding box
     const int32_t boxSize = 8;
