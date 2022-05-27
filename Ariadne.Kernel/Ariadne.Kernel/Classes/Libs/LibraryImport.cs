@@ -6,10 +6,10 @@ namespace Ariadne.Kernel.Libs
 {
     public static class LibraryImport
     {
-        private const string pathToLibs = @"..\..\..\..\Libs\";
+        private const string pathToLibs =  "Libs\\";
         public static ILibCGAL SelectCGAL()
         {
-            Directory.SetCurrentDirectory(pathToLibs);
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory + pathToLibs);
             if (IntPtr.Size == 4) // 32-bit application
             {
                 return new LibCGAL_x86();
