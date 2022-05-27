@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ariadne.Kernel.Math;
 
 namespace Ariadne.Kernel
@@ -219,6 +220,30 @@ namespace Ariadne.Kernel
             return TryLinkNodesToElements() &&
                    TryLinkCornerNodesToElements() &&
                    TryBuildBoundingBoxesToElements();
+        }
+
+        /// <summary>
+        /// The method checks whether the point is inside the Element
+        /// </summary>
+        /// <param name="point">Point</param>
+        /// <returns>Returns true if point inside the element, otherwise - false</returns>
+        protected bool IsPointInsideElement(Vector3D point)
+        {
+            var corners = GetCornerNodesAsRef();
+            if (corners.Count == 0)
+                return false;
+
+            var mesh = new List<Vector3D>();
+            foreach (var corner in corners)
+            {
+                mesh.Add(corner.Coords);
+            }
+
+            var result = Utils.CalculatePositionRelativelyMesh(point, mesh);
+            if (result == Utils.BoundedSide.OnUnboundedSide)
+                return false;
+
+            return true;
         }
     }
 

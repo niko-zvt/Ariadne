@@ -1,4 +1,5 @@
 ﻿using Ariadne.Kernel.Math;
+using System.Collections.Generic;
 
 namespace Ariadne.Kernel
 {
@@ -47,22 +48,6 @@ namespace Ariadne.Kernel
         {
             if (NodeIDs.Count < 0 || CornerNodeIDs.Count < 0)
                 return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// The method checks whether the point is inside the Element
-        /// </summary>
-        /// <param name="point">Point</param>
-        /// <returns>Returns true if point inside the element, otherwise - false</returns>
-        private bool IsPointInsideElement(Vector3D point)
-        {
-            var corners = GetCornerNodesAsRef();
-            if (corners.Count == 0)
-                return false;
-
-            throw new System.NotImplementedException();
 
             return true;
         }
