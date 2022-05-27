@@ -10,5 +10,7 @@ namespace Ariadne.Kernel.Libs
     {
         bool GetOOBB(CGAL_Point[] points, int size, Notification notification);
         bool GetAABB(CGAL_Point[] points, int size, Notification notification);
+
+        bool IsBelongToMesh(CGAL_Point point, CGAL_Point[] meshPoints, int size, Notification notification);
     }
 }
