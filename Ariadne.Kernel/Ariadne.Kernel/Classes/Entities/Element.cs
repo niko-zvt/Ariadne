@@ -240,10 +240,13 @@ namespace Ariadne.Kernel
             }
 
             var result = Utils.CalculatePositionRelativelyMesh(point, mesh);
-            if (result == Utils.BoundedSide.OnUnboundedSide)
-                return false;
+            if (result == Utils.LocationType.Vertex ||
+                result == Utils.LocationType.Edge ||
+                result == Utils.LocationType.Facet ||
+                result == Utils.LocationType.Cell)
+                return true;
 
-            return true;
+            return false;
         }
     }
 

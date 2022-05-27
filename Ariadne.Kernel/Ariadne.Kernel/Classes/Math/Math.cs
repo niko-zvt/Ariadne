@@ -121,15 +121,17 @@ namespace Ariadne.Kernel.Math
             return new Vector3D(I1, I2, I3);
         }
 
-
-        public enum BoundedSide
+        public enum LocationType
         {
-            OnUnboundedSide,
-            OnBoundedSide,
-            OnBoundary
+            Vertex,
+            Edge,
+            Facet,
+            Cell,
+            OutsideConvexHull,
+            OutsideAffineHull
         }
 
-        public static BoundedSide CalculatePositionRelativelyMesh(Vector3D point, List<Vector3D> points)
+        public static LocationType CalculatePositionRelativelyMesh(Vector3D point, List<Vector3D> points)
         {
             // 1. Load CGAL lib
             var cgal = LibraryImport.SelectCGAL();
@@ -149,26 +151,36 @@ namespace Ariadne.Kernel.Math
             var result = cgal.IsBelongToMesh(targetPoint, meshPoints, points.Count, str => { jsonResult = str; });
 
             if (string.IsNullOrEmpty(jsonResult) || result == false)
-                throw new System.Exception("CGAL lib is fail!");
+                throw new System.Exception("CGAL lib is fail! IsBelongToMesh().");
 
-            if (jsonResult == "ON_UNBOUNDED_SIDE") 
+            if (jsonResult == "VERTEX") 
             { 
-                return BoundedSide.OnUnboundedSide; 
+                return LocationType.Vertex; 
             }
-            else if (jsonResult == "ON_BOUNDED_SIDE") 
-            { 
-                return BoundedSide.OnBoundedSide; 
+            else if (jsonResult == "EDGE")
+            {
+                return LocationType.Edge;
             }
-            else if (jsonResult == "ON_BOUNDARY")
+            else if (jsonResult == "FACET")
+            {
+                return LocationType.Facet;
+            }
+            else if (jsonResult == "CELL") 
             { 
-                return BoundedSide.OnBoundary;
+                return LocationType.Cell; 
+            }
+            else if (jsonResult == "OUTSIDE_CONVEX_HULL")
+            {
+                return LocationType.OutsideConvexHull;
+            }
+            else if (jsonResult == "OUTSIDE_AFFINE_HULL")
+            { 
+                return LocationType.OutsideAffineHull;
             }
             else
             {
-                throw new System.Exception("CGAL lib is fail!");
+                throw new System.Exception("CGAL lib is fail! IsBelongToMesh().");
             }
         }
-
-
     }
 }
