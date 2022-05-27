@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ariadne.Kernel.Libs;
+using System;
+using System.Collections.Generic;
 
 namespace Ariadne.Kernel.Math
 {
@@ -117,6 +119,68 @@ namespace Ariadne.Kernel.Math
             var I3 = (Sxx * Syy * Szz) - (Sxx * Syz * Syz) - (Syy * Szx * Szx) - (Szz * Sxy * Sxy) + (2 * Sxy * Syz * Szx);
 
             return new Vector3D(I1, I2, I3);
+        }
+
+        public enum LocationType
+        {
+            Vertex,
+            Edge,
+            Facet,
+            Cell,
+            OutsideConvexHull,
+            OutsideAffineHull
+        }
+
+        public static LocationType CalculatePositionRelativelyMesh(Vector3D point, List<Vector3D> points)
+        {
+            // 1. Load CGAL lib
+            var cgal = LibraryImport.SelectCGAL();
+
+            // 2. Create CGAL points
+            CGAL.CGAL_Point targetPoint = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
+            CGAL.CGAL_Point[] meshPoints = new CGAL.CGAL_Point[points.Count];
+            int index = 0;
+            foreach (var currentPoint in points)
+            {
+                meshPoints[index] = new CGAL.CGAL_Point(currentPoint.X, currentPoint.Y, currentPoint.Z);
+                index++;
+            }
+
+            // 3. Calculate
+            var jsonResult = string.Empty;
+            var result = cgal.IsBelongToMesh(targetPoint, meshPoints, points.Count, str => { jsonResult = str; });
+
+            if (string.IsNullOrEmpty(jsonResult) || result == false)
+                throw new System.Exception("CGAL lib is fail! IsBelongToMesh().");
+
+            if (jsonResult == "VERTEX") 
+            { 
+                return LocationType.Vertex; 
+            }
+            else if (jsonResult == "EDGE")
+            {
+                return LocationType.Edge;
+            }
+            else if (jsonResult == "FACET")
+            {
+                return LocationType.Facet;
+            }
+            else if (jsonResult == "CELL") 
+            { 
+                return LocationType.Cell; 
+            }
+            else if (jsonResult == "OUTSIDE_CONVEX_HULL")
+            {
+                return LocationType.OutsideConvexHull;
+            }
+            else if (jsonResult == "OUTSIDE_AFFINE_HULL")
+            { 
+                return LocationType.OutsideAffineHull;
+            }
+            else
+            {
+                throw new System.Exception("CGAL lib is fail! IsBelongToMesh().");
+            }
         }
     }
 }

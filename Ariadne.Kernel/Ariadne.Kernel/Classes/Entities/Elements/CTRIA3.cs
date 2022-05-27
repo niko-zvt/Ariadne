@@ -1,4 +1,6 @@
-﻿namespace Ariadne.Kernel
+﻿using Ariadne.Kernel.Math;
+
+namespace Ariadne.Kernel
 {
     /// <summary>
     /// CTRIA3 element.
@@ -21,6 +23,20 @@
         public override ElementType GetElementType()
         {
             return ElementType.CTRIA3;
+        }
+
+        /// <summary>
+        /// Method for checking whether a point belongs to an element
+        /// </summary>
+        /// <param name="point">Point</param>
+        /// <returns>true if point belong to an element; otherwise return - false</returns>
+        public override bool IsPointBelong(Vector3D point)
+        {
+            if (GetBoundingBoxAsRef().IsPointBelong(point) == true &&
+                IsPointInsideElement(point) == true)
+                return true;
+
+            return false;
         }
 
         /// <summary>
