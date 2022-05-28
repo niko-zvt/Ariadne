@@ -9,6 +9,16 @@
         /// Vector specific data
         /// </summary>
         protected MathNet.Numerics.LinearAlgebra.Vector<float> _vectorData;
+
+        /// <summary>
+        /// Gets the length (L2-Norm) of this vector.
+        /// </summary>
+        public float Length { get { return (float)_vectorData.L2Norm(); } }
+
+        /// <summary>
+        /// Gets the length or number of dimensions of this vector.
+        /// </summary>
+        public int Size { get { return (int)_vectorData.Count; } }
     }
 
     /// <summary>
@@ -99,11 +109,6 @@
         {
             _vectorData = endPoint._vectorData - startPoint._vectorData;
         }
-
-        /// <summary>
-        /// Vector length
-        /// </summary>
-        public float Length { get { return (float)_vectorData.L2Norm(); } }
 
         /// <summary>
         /// Component X
