@@ -13,7 +13,7 @@
         /// <summary>
         /// Virtual method to return the type of the coordinate system
         /// </summary>
-        /// <returns>Type of plane</returns>
+        /// <returns>Type of coordinate system</returns>
         public abstract CoordinateSystemType GetCoordinateSystemType();
     }
 
