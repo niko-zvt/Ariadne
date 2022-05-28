@@ -14,6 +14,7 @@ namespace Ariadne.Kernel
         /// <param name="parameters">Element parameters</param>
         public CTRIA3(ElementParams parameters) : base(parameters)
         {
+            ShapeFunction = Triangle3.GetFunction;
         }
 
         /// <summary>

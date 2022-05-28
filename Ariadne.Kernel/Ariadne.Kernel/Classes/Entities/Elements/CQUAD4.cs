@@ -15,6 +15,7 @@ namespace Ariadne.Kernel
         /// <param name="parameters">Element parameters</param>
         public CQUAD4(ElementParams parameters):base(parameters)
         {
+            ShapeFunction = Quadrilateral4.GetFunction;
         }
 
         /// <summary>
