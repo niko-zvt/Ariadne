@@ -184,6 +184,31 @@
         }
 
         /// <summary>
+        /// Build a diagonal matrix 3x3.
+        /// XX = YY = ZZ;
+        /// XY, YX, YZ, ZY, XZ, ZX - zero.
+        /// </summary>
+        /// <param name="x">XX, YY, ZZ values.</param>
+        /// <returns>Diagonal matrix 3x3</returns>
+        public static Matrix3x3 BuildDiagonal(float x)
+        {
+            return BuildDiagonal(x, x, x);
+        }
+
+        /// <summary>
+        /// Build a diagonal matrix 3x3.
+        /// XY, YX, YZ, ZY, XZ, ZX - zero.
+        /// </summary>
+        /// <param name="xx">XX value.</param>
+        /// <param name="yy">YY value.</param>
+        /// <param name="zz">ZZ value.</param>
+        /// <returns>Diagonal matrix 3x3</returns>
+        public static Matrix3x3 BuildDiagonal(float xx, float yy, float zz)
+        {
+            return new Matrix3x3(xx, yy, zz, 0.0f, 0.0f, 0.0f);
+        }
+
+        /// <summary>
         /// Trace of a square matrix is defined to be the sum of elements on the main diagonal
         /// </summary>
         /// <returns>Return trace of matrix</returns>
