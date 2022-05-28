@@ -45,6 +45,17 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
+        /// The method returns the stress matrix by point location
+        /// </summary>
+        /// <param name="location">Point location</param>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        public bool GetStressByPoint(Vector3D location, out Matrix3x3 stress)
+        {
+            // TODO:
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
         /// Virtual method to return the type of the element
         /// </summary>
         /// <returns>Type of element</returns>
@@ -248,6 +259,8 @@ namespace Ariadne.Kernel
 
             return false;
         }
+
+
     }
 
     /// <summary>

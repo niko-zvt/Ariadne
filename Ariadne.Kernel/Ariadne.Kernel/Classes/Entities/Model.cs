@@ -378,11 +378,15 @@ namespace Ariadne.Kernel
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
         private bool GetStressInElementByIDAndPoint(int elementID, Vector3D location, out Matrix3x3 stress)
         {
-            stress = new Matrix3x3();
+            var element = Elements.GetByID(elementID);
 
-            // TODO: STUB - Find stress matrix in parent element by location
+            bool result = false;
+            stress = null;
 
-            return false;
+            if (element != null)
+                 result = element.GetStressByPoint(location, out stress);
+            
+            return result;
         }
 
         /// <summary>
@@ -393,12 +397,13 @@ namespace Ariadne.Kernel
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
         private bool CheckPointBelongElement(int elementID, Vector3D location)
         {
-            // 1. Get element
             var element = Elements.GetByID(elementID);
-            var elementCornerNodes = element.GetCornerNodesAsRef();
+            var result = false;
 
-            // 2. Check bounding box;
-            return element.IsPointBelong(location);
+            if (element != null)
+                result = element.IsPointBelong(location);
+
+            return result;
         }
     }
 }
