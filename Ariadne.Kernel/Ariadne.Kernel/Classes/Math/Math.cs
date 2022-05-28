@@ -15,6 +15,19 @@ namespace Ariadne.Kernel.Math
         public const float Tolerance = 0.000001f;
 
         /// <summary>
+        /// Point location type
+        /// </summary>
+        public enum LocationType
+        {
+            Vertex,
+            Edge,
+            Facet,
+            Cell,
+            OutsideConvexHull,
+            OutsideAffineHull
+        }
+
+        /// <summary>
         /// Calculate the principal invariants
         /// </summary>
         /// <param name="squareMatrix">Second-rank tensor / 3x3 matrix</param>
@@ -121,26 +134,22 @@ namespace Ariadne.Kernel.Math
             return new Vector3D(I1, I2, I3);
         }
 
-        public enum LocationType
-        {
-            Vertex,
-            Edge,
-            Facet,
-            Cell,
-            OutsideConvexHull,
-            OutsideAffineHull
-        }
-
-        public static LocationType CalculatePositionRelativelyMesh(Vector3D point, List<Vector3D> points)
+        /// <summary>
+        /// The function calculates the position of a point relative to the mesh given by a set of points
+        /// </summary>
+        /// <param name="point">Points</param>
+        /// <param name="meshByPoints">Mesh by points</param>
+        /// <returns>Point location type</returns>
+        public static LocationType CalculatePositionRelativelyMesh(Vector3D point, List<Vector3D> meshByPoints)
         {
             // 1. Load CGAL lib
             var cgal = LibraryImport.SelectCGAL();
 
             // 2. Create CGAL points
             CGAL.CGAL_Point targetPoint = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
-            CGAL.CGAL_Point[] meshPoints = new CGAL.CGAL_Point[points.Count];
+            CGAL.CGAL_Point[] meshPoints = new CGAL.CGAL_Point[meshByPoints.Count];
             int index = 0;
-            foreach (var currentPoint in points)
+            foreach (var currentPoint in meshByPoints)
             {
                 meshPoints[index] = new CGAL.CGAL_Point(currentPoint.X, currentPoint.Y, currentPoint.Z);
                 index++;
@@ -148,7 +157,7 @@ namespace Ariadne.Kernel.Math
 
             // 3. Calculate
             var jsonResult = string.Empty;
-            var result = cgal.IsBelongToMesh(targetPoint, meshPoints, points.Count, str => { jsonResult = str; });
+            var result = cgal.IsBelongToMesh(targetPoint, meshPoints, meshByPoints.Count, str => { jsonResult = str; });
 
             if (string.IsNullOrEmpty(jsonResult) || result == false)
                 throw new System.Exception("CGAL lib is fail! IsBelongToMesh().");
@@ -182,5 +191,49 @@ namespace Ariadne.Kernel.Math
                 throw new System.Exception("CGAL lib is fail! IsBelongToMesh().");
             }
         }
+
+        /// <summary>
+        /// The function checks if the parameter belongs to natural coordinates
+        /// </summary>
+        /// <param name="u">Parameter</param>
+        /// <returns>true if parameter belong to natural coordinates; otherwise return - false</returns>
+        public static bool IsNaturalCoordinate(float u)
+        {
+            if (u < -1 || u > 1)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// The function checks if the parameters belongs to natural coordinates
+        /// </summary>
+        /// <param name="u">First parameter</param>
+        /// <param name="v">Second parameter</param>
+        /// <returns>true if parameters belong to natural coordinates; otherwise return - false</returns>
+        public static bool IsNaturalCoordinate(float u, float v)
+        {
+            if (!IsNaturalCoordinate(u) || 
+                !IsNaturalCoordinate(v))
+                return false;
+            return true;
+        }
+
+        /// <summary>
+        /// The function checks if the parameters belongs to natural coordinates
+        /// </summary>
+        /// <param name="u">First parameter</param>
+        /// <param name="v">Second parameter</param>
+        /// <param name="w">Third parametr</param>
+        /// <returns>true if parameters belong to natural coordinates; otherwise return - false</returns>
+        public static bool IsNaturalCoordinate(float u, float v, float w)
+        {
+            if (!IsNaturalCoordinate(u) || 
+                !IsNaturalCoordinate(v) || 
+                !IsNaturalCoordinate(w))
+                return false;
+            return true;
+        }
+
     }
 }
