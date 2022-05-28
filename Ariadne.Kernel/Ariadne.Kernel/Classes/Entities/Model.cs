@@ -370,23 +370,42 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// The method returns the stress matrix by ID element and point location
+        /// The method returns the stress matrix by ID element and point location.
+        /// The point MUST BELONG to the element. Use parameter "forceCheck = true" if you are unsure if the point actually belongs to the element.
         /// </summary>
         /// <param name="elementID">Element ID</param>
         /// <param name="location">Point location</param>
         /// <param name="stress">Stress matrix</param>
+        /// <param name="forceCheck">If the parameter is true, then an explicit check is made that the point belongs to the element.</param>
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        private bool GetStressInElementByIDAndPoint(int elementID, Vector3D location, out Matrix3x3 stress)
+        private bool GetStressInElementByIDAndPoint(int elementID, Vector3D location, out Matrix3x3 stress, bool forceCheck = false)
         {
-            var element = Elements.GetByID(elementID);
-
-            bool result = false;
             stress = null;
 
-            if (element != null)
-                 result = element.GetStressByPoint(location, out stress);
-            
-            return result;
+            if (forceCheck == true && CheckPointBelongElement(elementID, location) == false)
+                return false;
+
+            var element = Elements.GetByID(elementID);
+            if (element == null)
+                return false;
+
+            var elementNodes = element.GetNodesAsRef();
+            if (elementNodes == null)
+                return false;
+
+            var nodesData = new List<(int NodeID, Vector3D NodeLocation, Matrix3x3 NodeStress)>();
+            foreach (var node in elementNodes)
+            {
+                var nodeResult = GetStressInNode(node.ID, out var nodeStress, out var nodeLocation);
+                nodesData.Add(new (node.ID, nodeLocation, nodeStress));
+            }
+
+            if(nodesData.Count != elementNodes.Count)
+                return false;
+
+            // TODO: Calculate the stress through the shape function
+
+            return true;
         }
 
         /// <summary>
