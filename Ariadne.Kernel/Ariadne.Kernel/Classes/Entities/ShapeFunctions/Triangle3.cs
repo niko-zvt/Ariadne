@@ -14,9 +14,9 @@ namespace Ariadne.Kernel
 
         private Triangle3()
         {
-            _functors.Add(new Functor(N1));
-            _functors.Add(new Functor(N2));
-            _functors.Add(new Functor(N3));
+            _functors.Add(new Functor(LocalN1));
+            _functors.Add(new Functor(LocalN2));
+            _functors.Add(new Functor(LocalN3));
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Ariadne.Kernel
         /// <param name="u">Parameter U</param>
         /// <param name="v">Parameter V</param>
         /// <returns>Value of shape function</returns>
-        public float N1(float u, float v, float w = 0.0f)
+        public float LocalN1(float u, float v, float w = 0.0f)
         {
             if (Math.Utils.IsNaturalCoordinate(u, v) &&
                 u >= 0 && v >= 0 && (u + v) <= 1)
@@ -48,7 +48,7 @@ namespace Ariadne.Kernel
         /// <param name="u">Parameter U</param>
         /// <param name="v">Parameter V</param>
         /// <returns>Value of shape function</returns>
-        public float N2(float u, float v, float w = 0.0f)
+        public float LocalN2(float u, float v, float w = 0.0f)
         {
             if (Math.Utils.IsNaturalCoordinate(u, v) && 
                 u >= 0 && v >= 0 && (u + v)<= 1 )
@@ -63,7 +63,7 @@ namespace Ariadne.Kernel
         /// <param name="u">Parameter U</param>
         /// <param name="v">Parameter V</param>
         /// <returns>Value of shape function</returns>
-        public float N3(float u, float v, float w = 0.0f)
+        public float LocalN3(float u, float v, float w = 0.0f)
         {
             if (Math.Utils.IsNaturalCoordinate(u, v) &&
                 u >= 0 && v >= 0 && (u + v) <= 1)
