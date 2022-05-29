@@ -1,4 +1,8 @@
-﻿namespace Ariadne.Kernel.Math
+﻿using MathNet.Numerics.LinearAlgebra.Double.Solvers;
+using MathNet.Numerics.LinearAlgebra.Solvers;
+using System.Collections.Generic;
+
+namespace Ariadne.Kernel.Math
 {
     /// <summary>
     /// Abstract class for hiding the implementation of the Matrix class
@@ -23,6 +27,7 @@
     enum MatrixType
     {
         Matrix3x3,
+        MatrixNxM,
     }
 
     /// <summary>
@@ -312,6 +317,178 @@
         public override MatrixType GetMatrixType()
         {
             return MatrixType.Matrix3x3;
+        }
+
+        /// <summary>
+        /// The method returns representations of the specific matrix as a string
+        /// </summary>
+        /// <returns>A string that represents the current object</returns>
+        public override string ToString()
+        {
+            return GetMatrixType().ToString();
+        }
+    }
+
+    /// <summary>
+    /// Class of a matrix in three-dimensional space NxN
+    /// </summary>
+    class MatrixNxM : Matrix
+    {
+        /// <summary>
+        /// Constructor by float array
+        /// </summary>
+        /// <param name="array">Array of size NxM</param>
+        public MatrixNxM(float[,] array)
+        {
+            _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(array);
+        }
+
+        /// <summary>
+        /// Constructor by double array
+        /// </summary>
+        /// <param name="array">Array of size 3x3</param>
+        public MatrixNxM(double[,] array)
+        {
+            var l1 = array.GetLength(0);
+            var l2 = array.GetLength(1);
+            float[,] floatArray = new float[l1, l2];
+
+            for (int i = 0; i < l1; i++)
+                for (int j = 0; j < l2; j++)
+                    floatArray[i, j] = (float)array[i, j];
+
+            _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(floatArray);
+        }
+
+        /// <summary>
+        /// Constructor by matrix
+        /// </summary>
+        /// <param name="matrix">Matrix</param>
+        public MatrixNxM(MatrixNxM matrix)
+        {
+            _values = matrix._values;
+        }
+
+        /// <summary>
+        /// Private constructor for transformations
+        /// </summary>
+        /// <param name="matrix">Matrix</param>
+        private MatrixNxM(MathNet.Numerics.LinearAlgebra.Matrix<float> matrix)
+        {
+            if (matrix.RowCount != matrix.ColumnCount)
+                throw new System.ArgumentException("Matrix is not square NxN");
+
+            _values = matrix;
+        }
+
+        /// <summary>
+        /// Trace of a square matrix is defined to be the sum of elements on the main diagonal
+        /// </summary>
+        /// <returns>Return trace of matrix</returns>
+        public float Trace()
+        {
+            return _values.Trace();
+        }
+
+        /// <summary>
+        /// Inverse matrix
+        /// </summary>
+        /// <returns></returns>
+        public void Inverse()
+        {
+           _values.Inverse();
+        }
+
+        /// <summary>
+        /// Transpose the matrix
+        /// </summary>
+        public void Transpose()
+        {
+            _values.Transpose();
+        }
+
+        /// <summary>
+        /// The components of the matrix are squared and the trace of this matrix is determined
+        /// </summary>
+        /// <returns>Trace of the matrix square</returns>
+        public float SquareTrace()
+        {
+            return Power(2).Trace();
+        }
+
+        public VectorND Solve(VectorND vector)
+        {
+            var b = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(vector.ToArray());
+
+            var x = _values.Solve(b);
+
+            return new VectorND(x.ToArray());
+        }
+
+        public VectorND MultyPly(VectorND vector)
+        {
+            var b = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(vector.ToArray());
+
+            var x = _values.Multiply(b);
+
+            return new VectorND(x.ToArray());
+        }
+
+        /// <summary>
+        /// Raises this square matrix to a positive integer exponent and places the result into the result matrix
+        /// </summary>
+        /// <param name="exponent">Positive exponent</param>
+        /// <returns>Matrix raised to a power of</returns>
+        public MatrixNxM Power(int exponent)
+        {
+            if (exponent < 0)
+                throw new System.ArgumentException("The exponent cannot be a negative number");
+
+            MathNet.Numerics.LinearAlgebra.Matrix<float> resultValues =
+                MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.Dense(3, 3);
+            _values.Power(exponent, resultValues);
+            return new MatrixNxM(resultValues);
+        }
+
+        /// <summary>
+        /// Computes the determinant of this matrix
+        /// </summary>
+        /// <returns>The determinant of this matrix</returns>
+        public float Determinant()
+        {
+            return _values.Determinant();
+        }
+
+        /// <summary>
+        /// Checking whether the matrix is square
+        /// </summary>
+        /// <returns>True if the matrix is square, otherwise - false</returns>
+        public bool IsSquare()
+        {
+            return _values.RowCount == _values.ColumnCount;
+        }
+
+        /// <summary>
+        /// Component ZZ
+        /// </summary>
+        public float GetValueAt(int i, int j)
+        {
+            if (i < 0 || j < 0)
+                throw new System.ArgumentOutOfRangeException("i or j < 0");
+
+            if (i > _values.RowCount || j > _values.ColumnCount)
+                throw new System.ArgumentOutOfRangeException("i or j > matrix size");
+
+            return _values[i, j];
+        }
+
+        /// <summary>
+        /// Returns the matrix type
+        /// </summary>
+        /// <returns>Matrix type</returns>
+        public override MatrixType GetMatrixType()
+        {
+            return MatrixType.MatrixNxM;
         }
 
         /// <summary>
