@@ -235,5 +235,19 @@ namespace Ariadne.Kernel.Math
             return true;
         }
 
+        public static Vector3D CalculatePointOnLegendreGaussInterval(Vector3D point, Vector3D min, Vector3D max)
+        {
+            Vector3D result = new Vector3D();
+            result.X = CalculatePointOnLegendreGaussInterval(point.X, min.X, max.X);
+            result.Y = CalculatePointOnLegendreGaussInterval(point.Y, min.Y, max.Y);
+            result.Z = CalculatePointOnLegendreGaussInterval(point.Z, min.Z, max.Z);
+            return result;
+        }
+
+        public static float CalculatePointOnLegendreGaussInterval(float x, float xmin, float xmax)
+        {
+            var k = (x - xmin) / (xmax - xmin);
+            return 2 * k - 1;
+        }
     }
 }
