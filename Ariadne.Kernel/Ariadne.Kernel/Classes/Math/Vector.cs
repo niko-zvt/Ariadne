@@ -1,4 +1,6 @@
-﻿namespace Ariadne.Kernel.Math
+﻿using System.Collections.Generic;
+
+namespace Ariadne.Kernel.Math
 {
     /// <summary>
     /// Abstract class for hiding the implementation of the Vector class
@@ -19,6 +21,14 @@
         /// Gets the length or number of dimensions of this vector.
         /// </summary>
         public int Size { get { return (int)_vectorData.Count; } }
+
+        public float[] ToArray()
+        {
+            if (_vectorData == null)
+                throw new System.ArgumentNullException("Vector data is null!");
+
+            return _vectorData.ToArray();
+        }
     }
 
     /// <summary>
@@ -133,6 +143,86 @@
         public bool Equals(Vector3D vector3d)
         {
             return _vectorData.Equals(vector3d._vectorData);
+        }
+    }
+
+    /// <summary>
+    /// Class of a vector in three-dimensional space
+    /// </summary>
+    class VectorND : Vector
+    {
+        /// <summary>
+        /// Constructor by float values
+        /// </summary>
+        /// <param name="values">List of values</param>
+        public VectorND(List<float> values)
+        {
+            _vectorData = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(values.ToArray());
+        }
+
+        /// <summary>
+        /// Constructor by float array
+        /// </summary>
+        /// <param name="array">Array of dimension N</param>
+        public VectorND(float[] array)
+        {
+            _vectorData = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(array);
+        }
+
+        /// <summary>
+        /// Constructor by double array
+        /// </summary>
+        /// <param name="array">Array of dimension N</param>
+        public VectorND(double[] array)
+        {
+            var len = array.Length;
+            float[] floatArray = new float[len];
+            for (int i = 0; i < len; i++)
+            {
+                floatArray[i] = (float)array[i];
+            }
+
+            _vectorData = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(floatArray);
+        }
+
+        /// <summary>
+        /// Constructor by vector
+        /// </summary>
+        /// <param name="vector">Vector</param>
+        public VectorND(VectorND vector)
+        {
+            _vectorData = vector._vectorData;
+        }
+
+        /// <summary>
+        /// Constructor by two vectors
+        /// </summary>
+        /// <param name="startPoint">Start vector</param>
+        /// <param name="endPoint">End vector</param>
+        public VectorND(VectorND startPoint, VectorND endPoint)
+        {
+            _vectorData = endPoint._vectorData - startPoint._vectorData;
+        }
+
+        /// <summary>
+        /// Component by index
+        /// </summary>
+        public float GetValueAt(int index)
+        {
+            if (index < 0 || index > _vectorData.Count)
+                throw new System.ArgumentOutOfRangeException("id");
+
+            return _vectorData.At(index);
+        }
+
+        /// <summary>
+        /// Indicates whether the current vector is equal to another vector of the same type.
+        /// </summary>
+        /// <param name="vector">Another vector</param>
+        /// <returns>true if the current vector is equal to the other vector; otherwise, false.</returns>
+        public bool Equals(VectorND vector)
+        {
+            return _vectorData.Equals(vector._vectorData);
         }
     }
 }
