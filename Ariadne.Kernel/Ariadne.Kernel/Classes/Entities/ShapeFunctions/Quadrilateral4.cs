@@ -15,10 +15,10 @@ namespace Ariadne.Kernel
 
         private Quadrilateral4()
         {
-            _functors.Add(new Functor(LocalN1));
-            _functors.Add(new Functor(LocalN2));
-            _functors.Add(new Functor(LocalN3));
-            _functors.Add(new Functor(LocalN4));
+            _localFunctors.Add(new Functor(LocalN1));
+            _localFunctors.Add(new Functor(LocalN2));
+            _localFunctors.Add(new Functor(LocalN3));
+            _localFunctors.Add(new Functor(LocalN4));
         }
 
         /// <summary>

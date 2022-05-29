@@ -11,7 +11,7 @@ namespace Ariadne.Kernel
     /// </summary>
     abstract class ShapeFunction
     {
-        protected List<Functor> _functors = new List<Functor>();
+        protected List<Functor> _localFunctors = new List<Functor>();
 
         /// <summary>
         /// Dimension of shape function
@@ -22,20 +22,19 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Nodes in shape function
         /// </summary>
-        public int Size { get { return _functors.Count; } }
+        public int Size { get { return _localFunctors.Count; } }
 
         /// <summary>
         /// Virtual method to return a matrixes of shape values ​​calculated from a vector
         /// </summary>
         /// <param name="naturalCoords">Natural coordinates of point</param>
         /// <returns>Matrixes of shape values</returns>
-        public Dictionary<int, Matrix3x3> GetAsListOfMatrixFromPoint(Vector3D naturalCoords)
+        public Dictionary<int, Matrix3x3> GetMatrixFromNaturalPoint(Vector3D naturalCoords)
         {
-            // Создаем матрицы на каждый узел
             var matrixes = new Dictionary<int, Matrix3x3>();
             for (int i = 0; i < Size; i++)
             {
-                var C = _functors[i](naturalCoords.X, naturalCoords.Y, naturalCoords.Z);
+                var C = _localFunctors[i](naturalCoords.X, naturalCoords.Y, naturalCoords.Z);
                 var matix = Matrix3x3.BuildDiagonal(C, C, C);
                 matrixes.Add(i, matix);
             }
