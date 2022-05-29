@@ -370,6 +370,29 @@ namespace Ariadne.Kernel.Math
         }
 
         /// <summary>
+        /// Constructor by vectors
+        /// </summary>
+        /// <param name="v1">First vector</param>
+        /// <param name="v2">Second vector</param>
+        /// <param name="v3">Third vector</param>
+        /// <param name="isHorizontal">true - transverse matrix</param>
+        public MatrixNxM(VectorND v1, VectorND v2, VectorND v3, bool isHorizontal = false)
+        {
+            if (v1.Size != v2.Size ||
+                v1.Size != v3.Size ||
+                v2.Size != v3.Size)
+                throw new System.ArgumentException("Vectors is not one size!");
+
+            var _v1 = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(v1.ToArray());
+            var _v2 = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(v2.ToArray());
+            var _v3 = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(v3.ToArray());
+
+            _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfColumnVectors(_v1, _v2, _v3);
+            if (isHorizontal == false)
+               _values = _values.Transpose();
+        }
+
+        /// <summary>
         /// Private constructor for transformations
         /// </summary>
         /// <param name="matrix">Matrix</param>
@@ -391,12 +414,12 @@ namespace Ariadne.Kernel.Math
         }
 
         /// <summary>
-        /// Inverse matrix
+        /// Inverse the matrix
         /// </summary>
         /// <returns></returns>
         public void Inverse()
         {
-           _values.Inverse();
+            _values = _values.Inverse();
         }
 
         /// <summary>
@@ -404,7 +427,7 @@ namespace Ariadne.Kernel.Math
         /// </summary>
         public void Transpose()
         {
-            _values.Transpose();
+            _values = _values.Transpose();
         }
 
         /// <summary>

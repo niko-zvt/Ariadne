@@ -254,7 +254,49 @@ namespace Ariadne.Kernel
             return false;
         }
 
+        protected abstract List<float>[] GetUVWNodes();
 
+        /// <summary>
+        /// The method calculates the values ​​of shape functions (shape mapping).
+        /// </summary>
+        /// <param name="point">Point</param>
+        /// <returns>Values ​​of shape functions</returns>
+        public Matrix CalculateShapeMapping()
+        {
+            var uvwCoords = GetUVWNodes();
+            if (uvwCoords.Length < 3 || uvwCoords.Length > 3)
+                throw new ArgumentOutOfRangeException("UVW != 3!");
+
+            var u = GetUVWNodes()[0];
+            var v = GetUVWNodes()[1];
+            var w = GetUVWNodes()[2];
+
+            var modelRef = GetParentModelRef() as Model;
+            var m = new float[NodeIDs.Count, 4];
+            int index = 0;
+            foreach (var nodeID in NodeIDs)
+            {
+                var coords = modelRef.Nodes.GetByID(nodeID).Coords;
+                m[index, 0] = 1;
+                m[index, 1] = coords.X;
+                m[index, 2] = coords.Z;
+                m[index, 3] = coords.Z;
+                index++;
+            }
+
+            VectorND TempU = new VectorND(u);
+            VectorND TempV = new VectorND(v);
+            VectorND TempW = new VectorND(w);
+            MatrixNxM TempM = new MatrixNxM(m);
+
+            TempM.Transpose();
+
+            var A = TempM.MultyPly(TempU);
+            var B = TempM.MultyPly(TempV);
+            var C = TempM.MultyPly(TempW);
+
+            return new MatrixNxM(A, B, C, true);
+        }
     }
 
     /// <summary>

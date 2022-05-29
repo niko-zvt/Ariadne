@@ -1,4 +1,5 @@
 ﻿using Ariadne.Kernel.Math;
+using System.Collections.Generic;
 
 namespace Ariadne.Kernel
 {
@@ -24,6 +25,22 @@ namespace Ariadne.Kernel
         public override ElementType GetElementType()
         {
             return ElementType.CTRIA3;
+        }
+
+        /// <summary>
+        /// UVW-Coords of nodes
+        /// </summary>
+        /// <returns>List of UVW-Coords</returns>
+        protected override List<float>[] GetUVWNodes()
+        {
+            var UVCoordsOfNodes = new List<float>[3]
+            {
+                new List<float>() { 0, 1, 0 },
+                new List<float>() { 0, 0, 1 },
+                new List<float>() { 0, 0, 0 }
+            };
+
+            return UVCoordsOfNodes;
         }
 
         /// <summary>

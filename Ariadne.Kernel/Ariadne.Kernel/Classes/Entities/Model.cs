@@ -389,8 +389,12 @@ namespace Ariadne.Kernel
             if (element == null)
                 return false;
 
-            var elementNodes = element.GetNodesAsRef();
-            if (elementNodes == null)
+            var elementNodes = new NodeSet();
+            foreach(var nodeID in element.NodeIDs)
+            {
+                elementNodes.Add(nodeID, Nodes.GetByID((int)nodeID));
+            }
+            if (elementNodes.Count <= 0)
                 return false;
 
             var nodesData = new List<(int NodeID, Vector3D NodeLocation, Matrix3x3 NodeStress)>();
@@ -404,6 +408,7 @@ namespace Ariadne.Kernel
                 return false;
 
             // TODO: Calculate the stress through the shape function
+            var sm = element.CalculateShapeMapping();
 
             return true;
         }
