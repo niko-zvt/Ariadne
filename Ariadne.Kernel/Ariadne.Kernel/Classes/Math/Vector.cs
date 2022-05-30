@@ -29,6 +29,76 @@ namespace Ariadne.Kernel.Math
 
             return _vectorData.ToArray();
         }
+
+        public static Vector operator / (Vector a, float b)
+        {
+            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
+            var o = new float[a.Size];
+
+            for (int i = 0; i < a.Size; i++)
+            {
+                o[i] = A.At(i) / b;
+            }
+            return new VectorND(o);
+        }
+
+        public static Vector operator * (Vector a, float b)
+        {
+            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
+            var o = new float[a.Size];
+
+            for (int i = 0; i < a.Size; i++)
+            {
+                o[i] = A.At(i) * b;
+            }
+            return new VectorND(o);
+        }
+
+        public static Vector operator * (float b, Vector a)
+        {
+            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
+            var o = new float[a.Size];
+
+            for (int i = 0; i < a.Size; i++)
+            {
+                o[i] = A.At(i) * b;
+            }
+            return new VectorND(o);
+        }
+
+        public static Vector operator + (Vector a, Vector b)
+        {
+            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
+            var B = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
+
+            if (a.Size != b.Size)
+                throw new System.ArgumentException("Size of A != size of B");
+            
+            var o = new float[a.Size];
+
+            for (int i = 0; i < a.Size; i++)
+            {
+                o[i] = A.At(i) + B.At(i);
+            }
+            return new VectorND(o);
+        }
+
+        public static Vector operator - (Vector a, Vector b)
+        {
+            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
+            var B = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
+
+            if (a.Size != b.Size)
+                throw new System.ArgumentException("Size of A != size of B");
+
+            var o = new float[a.Size];
+
+            for (int i = 0; i < a.Size; i++)
+            {
+                o[i] = A.At(i) - B.At(i);
+            }
+            return new VectorND(o);
+        }
     }
 
     /// <summary>

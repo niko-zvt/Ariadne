@@ -244,6 +244,26 @@ namespace Ariadne.Kernel.Math
             return result;
         }
 
+        public static void Test(float x, float y, float z)
+        {
+            Vector3D NA = new Vector3D();
+            Vector3D NB = new Vector3D();
+            Vector3D NC = new Vector3D();
+            Vector3D ND = new Vector3D();
+            float x1 = 0.0f, y1 = 0.0f, z1 = 0.0f;
+            float x2 = 0.0f, y2 = 0.0f, z2 = 0.0f;
+            float x3 = 0.0f, y3 = 0.0f, z3 = 0.0f;
+            float x4 = 0.0f, y4 = 0.0f, z4 = 0.0f;
+
+            var vec = (((-z4 + z) * y3 + (z3 - z) * y4 - y * (z3 - z4)) * x2 + ((z4 - z) * y2 + (-z2 + z) * y4 + y * (z2 - z4)) * x3 + ((-z3 + z) * y2 + (z2 - z) * y3 - y * (z2 - z3)) * x4 + ((z3 - z4) * y2 + (-z2 + z4) * y3 + y4 * (z2 - z3)) * x) * NA + (((z4 - z) * y3 + (-z3 + z) * y4 + y * (z3 - z4)) * x1 + ((-z4 + z) * y1 + (z1 - z) * y4 - y * (z1 - z4)) * x3 + ((z3 - z) * y1 + (-z1 + z) * y3 + y * (z1 - z3)) * x4 - x * ((z3 - z4) * y1 + (-z1 + z4) * y3 + y4 * (z1 - z3))) * NB;
+            var Affine = (vec + (((-z4 + z) * y2 + (z2 - z) * y4 - y * (z2 - z4)) * x1 + ((z4 - z) * y1 + (-z1 + z) * y4 + y * (z1 - z4)) * x2 + ((-z2 + z) * y1 + (z1 - z) * y2 - y * (z1 - z2)) * x4 + x * ((z2 - z4) * y1 + (-z1 + z4) * y2 + y4 * (z1 - z2))) * NC - ND * (((-z3 + z) * y2 + (z2 - z) * y3 - y * (z2 - z3)) * x1 + ((z3 - z) * y1 + (-z1 + z) * y3 + y * (z1 - z3)) * x2 + ((-z2 + z) * y1 + (z1 - z) * y2 - y * (z1 - z2)) * x3 + x * ((z2 - z3) * y1 + (-z1 + z3) * y2 + y3 * (z1 - z2)))) / (((z3 - z4) * y2 + (-z2 + z4) * y3 + y4 * (z2 - z3)) * x1 + ((-z3 + z4) * y1 + (z1 - z4) * y3 - y4 * (z1 - z3)) * x2 + ((z2 - z4) * y1 + (-z1 + z4) * y2 + y4 * (z1 - z2)) * x3 - ((z2 - z3) * y1 + (-z1 + z3) * y2 + y3 * (z1 - z2)) * x4);
+
+
+            // TODO: return vector for CQUAD;
+
+
+        }
+
         public static float CalculatePointOnLegendreGaussInterval(float x, float xmin, float xmax)
         {
             var k = (x - xmin) / (xmax - xmin);
