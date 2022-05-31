@@ -28,22 +28,6 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// UVW-Coords of nodes
-        /// </summary>
-        /// <returns>List of UVW-Coords</returns>
-        protected override List<float>[] GetUVWNodes()
-        {
-            var UVCoordsOfNodes = new List<float>[3] 
-            {
-                new List<float>() { 1, -1, -1, 1 },
-                new List<float>() { 1, 1, -1, -1 },
-                new List<float>() { 0, 0, 0, 0 }
-            };
-
-            return UVCoordsOfNodes;
-        }
-
-        /// <summary>
         /// Method for checking whether a point belongs to an element
         /// </summary>
         /// <param name="point">Point</param>

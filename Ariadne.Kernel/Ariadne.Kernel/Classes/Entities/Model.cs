@@ -408,7 +408,6 @@ namespace Ariadne.Kernel
                 return false;
 
             // TODO: Calculate the stress through the shape function
-            var sm = element.CalculateShapeMapping(location);
 
             return true;
         }

@@ -57,7 +57,7 @@ namespace Ariadne.Kernel.Math
         /// </summary>
         /// <param name="nodes">Set of nodes</param>
         /// <returns>Axis-aligned bounding box</returns>
-        public static AABoundingBox CreateByNodeSet(ref NodeSet nodes)
+        public static AABoundingBox CreateByNodeSet(NodeSet nodes)
         {
             List<Vector3D> points = new List<Vector3D>();
             foreach (Node node in nodes)

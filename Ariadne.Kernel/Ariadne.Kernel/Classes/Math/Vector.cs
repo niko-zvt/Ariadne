@@ -22,82 +22,16 @@ namespace Ariadne.Kernel.Math
         /// </summary>
         public int Size { get { return (int)_vectorData.Count; } }
 
+        /// <summary>
+        /// Concer to array
+        /// </summary>
+        /// <returns>Float array</returns>
         public float[] ToArray()
         {
             if (_vectorData == null)
                 throw new System.ArgumentNullException("Vector data is null!");
 
             return _vectorData.ToArray();
-        }
-
-        public static Vector operator / (Vector a, float b)
-        {
-            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
-            var o = new float[a.Size];
-
-            for (int i = 0; i < a.Size; i++)
-            {
-                o[i] = A.At(i) / b;
-            }
-            return new VectorND(o);
-        }
-
-        public static Vector operator * (Vector a, float b)
-        {
-            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
-            var o = new float[a.Size];
-
-            for (int i = 0; i < a.Size; i++)
-            {
-                o[i] = A.At(i) * b;
-            }
-            return new VectorND(o);
-        }
-
-        public static Vector operator * (float b, Vector a)
-        {
-            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
-            var o = new float[a.Size];
-
-            for (int i = 0; i < a.Size; i++)
-            {
-                o[i] = A.At(i) * b;
-            }
-            return new VectorND(o);
-        }
-
-        public static Vector operator + (Vector a, Vector b)
-        {
-            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
-            var B = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
-
-            if (a.Size != b.Size)
-                throw new System.ArgumentException("Size of A != size of B");
-            
-            var o = new float[a.Size];
-
-            for (int i = 0; i < a.Size; i++)
-            {
-                o[i] = A.At(i) + B.At(i);
-            }
-            return new VectorND(o);
-        }
-
-        public static Vector operator - (Vector a, Vector b)
-        {
-            var A = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
-            var B = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
-
-            if (a.Size != b.Size)
-                throw new System.ArgumentException("Size of A != size of B");
-
-            var o = new float[a.Size];
-
-            for (int i = 0; i < a.Size; i++)
-            {
-                o[i] = A.At(i) - B.At(i);
-            }
-            return new VectorND(o);
         }
     }
 
@@ -293,6 +227,41 @@ namespace Ariadne.Kernel.Math
         public bool Equals(VectorND vector)
         {
             return _vectorData.Equals(vector._vectorData);
+        }
+
+        public static VectorND operator / (VectorND a, float b)
+        {
+           return new VectorND((a._vectorData / b).ToArray());
+        }
+
+        public static VectorND operator * (VectorND a, float b)
+        {
+            return new VectorND((a._vectorData * b).ToArray());
+        }
+
+        public static VectorND operator * (float a, VectorND b)
+        {
+            return new VectorND((a * b._vectorData).ToArray());
+        }
+
+        public static float operator * (VectorND a, VectorND b)
+        {
+            return a._vectorData * b._vectorData;
+        }
+
+        public static VectorND operator + (VectorND a, VectorND b)
+        {
+            return new VectorND((a._vectorData + b._vectorData).ToArray());
+        }
+
+        public static VectorND operator - (VectorND a, VectorND b)
+        {
+            return new VectorND((a._vectorData + b._vectorData).ToArray());
+        }
+
+        public static VectorND operator -(VectorND a)
+        {
+            return new VectorND((- a._vectorData).ToArray());
         }
     }
 }

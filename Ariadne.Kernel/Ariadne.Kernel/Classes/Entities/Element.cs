@@ -15,19 +15,9 @@ namespace Ariadne.Kernel
         private object _parentModel = null;
 
         /// <summary>
-        /// A set of references to element nodes
-        /// </summary>
-        private NodeSet _nodes = new NodeSet();
-
-        /// <summary>
-        /// A set of references to element corner nodes
-        /// </summary>
-        private NodeSet _cornerNodes = new NodeSet();
-
-        /// <summary>
         /// Bounding box of element
         /// </summary>
-        private BoundingBox _boundingBox;
+        private BoundingBox _boundingBox = null;
 
         /// <summary>
         /// Protected constructor with parameters
@@ -101,18 +91,56 @@ namespace Ariadne.Kernel
         /// The method returns a reference to a set of element nodes
         /// </summary>
         /// <returns>Reference to a set of element nodes</returns>
-        public ref NodeSet GetNodesAsRef()
+        public NodeSet GetNodes()
         {
-            return ref _nodes;
+            if (_parentModel == null)
+                throw new ArgumentNullException("The parent model of element is null");
+
+            if (!(_parentModel is Model))
+                throw new InvalidCastException("The parent model object is not the model type");
+
+            if (NodeIDs == null || NodeIDs.Count <= 0)
+                throw new ArgumentNullException("Set of node IDs is null or empty");
+
+            var nodes = new NodeSet();
+            foreach (var modelNode in ((Model)_parentModel).Nodes)
+            {
+                foreach (var nodeID in NodeIDs)
+                {
+                    if (nodeID == modelNode.ID)
+                        nodes.Add(modelNode.ID, modelNode);
+                }
+            }
+
+            return nodes;
         }
 
         /// <summary>
         /// The method returns a reference to a set of element corner nodes
         /// </summary>
         /// <returns>Reference to a set of element corner nodes</returns>
-        public ref NodeSet GetCornerNodesAsRef()
+        public NodeSet GetCornerNodes()
         {
-            return ref _cornerNodes;
+            if (_parentModel == null)
+                throw new ArgumentNullException("The parent model of element is null");
+
+            if (!(_parentModel is Model))
+                throw new InvalidCastException("The parent model object is not the model type");
+
+            if (NodeIDs == null || NodeIDs.Count <= 0)
+                throw new ArgumentNullException("Set of node IDs is null or empty");
+
+            var cornerNodes = new NodeSet();
+            foreach (var modelNode in ((Model)_parentModel).Nodes)
+            {
+                foreach (var cornerNodeID in CornerNodeIDs)
+                {
+                    if (cornerNodeID == modelNode.ID)
+                        cornerNodes.Add(modelNode.ID, modelNode);
+                }
+            }
+
+            return cornerNodes;
         }
 
         /// <summary>
@@ -122,60 +150,6 @@ namespace Ariadne.Kernel
         public ref BoundingBox GetBoundingBoxAsRef()
         {
             return ref _boundingBox;
-        }
-
-        /// <summary>
-        /// The method attempts to populate a set of nodes for the current element
-        /// </summary>
-        /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        private bool TryLinkNodesToElements()
-        {
-            if (_parentModel == null)
-                throw new ArgumentNullException("The parent model of element is null");
-
-            if (!(_parentModel is Model))
-                throw new InvalidCastException("The parent model object is not the model type");
-
-            if (NodeIDs == null || NodeIDs.Count <= 0)
-                throw new ArgumentNullException("Set of node IDs is null or empty");
-
-            foreach (var modelNode in ((Model)_parentModel).Nodes)
-            {
-                foreach (var nodeID in NodeIDs)
-                {
-                    if (nodeID == modelNode.ID)
-                        _nodes.Add(modelNode.ID, modelNode);
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// The method attempts to populate a set of nodes for the current element
-        /// </summary>
-        /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        private bool TryLinkCornerNodesToElements()
-        {
-            if (_parentModel == null)
-                throw new ArgumentNullException("The parent model of element is null");
-
-            if (!(_parentModel is Model))
-                throw new InvalidCastException("The parent model object is not the model type");
-
-            if (NodeIDs == null || NodeIDs.Count <= 0)
-                throw new ArgumentNullException("Set of node IDs is null or empty");
-
-            foreach (var modelNode in ((Model)_parentModel).Nodes)
-            {
-                foreach (var cornerNodeID in CornerNodeIDs)
-                {
-                    if (cornerNodeID == modelNode.ID)
-                        _cornerNodes.Add(modelNode.ID, modelNode);
-                }
-            }
-
-            return true;
         }
 
         /// <summary>
@@ -193,7 +167,7 @@ namespace Ariadne.Kernel
             if (NodeIDs == null || NodeIDs.Count <= 0)
                 throw new ArgumentNullException("Set of node IDs is null or empty");
 
-            _boundingBox = Math.AABoundingBox.CreateByNodeSet(ref _cornerNodes);
+            _boundingBox = AABoundingBox.CreateByNodeSet(GetCornerNodes());
 
             if(_boundingBox == null)
                 throw new ArgumentNullException("Bounding box of element is null");
@@ -205,7 +179,7 @@ namespace Ariadne.Kernel
         /// The method returns a reference to the parent model of the element
         /// </summary>
         /// <returns>Reference to the parent model</returns>
-        protected ref object GetParentModelRef()
+        public ref object GetParentModelRef()
         {
             return ref _parentModel;
         }
@@ -218,13 +192,11 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="parentModel">Reference to specific parent model</param>
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        protected bool Update(ref object parentModel)
+        protected bool Update(in object parentModel)
         {
             _parentModel = parentModel;
 
-            return TryLinkNodesToElements() &&
-                   TryLinkCornerNodesToElements() &&
-                   TryBuildBoundingBoxesToElements();
+            return TryBuildBoundingBoxesToElements();
         }
 
         /// <summary>
@@ -234,7 +206,7 @@ namespace Ariadne.Kernel
         /// <returns>Returns true if point inside the element, otherwise - false</returns>
         protected bool IsPointInsideElement(Vector3D point)
         {
-            var corners = GetCornerNodesAsRef();
+            var corners = GetCornerNodes();
             if (corners.Count == 0)
                 return false;
 
@@ -252,50 +224,6 @@ namespace Ariadne.Kernel
                 return true;
 
             return false;
-        }
-
-        protected abstract List<float>[] GetUVWNodes();
-
-        /// <summary>
-        /// The method calculates the values ​​of shape functions (shape mapping).
-        /// </summary>
-        /// <param name="point">Point</param>
-        /// <returns>Values ​​of shape functions</returns>
-        public Matrix CalculateShapeMapping()
-        {
-            var uvwCoords = GetUVWNodes();
-            if (uvwCoords.Length < 3 || uvwCoords.Length > 3)
-                throw new ArgumentOutOfRangeException("UVW != 3!");
-
-            var u = GetUVWNodes()[0];
-            var v = GetUVWNodes()[1];
-            var w = GetUVWNodes()[2];
-
-            var modelRef = GetParentModelRef() as Model;
-            var m = new float[NodeIDs.Count, 4];
-            int index = 0;
-            foreach (var nodeID in NodeIDs)
-            {
-                var coords = modelRef.Nodes.GetByID(nodeID).Coords;
-                m[index, 0] = 1;
-                m[index, 1] = coords.X;
-                m[index, 2] = coords.Z;
-                m[index, 3] = coords.Z;
-                index++;
-            }
-
-            VectorND TempU = new VectorND(u);
-            VectorND TempV = new VectorND(v);
-            VectorND TempW = new VectorND(w);
-            MatrixNxM TempM = new MatrixNxM(m);
-
-            TempM.Transpose();
-
-            var A = TempM.MultyPly(TempU);
-            var B = TempM.MultyPly(TempV);
-            var C = TempM.MultyPly(TempW);
-
-            return new MatrixNxM(A, B, C, true);
         }
     }
 
