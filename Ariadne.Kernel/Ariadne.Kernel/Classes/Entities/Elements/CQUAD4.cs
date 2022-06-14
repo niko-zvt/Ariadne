@@ -42,6 +42,18 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
+        /// Build local coordinate system of element.
+        /// </summary>
+        /// <returns>Local CS or null</returns>
+        public override LocalCSys BuildElementLCS()
+        {
+            var corners = GetCornerNodes();
+
+
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
         /// Return the result of validate the element
         /// </summary>
         /// <returns>Returns true if the element is valid, otherwise - false</returns>

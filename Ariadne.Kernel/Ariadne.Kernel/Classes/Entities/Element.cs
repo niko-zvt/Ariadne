@@ -20,6 +20,11 @@ namespace Ariadne.Kernel
         private BoundingBox _boundingBox = null;
 
         /// <summary>
+        /// Local coordinate system of element
+        /// </summary>
+        private LocalCSys _localCSys = null;
+
+        /// <summary>
         /// Protected constructor with parameters
         /// </summary>
         /// <param name="parameters">Element parameters</param>
@@ -51,6 +56,12 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <returns>true if point belong to element; otherwise return - false</returns>
         public abstract bool IsPointBelong(Vector3D point);
+
+        /// <summary>
+        /// Build local coordinate system of element
+        /// </summary>
+        /// <returns>Local CS of element or null</returns>
+        public abstract LocalCSys BuildElementLCS();
 
         /// <summary>
         /// Element identifier
@@ -152,6 +163,11 @@ namespace Ariadne.Kernel
             return ref _boundingBox;
         }
 
+        public ref LocalCSys GetElementLCS()
+        {
+            return ref _localCSys;
+        }
+
         /// <summary>
         /// The method tries to form a bounding box for the current element
         /// </summary>
@@ -171,6 +187,25 @@ namespace Ariadne.Kernel
 
             if(_boundingBox == null)
                 throw new ArgumentNullException("Bounding box of element is null");
+
+            return true;
+        }
+
+        private bool TryBuildLCS()
+        {
+            if (_parentModel == null)
+                throw new ArgumentNullException("The parent model of element is null");
+
+            if (!(_parentModel is Model))
+                throw new InvalidCastException("The parent model object is not the model type");
+
+            if (NodeIDs == null || NodeIDs.Count <= 0)
+                throw new ArgumentNullException("Set of node IDs is null or empty");
+
+            _localCSys = BuildElementLCS();
+
+            if(_localCSys == null)
+                throw new ArgumentNullException("Local CS of element is null");
 
             return true;
         }
@@ -196,7 +231,7 @@ namespace Ariadne.Kernel
         {
             _parentModel = parentModel;
 
-            return TryBuildBoundingBoxesToElements();
+            return TryBuildBoundingBoxesToElements() && TryBuildLCS();
         }
 
         /// <summary>
