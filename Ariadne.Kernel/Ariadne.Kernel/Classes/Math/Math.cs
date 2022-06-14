@@ -10,9 +10,14 @@ namespace Ariadne.Kernel.Math
     static class Utils
     {
         /// <summary>
-        /// Global tolerance
+        /// Global linear tolerance
         /// </summary>
-        public const float Tolerance = 0.000001f;
+        public const float LinearTolerance = 0.000001f;
+
+        /// <summary>
+        /// Global angular tolerance
+        /// </summary>
+        public const float AngularTolerance = 0.001f;
 
         /// <summary>
         /// Point location type
