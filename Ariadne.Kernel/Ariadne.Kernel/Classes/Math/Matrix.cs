@@ -53,6 +53,22 @@ namespace Ariadne.Kernel.Math
         /// <param name="xx">Component [0, 0]</param>
         /// <param name="yy">Component [1, 1]</param>
         /// <param name="zz">Component [2, 2]</param>
+        public Matrix3x3(float xx, float yy, float zz)
+        {
+            float o = 0.0f;
+            float[,] values = { { xx, o, o },
+                                { o, yy, o },
+                                { o, o, zz }};
+
+            _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
+        }
+
+        /// <summary>
+        /// Constructor by symmetry float values
+        /// </summary>
+        /// <param name="xx">Component [0, 0]</param>
+        /// <param name="yy">Component [1, 1]</param>
+        /// <param name="zz">Component [2, 2]</param>
         /// <param name="xy">Component [0, 1]</param>
         /// <param name="yz">Component [2, 3]</param>
         /// <param name="zx">Component [3, 1]</param>
@@ -129,6 +145,18 @@ namespace Ariadne.Kernel.Math
                                  { (float)zx, (float)zy, (float)zz }};
 
             _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
+        }
+
+        public Matrix3x3(Vector3D i, Vector3D j, Vector3D k, bool isTranspose = false)
+        {
+            float[,] values = { { i.X, i.Y, i.Z },
+                                { j.X, j.Y, j.Z },
+                                { k.X, k.Y, k.Z }};
+
+            _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
+
+            if(isTranspose = true)
+                _values = _values.Transpose();
         }
 
         /// <summary>
