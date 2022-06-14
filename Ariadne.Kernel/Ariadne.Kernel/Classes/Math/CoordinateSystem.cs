@@ -52,14 +52,14 @@
         /// <summary>
         /// X-axis of global coordinate system
         /// </summary>
-        public Vector3D XAxis 
-        { 
-            get 
-            { 
+        public Vector3D XAxis
+        {
+            get
+            {
                 return new Vector3D(_coordSys.XAxis.X,
                                     _coordSys.XAxis.Y,
-                                    _coordSys.XAxis.Z); 
-            } 
+                                    _coordSys.XAxis.Z);
+            }
         }
 
         /// <summary>
@@ -172,6 +172,7 @@
                                     _coordSys.Origin.Z);
             }
         }
+
 
         /// <summary>
         /// Returns the coordinate system type

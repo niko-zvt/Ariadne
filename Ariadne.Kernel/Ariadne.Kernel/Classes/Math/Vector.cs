@@ -139,6 +139,20 @@ namespace Ariadne.Kernel.Math
         /// </summary>
         public float Z { get { return _vectorData[2]; } set { _vectorData[2] = value; } }
 
+        public void SetNorm(float iTolerance)
+        {
+            SetNormByLength(1.0f, iTolerance);
+        }
+
+        private void SetNormByLength(float iDistance, float iTolerance)
+        {
+            if (System.Math.Abs(Length) > iTolerance)
+            {
+                float dist = iDistance / Length;
+                _vectorData.Multiply(dist);
+            }
+        }
+
         /// <summary>
         /// Indicates whether the current vector is equal to another vector of the same type.
         /// </summary>
@@ -229,39 +243,39 @@ namespace Ariadne.Kernel.Math
             return _vectorData.Equals(vector._vectorData);
         }
 
-        public static VectorND operator / (VectorND a, float b)
+        public static VectorND operator /(VectorND a, float b)
         {
-           return new VectorND((a._vectorData / b).ToArray());
+            return new VectorND((a._vectorData / b).ToArray());
         }
 
-        public static VectorND operator * (VectorND a, float b)
+        public static VectorND operator *(VectorND a, float b)
         {
             return new VectorND((a._vectorData * b).ToArray());
         }
 
-        public static VectorND operator * (float a, VectorND b)
+        public static VectorND operator *(float a, VectorND b)
         {
             return new VectorND((a * b._vectorData).ToArray());
         }
 
-        public static float operator * (VectorND a, VectorND b)
+        public static float operator *(VectorND a, VectorND b)
         {
             return a._vectorData * b._vectorData;
         }
 
-        public static VectorND operator + (VectorND a, VectorND b)
+        public static VectorND operator +(VectorND a, VectorND b)
         {
             return new VectorND((a._vectorData + b._vectorData).ToArray());
         }
 
-        public static VectorND operator - (VectorND a, VectorND b)
+        public static VectorND operator -(VectorND a, VectorND b)
         {
             return new VectorND((a._vectorData + b._vectorData).ToArray());
         }
 
         public static VectorND operator -(VectorND a)
         {
-            return new VectorND((- a._vectorData).ToArray());
+            return new VectorND((-a._vectorData).ToArray());
         }
     }
 }
