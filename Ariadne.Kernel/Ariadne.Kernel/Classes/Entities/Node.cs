@@ -6,7 +6,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Class of the node
     /// </summary>
-    class Node
+    public class Node
     {
         /// <summary>
         /// Parent model
@@ -168,7 +168,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// The basic structure of the generalized parameters of the node
     /// </summary>
-    struct NodeParams
+    public struct NodeParams
     {
         /// <summary>
         /// Node identifier
@@ -204,7 +204,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Enumeration of all available types of nodes
     /// </summary>
-    enum NodeType
+    public enum NodeType
     {
         General,
     }

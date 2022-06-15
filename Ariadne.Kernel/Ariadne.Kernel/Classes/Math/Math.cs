@@ -1,5 +1,6 @@
 ﻿using Ariadne.Kernel.Libs;
 using System;
+using System.Text.Json;
 using System.Collections.Generic;
 
 namespace Ariadne.Kernel.Math
@@ -7,7 +8,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Static class for implementing a set of general mathematical functions
     /// </summary>
-    static class Utils
+    public static class Utils
     {
         /// <summary>
         /// Global linear tolerance
@@ -30,6 +31,16 @@ namespace Ariadne.Kernel.Math
             Cell,
             OutsideConvexHull,
             OutsideAffineHull
+        }
+
+        /// <summary>
+        /// Intersection type
+        /// </summary>
+        public enum IntersectionType
+        {
+            Null,
+            Point,
+            Segment
         }
 
         /// <summary>
@@ -147,54 +158,9 @@ namespace Ariadne.Kernel.Math
         /// <returns>Point location type</returns>
         public static LocationType CalculatePositionRelativelyMesh(Vector3D point, List<Vector3D> meshByPoints)
         {
-            // 1. Load CGAL lib
             var cgal = LibraryImport.SelectCGAL();
-
-            // 2. Create CGAL points
-            CGAL.CGAL_Point targetPoint = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
-            CGAL.CGAL_Point[] meshPoints = new CGAL.CGAL_Point[meshByPoints.Count];
-            int index = 0;
-            foreach (var currentPoint in meshByPoints)
-            {
-                meshPoints[index] = new CGAL.CGAL_Point(currentPoint.X, currentPoint.Y, currentPoint.Z);
-                index++;
-            }
-
-            // 3. Calculate
-            var jsonResult = string.Empty;
-            var result = cgal.IsBelongToMesh(targetPoint, meshPoints, meshByPoints.Count, str => { jsonResult = str; });
-
-            if (string.IsNullOrEmpty(jsonResult) || result == false)
-                throw new System.Exception("CGAL lib is fail! IsBelongToMesh().");
-
-            if (jsonResult == "VERTEX") 
-            { 
-                return LocationType.Vertex; 
-            }
-            else if (jsonResult == "EDGE")
-            {
-                return LocationType.Edge;
-            }
-            else if (jsonResult == "FACET")
-            {
-                return LocationType.Facet;
-            }
-            else if (jsonResult == "CELL") 
-            { 
-                return LocationType.Cell; 
-            }
-            else if (jsonResult == "OUTSIDE_CONVEX_HULL")
-            {
-                return LocationType.OutsideConvexHull;
-            }
-            else if (jsonResult == "OUTSIDE_AFFINE_HULL")
-            { 
-                return LocationType.OutsideAffineHull;
-            }
-            else
-            {
-                throw new System.Exception("CGAL lib is fail! IsBelongToMesh().");
-            }
+            var result = cgal.CGAL_IsBelongToGrid(point, meshByPoints);
+            return result;
         }
 
         /// <summary>
@@ -240,18 +206,105 @@ namespace Ariadne.Kernel.Math
             return true;
         }
 
-        public static Vector3D CalculatePointOnLegendreGaussInterval(Vector3D point, Vector3D min, Vector3D max)
+        /// <summary>
+        /// Calculate point on Legendre-Gauss Interval
+        /// </summary>
+        /// <param name="point">Point in 3D space</param>
+        /// <param name="startPoint">Start point in 3D space</param>
+        /// <param name="endPoint">End point in 3D space</param>
+        /// <returns>Point on Legendre-Gauss interval</returns>
+        public static Vector3D CalculatePointOnLegendreGaussInterval(Vector3D point, Vector3D startPoint, Vector3D endPoint)
         {
             Vector3D result = new Vector3D();
-            result.X = CalculatePointOnLegendreGaussInterval(point.X, min.X, max.X);
-            result.Y = CalculatePointOnLegendreGaussInterval(point.Y, min.Y, max.Y);
-            result.Z = CalculatePointOnLegendreGaussInterval(point.Z, min.Z, max.Z);
+            result.X = CalculatePointOnLegendreGaussInterval(point.X, startPoint.X, endPoint.X);
+            result.Y = CalculatePointOnLegendreGaussInterval(point.Y, startPoint.Y, endPoint.Y);
+            result.Z = CalculatePointOnLegendreGaussInterval(point.Z, startPoint.Z, endPoint.Z);
             return result;
         }
+
+        /// <summary>
+        /// Calculate value on Legendre-Gauss interval
+        /// </summary>
+        /// <param name="x">Value</param>
+        /// <param name="xmin">Min value</param>
+        /// <param name="xmax">Max value</param>
+        /// <returns>Value on Legendre-Gauss interval</returns>
         public static float CalculatePointOnLegendreGaussInterval(float x, float xmin, float xmax)
         {
             var k = (x - xmin) / (xmax - xmin);
             return 2 * k - 1;
+        }
+
+        /// <summary>
+        /// Calculate angle between vectors
+        /// </summary>
+        /// <param name="v1">First vector</param>
+        /// <param name="v2">Second vector</param>
+        /// <returns>Angle between vectors</returns>
+        public static float CalculateAngleBetweenVectors(Vector3D v1, Vector3D v2)
+        {
+            var cos = (v1.DotProduct(v2)) / (v1.Length * v2.Length);
+            var angle = System.Math.Acos(cos);
+            return (float)angle;
+        }
+
+        /// <summary>
+        /// Calculate the intersection of two segments.
+        /// </summary>
+        /// <param name="A1">Start point of the first segment</param>
+        /// <param name="A2">End point of the first segment</param>
+        /// <param name="B1">Start point of the second segment</param>
+        /// <param name="B2">End point of the second segment</param>
+        /// <param name="intersectionPoints">List of intersection points</param>
+        /// <returns>Intersection type</returns>
+        public static IntersectionType CalculateIntersectionOfTwoSegments(Vector3D A1, Vector3D A2, Vector3D B1, Vector3D B2, out List<Vector3D> intersectionPoints)
+        {
+            var result = LibraryImport.SelectCGAL().CGAL_GetIntersectionOfTwoSegments(A1, A2, B1, B2, out intersectionPoints);
+            return result;
+        }
+
+        /// <summary>
+        /// Calculate intersection of bisector and base.
+        /// </summary>
+        /// <param name="vertex">Vertex of bisector</param>
+        /// <param name="startBase">Start point of the base</param>
+        /// <param name="endBase">End point of the base</param>
+        /// <returns>Intersect point or NULL.</returns>
+        public static Vector3D CalculateIntersectionOfBisectorAndBase(Vector3D vertex, Vector3D startBase, Vector3D endBase)
+        {
+            // (A) - Vertex 
+            // (B) - Start of base
+            // (C) - End of base
+            // (D) - Intersection Point
+            //
+            // AD - Bisector
+            // BC - Base
+            //
+            //                  (A)
+            //                 / | \
+            //                /  |  \
+            //               /   |   \
+            //              /    |    \
+            //            (B)___(D)___(C)
+            //
+
+            var AB = (startBase - vertex).Length;
+            var AC = (endBase - vertex).Length;
+            var CB = (endBase - startBase).Length;
+
+            var k = 1 + (AC / AB);
+            var BD = CB / k;
+            var CD = (BD * AC) / AB;
+
+            var error = System.Math.Abs(CB - (BD + CD));
+            if (error > LinearTolerance)
+                throw new System.ArithmeticException("The intersection of bisector and base is incorrect!");
+
+            var weight = BD / CB;
+            if (weight < 0 || weight > 1)
+                throw new System.ArithmeticException("The weight of the base is incorrect!");
+
+            return startBase * (1 - weight) + endBase * weight;
         }
     }
 }

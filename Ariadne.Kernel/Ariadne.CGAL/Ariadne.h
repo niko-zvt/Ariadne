@@ -16,6 +16,7 @@
 #include <CGAL/optimal_bounding_box.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_3.h>
+#include <CGAL/intersections.h>
 
 
 typedef void(__stdcall* Notification)(const char*);
@@ -30,6 +31,9 @@ typedef struct _AriadnePoint3D
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef Kernel::Point_3                                         Point3D;
+typedef Kernel::Line_3                                          Line3D;
+typedef Kernel::Segment_3                                       Segment3D;
+typedef Kernel::Intersect_3                                     Intersect3D;
 typedef CGAL::Polyhedron_3<Kernel>                              Polyhedron3D;
 typedef CGAL::Surface_mesh<Point3D>                             Surface_mesh;
 typedef CGAL::Triangulation_3<Kernel>                           Triangulation;

@@ -2,11 +2,11 @@
 #include "pch.h"
 #include "OOBB.h"
 
-// Manual test of FLOAT marshalling
 int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size, Notification notification)
 {
     try
     {
+        // 1. Create points
         std::vector<Point3D> element_points;
         for (int32_t i = 0; i < size; i++)
         {
@@ -17,18 +17,19 @@ int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size
             element_points.push_back(point);
         }
 
-        // Compute convex hull of element
+        // 2. Create mesh - compute convex hull.
         Surface_mesh element_mesh;
         CGAL::convex_hull_3(element_points.begin(), element_points.end(), element_mesh);
         if (element_mesh.is_empty() && !element_mesh.is_valid())
             return 1;
-        // Compute the extreme points of the mesh, and then a tightly fitted oriented bounding box
+        
+        // 3. Compute the extreme points of the mesh, and then a tightly fitted oriented bounding box
         const int32_t boxSize = 8;
         std::array<Point3D, boxSize> obb_points;
         CGAL::oriented_bounding_box(element_mesh, obb_points, CGAL::parameters::use_convex_hull(true));
 
+        // 4. Build result
         std::string str = "";
-
         for (int32_t i = 0; i < boxSize; i++)
         {
             auto x = obb_points[i].x();
@@ -41,6 +42,7 @@ int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size
                 ",\"Z\":" + std::to_string(z) + "}\n";
         }
 
+        // 5. Export result
         notification(str.c_str());
         return 0;
     }

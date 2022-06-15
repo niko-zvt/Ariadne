@@ -61,7 +61,7 @@ namespace Ariadne.Kernel
         /// Build local coordinate system of element
         /// </summary>
         /// <returns>Local CS of element or null</returns>
-        public abstract LocalCSys BuildElementLCS();
+        protected abstract LocalCSys BuildElementLCS();
 
         /// <summary>
         /// Element identifier
@@ -114,13 +114,11 @@ namespace Ariadne.Kernel
                 throw new ArgumentNullException("Set of node IDs is null or empty");
 
             var nodes = new NodeSet();
-            foreach (var modelNode in ((Model)_parentModel).Nodes)
+
+            foreach (var nodeID in NodeIDs)
             {
-                foreach (var nodeID in NodeIDs)
-                {
-                    if (nodeID == modelNode.ID)
-                        nodes.Add(modelNode.ID, modelNode);
-                }
+                var modelNode = ((Model)_parentModel).Nodes.GetByID(nodeID);
+                nodes.Add(modelNode.ID, modelNode);
             }
 
             return nodes;
@@ -142,16 +140,22 @@ namespace Ariadne.Kernel
                 throw new ArgumentNullException("Set of node IDs is null or empty");
 
             var cornerNodes = new NodeSet();
-            foreach (var modelNode in ((Model)_parentModel).Nodes)
+            foreach (var cornerNodeID in CornerNodeIDs)
             {
-                foreach (var cornerNodeID in CornerNodeIDs)
-                {
-                    if (cornerNodeID == modelNode.ID)
-                        cornerNodes.Add(modelNode.ID, modelNode);
-                }
+                var modelNode = ((Model)_parentModel).Nodes.GetByID(cornerNodeID);
+                cornerNodes.Add(modelNode.ID, modelNode);
             }
 
             return cornerNodes;
+        }
+
+        /// <summary>
+        /// The method returns a reference to the parent model of the element
+        /// </summary>
+        /// <returns>Reference to the parent model</returns>
+        public ref object GetParentModelRef()
+        {
+            return ref _parentModel;
         }
 
         /// <summary>
@@ -211,15 +215,6 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// The method returns a reference to the parent model of the element
-        /// </summary>
-        /// <returns>Reference to the parent model</returns>
-        public ref object GetParentModelRef()
-        {
-            return ref _parentModel;
-        }
-
-        /// <summary>
         /// The method updates the content of the element, binds the nodes through a specific model,
         /// which is passed by reference. This method is called when constructing a specific model 
         /// through the reflection mechanism. Be careful and call the method only in the context of 
@@ -231,7 +226,11 @@ namespace Ariadne.Kernel
         {
             _parentModel = parentModel;
 
-            return TryBuildBoundingBoxesToElements() && TryBuildLCS();
+            var result_BBox = TryBuildBoundingBoxesToElements();
+            var result_LCS = TryBuildLCS();
+            var result = result_BBox && result_LCS;
+
+            return result;
         }
 
         /// <summary>

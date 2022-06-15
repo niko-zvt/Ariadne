@@ -13,6 +13,9 @@ namespace Ariadne.Kernel
         /// </summary>
         private static readonly System.Lazy<Quadrilateral4> instanceHolder = new System.Lazy<Quadrilateral4>(() => new Quadrilateral4());
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         private Quadrilateral4()
         {
             _localFunctors.Add(new Functor(LocalN1));

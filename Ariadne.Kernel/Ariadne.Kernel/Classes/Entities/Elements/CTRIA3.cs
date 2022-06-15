@@ -45,9 +45,25 @@ namespace Ariadne.Kernel
         /// Build local coordinate system of element.
         /// </summary>
         /// <returns>Local CS or null</returns>
-        public override LocalCSys BuildElementLCS()
+        protected override LocalCSys BuildElementLCS()
         {
-            throw new System.NotImplementedException();
+            // 1. Calculate origin point for LCS
+            var originPoint = Coords;
+            var corners = GetCornerNodes();
+            var P1 = corners.GetByIndex(0).Coords;
+            var P2 = corners.GetByIndex(1).Coords;
+            var P3 = corners.GetByIndex(2).Coords;
+
+            // 2. Calculate xAxis
+            var xAxis = (P2 - P1).GetAsUnitVector();
+
+            // 3. Calculate zAxis
+            var zAxis = ((P2 - P1).CrossProduct(P3 - P2)).GetAsUnitVector();
+
+            // 4. Calculate zAxis
+            var yAxis = (zAxis.CrossProduct(xAxis)).GetAsUnitVector();
+
+            return new LocalCSys(xAxis, yAxis, zAxis, originPoint);
         }
 
         /// <summary>

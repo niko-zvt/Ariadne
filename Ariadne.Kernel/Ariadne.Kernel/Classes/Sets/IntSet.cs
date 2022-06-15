@@ -7,7 +7,7 @@ namespace Ariadne.Kernel
     /// A generalized set is needed to hide a specific implementation of the object storage mechanism. 
     /// The source mechanism can be an array, a list, a tree, or other structure.
     /// </summary>
-    class IntSet : List<int>
+    public class IntSet : List<int>
     {
         /// <summary>
         /// Convert an array of numbers to a set of numbers

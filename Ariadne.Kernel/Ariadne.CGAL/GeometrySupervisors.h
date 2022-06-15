@@ -13,4 +13,38 @@
 
 #include "Ariadne.h"
 
-extern "C" int32_t ARIADNE_CGAL_API __stdcall IsPointBelongToElement(AriadnePoint3D point, AriadnePoint3D * elementPoints, int size, Notification notification);
+/// <summary>
+/// The method determines whether a point belongs to a grid created on the basis of a point cloud.
+/// </summary>
+/// <param name="point">Point</param>
+/// <param name="meshPoints">Point cloud of mesh</param>
+/// <param name="size">Size of point cloud</param>
+/// <param name="notification">Belonging of a point as a JSON string</param>
+/// <returns>
+/// <para> - true in the case, when the result is valid.</para>
+/// JSON contain:<br/>
+///  - VERTEX    - if the point lies at the vertex of the grid.<br/>
+///  - EDGE      - if the point lies at the edge of the grid.<br/>
+///  - FACET     - if the point lies at the facet of the grid.<br/>
+///  - CELL      - if the point lies inside the cell.<br/>
+///  - OUTSIDE_CONVEX_HULL - if the point lies at the outside convex hull.<br/>
+///  - OUTSIDE_AFFINE_HULL - if the point lies at the outside affine hull.<br/>
+/// </returns>
+extern "C" int32_t ARIADNE_CGAL_API __stdcall IsPointBelongToGrid(AriadnePoint3D point, AriadnePoint3D * elementPoints, int size, Notification notification);
+
+/// <summary>
+/// The method determines the intersection of two segments defined by the start and end points.
+/// </summary>
+/// <param name="A1">Start point of first segment.</param>
+/// <param name="A2">End point of first segment.</param>
+/// <param name="B1">Start point of second segment.</param>
+/// <param name="B2">End point of second segment.</param>
+/// <param name="notification">Intersection type as JSON string.</param>
+/// <returns>
+/// <para> - true in the case, when the result is valid.</para>
+/// JSON contain:<br/>
+///  - NULL    - if there are no intersection points.<br/>
+///  - POINT   - if the intersection is a point.<br/>
+///  - SEGMENT - if the intersection is a segment.<br/>
+/// </returns>
+extern "C" int32_t ARIADNE_CGAL_API __stdcall SegmentsIntersection(AriadnePoint3D a1, AriadnePoint3D a2, AriadnePoint3D b1, AriadnePoint3D b2, Notification notification);

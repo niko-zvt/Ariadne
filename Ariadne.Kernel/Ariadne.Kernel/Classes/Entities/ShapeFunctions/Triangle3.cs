@@ -12,6 +12,9 @@ namespace Ariadne.Kernel
         /// </summary>
         private static readonly System.Lazy<Triangle3> instanceHolder = new System.Lazy<Triangle3>(() => new Triangle3());
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         private Triangle3()
         {
             _localFunctors.Add(new Functor(LocalN1));

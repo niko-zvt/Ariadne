@@ -2,11 +2,11 @@
 #include "pch.h"
 #include "AABB.h"
 
-// Manual test of FLOAT marshalling
 int32_t __stdcall GetAxisAlignedBoundingBox(AriadnePoint3D* points, int size, Notification notification)
 {
     try
     {
+        // 1. Create points
         std::vector<Point3D> element_points;
         for (int32_t i = 0; i < size; i++)
         {
@@ -17,7 +17,7 @@ int32_t __stdcall GetAxisAlignedBoundingBox(AriadnePoint3D* points, int size, No
             element_points.push_back(point);
         }
 
-        // axis-aligned bounding box of 3D points
+        // 2. Create axis-aligned bounding box of 3D points
         Kernel::Iso_cuboid_3 c3 = CGAL::bounding_box(element_points.begin(), element_points.end());
         double xMin = c3.bbox().xmin();
         double yMin = c3.bbox().ymin();
@@ -29,6 +29,7 @@ int32_t __stdcall GetAxisAlignedBoundingBox(AriadnePoint3D* points, int size, No
         double zMax = c3.bbox().zmax();
         double maxLength = std::sqrt(xMax * xMax + yMax * yMax + zMax * zMax);
 
+        // 3. Build result
         std::string str = "";
 
         str += "{\"Length\":" + std::to_string(minLength) +
@@ -41,7 +42,7 @@ int32_t __stdcall GetAxisAlignedBoundingBox(AriadnePoint3D* points, int size, No
             ",\"Y\":" + std::to_string(yMax) +
             ",\"Z\":" + std::to_string(zMax) + "}";
 
-
+        // 4. Export result
         notification(str.c_str());
         return 0;
     }

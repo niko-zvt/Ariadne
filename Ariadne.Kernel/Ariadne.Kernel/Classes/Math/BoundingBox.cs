@@ -7,7 +7,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Abstract class for hiding the implementation of the BoundingBox class
     /// </summary>
-    abstract class BoundingBox
+    public abstract class BoundingBox
     {
         /// <summary>
         /// Virtual method for checking whether a point belongs to a bounding box
@@ -25,7 +25,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Enumeration of all available types of bounding boxes
     /// </summary>
-    enum BoundingBoxType
+    public enum BoundingBoxType
     {
         AABB, // Axis-aligned bounding box
         OOBB, // Optimal oriented bounding box
@@ -34,7 +34,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Class of an axis-aligned bounding box in three-dimensional space
     /// </summary>
-    sealed class AABoundingBox : BoundingBox
+    public sealed class AABoundingBox : BoundingBox
     {
         /// <summary>
         /// Minimum defining point AABB.
@@ -92,51 +92,10 @@ namespace Ariadne.Kernel.Math
         /// <exception cref="System.Exception">CGAL lib is fail.</exception>
         public static AABoundingBox CreateByPoints(List<Vector3D> points)
         {
-            // 1. Find AABB in C++ lib
-            var cgal = LibraryImport.SelectCGAL();
-            CGAL.CGAL_Point[] cgalPoints = new CGAL.CGAL_Point[points.Count];
-
-            int index = 0;
-            foreach (var point in points)
-            {
-                cgalPoints[index] = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
-                index++;
-            }
-
-            var jsonBox = string.Empty;
-            var result = cgal.GetAABB(cgalPoints, points.Count, str => { jsonBox = str; });
-
-            if (string.IsNullOrEmpty(jsonBox))
-                throw new System.Exception("CGAL lib is fail!");
-
-            // 2. Deserialize JSON box from C++ lib
-            return GetBoundingBoxByJSON(jsonBox);
-        }
-
-        /// <summary>
-        /// The method gets the bounding box after deserializing it from the JSON representation
-        /// </summary>
-        /// <param name="jsonString">JSON representation for bounding box (From CGAL lib)</param>
-        /// <returns>Optimal oriented bounding box</returns>
-        private static AABoundingBox GetBoundingBoxByJSON(string jsonString)
-        {
-            if (string.IsNullOrEmpty(jsonString))
-                throw new System.ArgumentNullException("OOBB GetBoundingBoxByJSON - JsonAttribute string is string.Empty or null");
-
-            const int countOOBBPoints = 2;
-            string[] jsonBoxes = jsonString.Split('\n');
-
-            List<Vector3D> points = new List<Vector3D>();
-            foreach(var jsonBox in jsonBoxes)
-            {
-                if(!string.IsNullOrEmpty(jsonBox))
-                    points.Add(JsonSerializer.Deserialize<Vector3D>(jsonBox));
-            }
-
-            if (points.Count != countOOBBPoints)
-                throw new System.ArgumentOutOfRangeException("OOBB GetBoundingBoxByJSON - JSON contains less/greater than 2 points!");
-
-            return new AABoundingBox(points[0], points[1]);
+            if (LibraryImport.SelectCGAL().CGAL_GetAABB(points, out var aabb) == true)
+                return aabb;
+            else
+                return null;
         }
 
         /// <summary>
@@ -175,7 +134,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Class of a optimal oriented bounding box in three-dimensional space
     /// </summary>
-    sealed class OOBoundingBox : BoundingBox
+    public sealed class OOBoundingBox : BoundingBox
     {
         /// <summary>
         /// Axis-aligned bounding box
@@ -221,63 +180,10 @@ namespace Ariadne.Kernel.Math
         /// <exception cref="System.Exception">CGAL lib is fail.</exception>
         public static OOBoundingBox CreateByPoints(List<Vector3D> points)
         {
-            // 1. Find OOBB in C++ lib
-            var cgal = LibraryImport.SelectCGAL();
-            CGAL.CGAL_Point[] cgalPoints = new CGAL.CGAL_Point[points.Count];
-
-            int index = 0;
-            foreach(var point in points)
-            {
-                cgalPoints[index] = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
-                index++;
-            }
-
-            var jsonBox = string.Empty;
-            var result = cgal.GetOOBB(cgalPoints, points.Count, str => { jsonBox = str; } );
-
-            if (string.IsNullOrEmpty(jsonBox))
-                throw new System.Exception("CGAL lib is fail!");
-
-            // 2. Deserialize JSON box from C++ lib
-            return GetBoundingBoxByJSON(jsonBox);
-        }
-
-        /// <summary>
-        /// The method gets the bounding box after deserializing it from the JSON representation
-        /// </summary>
-        /// <param name="jsonString">JSON representation for bounding box (From CGAL lib)</param>
-        /// <returns>Optimal oriented bounding box</returns>
-        private static OOBoundingBox GetBoundingBoxByJSON(string jsonString)
-        {
-            if (string.IsNullOrEmpty(jsonString))
-                throw new System.ArgumentNullException("AABB GetBoundingBoxByJSON - JsonAttribute string is string.Empty or null");
-
-            // 1. Find all points
-            const int countAABBPoints = 8;
-            string[] jsonBoxes = jsonString.Split('\n');
-
-            List<Vector3D> points = new List<Vector3D>();
-            foreach (var jsonBox in jsonBoxes)
-            {
-                if (!string.IsNullOrEmpty(jsonBox))
-                    points.Add(JsonSerializer.Deserialize<Vector3D>(jsonBox));
-            }
-
-            if (points.Count != countAABBPoints)
-                throw new System.ArgumentOutOfRangeException("AABB GetBoundingBoxByJSON - JSON contains less/greater than 8 points!");
-
-            // TODO: Implementation
-            throw new System.NotImplementedException();
-
-            // 1. Find CSYS
-            //CoordinateSystem cs = GlobalCSys.Instance;
-
-            // 3. Find AABB
-            //var minPoint = new Vector3D();
-            //var maxPoint = new Vector3D();
-            //AABoundingBox aabb = AABoundingBox.CreateByPoints(minPoint, maxPoint);
-
-            //return new OOBoundingBox(cs, aabb);
+            if (LibraryImport.SelectCGAL().CGAL_GetOOBB(points, out var oobb) == true)
+                return oobb;
+            else
+                return null;
         }
 
         /// <summary>

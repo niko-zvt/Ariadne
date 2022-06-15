@@ -5,7 +5,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Abstract class for hiding the implementation of the Vector class
     /// </summary>
-    abstract class Vector
+    public abstract class Vector
     {
         /// <summary>
         /// Vector specific data
@@ -38,7 +38,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Class of a vector in three-dimensional space
     /// </summary>
-    class Vector3D : Vector
+    public class Vector3D : Vector
     {
         /// <summary>
         /// Private constructor
@@ -316,7 +316,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Class of a vector in three-dimensional space
     /// </summary>
-    class VectorND : Vector
+    public class VectorND : Vector
     {
         /// <summary>
         /// Constructor by float values

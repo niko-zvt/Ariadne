@@ -7,7 +7,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Abstract class for hiding the implementation of the Matrix class
     /// </summary>
-    abstract class Matrix
+    public abstract class Matrix
     {
         /// <summary>
         /// Matrix specific data
@@ -24,7 +24,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Enumeration of all available types of matrix
     /// </summary>
-    enum MatrixType
+    public enum MatrixType
     {
         Matrix3x3,
         MatrixNxM,
@@ -33,7 +33,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Class of a matrix in three-dimensional space 3x3
     /// </summary>
-    class Matrix3x3 : Matrix
+    public class Matrix3x3 : Matrix
     {
         /// <summary>
         /// Default constructor. Creates a zero matrix
@@ -360,7 +360,7 @@ namespace Ariadne.Kernel.Math
     /// <summary>
     /// Class of a matrix in three-dimensional space NxN
     /// </summary>
-    class MatrixNxM : Matrix
+    public class MatrixNxM : Matrix
     {
         /// <summary>
         /// Constructor by float array

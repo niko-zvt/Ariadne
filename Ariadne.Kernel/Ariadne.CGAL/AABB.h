@@ -13,4 +13,13 @@
 
 #include "Ariadne.h"
 
+/// <summary>
+/// Get axis-aligned bounding box
+/// </summary>
+/// <param name="points">Point cloud</param>
+/// <param name="size">Size of point cloud</param>
+/// <param name="notification">Axis-aligned bounding box as JSON string</param>
+/// <returns>
+/// - true in the case, when the result is valid
+/// </returns>
 extern "C" int32_t ARIADNE_CGAL_API __stdcall GetAxisAlignedBoundingBox(AriadnePoint3D * points, int size, Notification notification);

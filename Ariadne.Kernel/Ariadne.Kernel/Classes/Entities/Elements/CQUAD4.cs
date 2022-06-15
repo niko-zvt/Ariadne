@@ -45,12 +45,39 @@ namespace Ariadne.Kernel
         /// Build local coordinate system of element.
         /// </summary>
         /// <returns>Local CS or null</returns>
-        public override LocalCSys BuildElementLCS()
+        protected override LocalCSys BuildElementLCS()
         {
+            // 1. Calculate origin point for LCS
+            var originPoint = Coords;
+
+            // 2. Calculate centroid
+            var centroid = new Vector3D();
             var corners = GetCornerNodes();
+            var P1 = corners.GetByIndex(0).Coords;
+            var P2 = corners.GetByIndex(1).Coords;
+            var P3 = corners.GetByIndex(2).Coords;
+            var P4 = corners.GetByIndex(3).Coords;
+            var intersectionType = Utils.CalculateIntersectionOfTwoSegments(P1, P3, P2, P4, out var intersectPoints);
+            if (intersectionType == Utils.IntersectionType.Point)
+            {
+                centroid = intersectPoints[0];
+            }
+            else
+            {
+                throw new System.ArgumentOutOfRangeException("There must be only one point of intersection!");
+            }
 
+            // 3. Calculate xAxis
+            var x = new Vector3D(centroid, Utils.CalculateIntersectionOfBisectorAndBase(centroid, P2, P3));
+            var xAxis = (x).GetAsUnitVector();
 
-            throw new System.NotImplementedException();
+            // 4. Calculate zAxis
+            var zAxis = ((P3 - P1).CrossProduct(P4 - P2)).GetAsUnitVector();
+
+            // 5. Calculate zAxis
+            var yAxis = (zAxis.CrossProduct(xAxis)).GetAsUnitVector();
+            
+            return new LocalCSys(xAxis, yAxis, zAxis, originPoint);
         }
 
         /// <summary>
