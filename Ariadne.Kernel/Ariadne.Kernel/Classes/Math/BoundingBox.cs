@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using Ariadne.Kernel.Libs;
 
@@ -37,7 +36,14 @@ namespace Ariadne.Kernel.Math
     /// </summary>
     sealed class AABoundingBox : BoundingBox
     {
+        /// <summary>
+        /// Minimum defining point AABB.
+        /// </summary>
         private Vector3D _minPoint;
+
+        /// <summary>
+        /// Maximum defining point AABB.
+        /// </summary>
         private Vector3D _maxPoint;
 
         /// <summary>
@@ -171,15 +177,22 @@ namespace Ariadne.Kernel.Math
     /// </summary>
     sealed class OOBoundingBox : BoundingBox
     {
+        /// <summary>
+        /// Axis-aligned bounding box
+        /// </summary>
         private AABoundingBox _box;
-        private CoordinateSystem _coordinateSystem;
+
+        /// <summary>
+        /// Local coordinate system
+        /// </summary>
+        private LocalCSys _coordinateSystem;
 
         /// <summary>
         /// Private constructor
         /// </summary>
         /// <param name="coordinateSystem">Coordinate system of bounding box</param>
         /// <param name="box">Axis-aligned bounding box</param>
-        private OOBoundingBox(CoordinateSystem coordinateSystem, AABoundingBox box)
+        private OOBoundingBox(LocalCSys coordinateSystem, AABoundingBox box)
         {
             _box = box;
             _coordinateSystem = coordinateSystem;
