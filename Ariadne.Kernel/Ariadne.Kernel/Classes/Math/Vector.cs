@@ -41,6 +41,14 @@ namespace Ariadne.Kernel.Math
     class Vector3D : Vector
     {
         /// <summary>
+        /// Private constructor
+        /// </summary>
+        private Vector3D(MathNet.Numerics.LinearAlgebra.Vector<float> vector)
+        {
+            _vectorData = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfVector(vector);
+        }
+
+        /// <summary>
         /// Default constructor. Forms the vector {0, 0, 0}
         /// </summary>
         public Vector3D()
@@ -139,18 +147,56 @@ namespace Ariadne.Kernel.Math
         /// </summary>
         public float Z { get { return _vectorData[2]; } set { _vectorData[2] = value; } }
 
-        public void SetNorm(float iTolerance)
+        /// <summary>
+        /// Computes the dot product between this vector and another vector.
+        /// </summary>
+        /// <param name="other">Other vector.</param>
+        /// <returns>The sum of a[i]*b[i] for all i.</returns>
+        public float DotProduct(Vector3D other)
         {
-            SetNormByLength(1.0f, iTolerance);
+            if (other == null)
+                throw new System.ArgumentNullException("Other vector is null!");
+
+            return _vectorData.DotProduct(other._vectorData);
         }
 
-        private void SetNormByLength(float iDistance, float iTolerance)
+        /// <summary>
+        /// Computes the cross product between this vector and another vector.
+        /// </summary>
+        /// <param name="other">Other vector.</param>
+        /// <returns>New vector.</returns>
+        public Vector3D CrossProduct(Vector3D other)
         {
-            if (System.Math.Abs(Length) > iTolerance)
-            {
-                float dist = iDistance / Length;
-                _vectorData.Multiply(dist);
-            }
+            var x = this.Y * other.Z - other.Y * this.Z;
+            var y = (this.X * other.Z - other.X * this.Z) * -1;
+            var z = this.X * other.Y - other.X * this.Y;
+            return new Vector3D(x, y, z);
+        }
+
+        /// <summary>
+        /// Get this vector as unit vector.
+        /// </summary>
+        /// <returns>New unit vector.</returns>
+        public Vector3D GetAsUnitVector()
+        {
+            var unit = MathNet.Spatial.Euclidean.UnitVector3D.Create(_vectorData[0], _vectorData[1], _vectorData[2]);
+            return new Vector3D(unit.X, unit.Y, unit.Z);
+        }
+
+        /// <summary>
+        /// Normalizes this vector to a unit vector.
+        /// </summary>
+        public void Normalize()
+        {
+            Normalize(1.0f);
+        }
+
+        /// <summary>
+        /// Normalizes this vector to a unit vector with respect to the p-norm.
+        /// </summary>
+        private void Normalize(float length)
+        {
+            _vectorData = _vectorData.Normalize(length);
         }
 
         /// <summary>
@@ -161,6 +207,109 @@ namespace Ariadne.Kernel.Math
         public bool Equals(Vector3D vector3d)
         {
             return _vectorData.Equals(vector3d._vectorData);
+        }
+
+        /// <summary>
+        /// Implicit type casting (Vector3D -> Vector3D) for the MathNet library.
+        /// </summary>
+        /// <param name="vector">Vector</param>
+        public static implicit operator MathNet.Spatial.Euclidean.Vector3D(Vector3D vector)
+        {
+            return new MathNet.Spatial.Euclidean.Vector3D(vector.X, vector.Y, vector.Z);
+        }
+
+        /// <summary>
+        /// Implicit type casting (Vector3D -> Point3D) for the MathNet library.
+        /// </summary>
+        /// <param name="vector">Vector</param>
+        public static implicit operator MathNet.Spatial.Euclidean.Point3D(Vector3D vector)
+        {
+            return new MathNet.Spatial.Euclidean.Point3D(vector.X, vector.Y, vector.Z);
+        }
+
+        /// <summary>
+        /// Summation operator.
+        /// Adds each element of the given vector to the corresponding element of the defined vector.
+        /// This operation is identical to simple vector-vector addition.
+        /// </summary>
+        /// <param name="a">First vector</param>
+        /// <param name="b">Second vector</param>
+        /// <returns>Resulting vector after summation.</returns>
+        public static Vector3D operator +(Vector3D a, Vector3D b)
+        {
+            return new Vector3D(a._vectorData + b._vectorData);
+        }
+
+        /// <summary>
+        /// Subtraction operator.
+        /// Subtracts each element of the other vector from the corresponding element of the given vector.
+        /// </summary>
+        /// <param name="a">First vector</param>
+        /// <param name="b">Second vector</param>
+        /// <returns>Resulting vector after subtraction.</returns>
+        public static Vector3D operator -(Vector3D a, Vector3D b)
+        {
+            return new Vector3D(a._vectorData - b._vectorData);
+        }
+
+        /// <summary>
+        /// Dot multiplication operator.
+        /// Dot (scalar) product.
+        /// </summary>
+        /// <param name="a">First vector</param>
+        /// <param name="b">Second vector</param>
+        /// <returns>Resulting value after dot multiplication.</returns>
+        public static float operator *(Vector3D a, Vector3D b)
+        {
+            return a._vectorData * b._vectorData;
+        }
+
+        /// <summary>
+        /// Dot multiplication operator.
+        /// Multiplies each element of the vector by the given scalar.
+        /// </summary>
+        /// <param name="a">Vector</param>
+        /// <param name="b">Number</param>
+        /// <returns>Resulting vector after dot multiplication.</returns>
+        public static Vector3D operator *(Vector3D a, float b)
+        {
+            return new Vector3D(a._vectorData * b);
+        }
+
+        /// <summary>
+        /// Dot multiplication operator.
+        /// Multiplies each element of the vector by the given scalar.
+        /// </summary>
+        /// <param name="a">Number</param>
+        /// <param name="b">Vector</param>
+        /// <returns>Resulting vector after dot multiplication.</returns>
+        public static Vector3D operator *(float a, Vector3D b)
+        {
+            return new Vector3D(a * b._vectorData);
+        }
+
+        /// <summary>
+        /// Pointwise division operator.
+        /// Divides each element of this vector by the corresponding element of the other vector.
+        /// </summary>
+        /// <param name="a">First vector</param>
+        /// <param name="b">Second vector</param>
+        /// <returns>Resulting vector after division.</returns>
+        public static Vector3D operator /(Vector3D a, Vector3D b)
+        {
+            return new Vector3D(a._vectorData / b._vectorData);
+        }
+
+        /// <summary>
+        /// Pointwise division operator.
+        /// Divides each element of this vector by the given scalar.
+        /// </summary>
+        /// <param name="a">Vector</param>
+        /// <param name="b">Number</param>
+        /// <returns>Resulting vector after division.</returns>
+        public static Vector3D operator /(Vector3D a, float b)
+        {
+            return new Vector3D(a._vectorData / b);
         }
     }
 
@@ -243,36 +392,85 @@ namespace Ariadne.Kernel.Math
             return _vectorData.Equals(vector._vectorData);
         }
 
+        /// <summary>
+        /// Pointwise division operator.
+        /// Divides each element of this vector by the given scalar.
+        /// </summary>
+        /// <param name="a">Vector</param>
+        /// <param name="b">Number</param>
+        /// <returns>Resulting vector after division.</returns>
         public static VectorND operator /(VectorND a, float b)
         {
             return new VectorND((a._vectorData / b).ToArray());
         }
 
+        /// <summary>
+        /// Dot multiplication operator.
+        /// Multiplies each element of the vector by the given scalar.
+        /// </summary>
+        /// <param name="a">Vector</param>
+        /// <param name="b">Number</param>
+        /// <returns>Resulting vector after dot multiplication.</returns>
         public static VectorND operator *(VectorND a, float b)
         {
             return new VectorND((a._vectorData * b).ToArray());
         }
 
+        /// <summary>
+        /// Dot multiplication operator.
+        /// Multiplies each element of the vector by the given scalar.
+        /// </summary>
+        /// <param name="a">Number</param>
+        /// <param name="b">Vector</param>
+        /// <returns>Resulting vector after dot multiplication.</returns>
         public static VectorND operator *(float a, VectorND b)
         {
             return new VectorND((a * b._vectorData).ToArray());
         }
 
+        /// <summary>
+        /// Dot multiplication operator.
+        /// Dot (scalar) product.
+        /// </summary>
+        /// <param name="a">First vector</param>
+        /// <param name="b">Second vector</param>
+        /// <returns>Resulting value after dot multiplication.</returns>
         public static float operator *(VectorND a, VectorND b)
         {
             return a._vectorData * b._vectorData;
         }
 
+        /// <summary>
+        /// Summation operator.
+        /// Adds each element of the given vector to the corresponding element of the defined vector.
+        /// This operation is identical to simple vector-vector addition.
+        /// </summary>
+        /// <param name="a">First vector</param>
+        /// <param name="b">Second vector</param>
+        /// <returns>Resulting vector after summation.</returns>
         public static VectorND operator +(VectorND a, VectorND b)
         {
             return new VectorND((a._vectorData + b._vectorData).ToArray());
         }
 
+        /// <summary>
+        /// Subtraction operator.
+        /// Subtracts each element of the other vector from the corresponding element of the given vector.
+        /// </summary>
+        /// <param name="a">First vector</param>
+        /// <param name="b">Second vector</param>
+        /// <returns>Resulting vector after subtraction.</returns>
         public static VectorND operator -(VectorND a, VectorND b)
         {
             return new VectorND((a._vectorData + b._vectorData).ToArray());
         }
 
+        /// <summary>
+        /// Negative operator.
+        /// The operation is identical to multiplying a vector by minus one.
+        /// </summary>
+        /// <param name="a">Vector</param>
+        /// <returns>Negative vector.</returns>
         public static VectorND operator -(VectorND a)
         {
             return new VectorND((-a._vectorData).ToArray());
