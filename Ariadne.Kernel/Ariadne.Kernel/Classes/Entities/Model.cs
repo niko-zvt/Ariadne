@@ -408,6 +408,8 @@ namespace Ariadne.Kernel
                 return false;
 
             // TODO: Calculate the stress through the shape function
+            // 1. Calculate UV-coords of point
+            // 2. Calculate the stress through the shape function
 
             return true;
         }
