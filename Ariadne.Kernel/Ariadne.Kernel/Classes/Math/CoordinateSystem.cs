@@ -36,6 +36,9 @@
         /// </summary>
         private static readonly System.Lazy<GlobalCSys> instanceHolder = new System.Lazy<GlobalCSys>(() => new GlobalCSys());
 
+        /// <summary>
+        /// Private constructor.
+        /// </summary>
         private GlobalCSys()
         {
             _coordSys = new MathNet.Spatial.Euclidean.CoordinateSystem();
@@ -116,9 +119,28 @@
     /// </summary>
     sealed class LocalCSys : CoordinateSystem
     {
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public LocalCSys()
         {
             _coordSys = new MathNet.Spatial.Euclidean.CoordinateSystem();
+        }
+
+        /// <summary>
+        /// Constructor along the axis and origin point.
+        /// </summary>
+        /// <param name="xAxis">Vector of X-axis</param>
+        /// <param name="yAxis">Vector of Y-axis</param>
+        /// <param name="zAxis">Vector of Z-axis</param>
+        /// <param name="origin">Origin point</param>
+        public LocalCSys(Vector3D xAxis, Vector3D yAxis, Vector3D zAxis, Vector3D origin)
+        {
+            var oX = ((MathNet.Spatial.Euclidean.Vector3D)xAxis).Normalize();
+            var oY = ((MathNet.Spatial.Euclidean.Vector3D)yAxis).Normalize();
+            var oZ = ((MathNet.Spatial.Euclidean.Vector3D)zAxis).Normalize();
+            var O = (MathNet.Spatial.Euclidean.Point3D)zAxis;
+            _coordSys = new MathNet.Spatial.Euclidean.CoordinateSystem(O, oX, oY, oZ);
         }
 
         /// <summary>
@@ -172,7 +194,6 @@
                                     _coordSys.Origin.Z);
             }
         }
-
 
         /// <summary>
         /// Returns the coordinate system type
