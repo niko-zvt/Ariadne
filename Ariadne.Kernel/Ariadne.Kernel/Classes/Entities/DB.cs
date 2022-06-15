@@ -254,7 +254,7 @@ namespace Ariadne.Kernel
                         parameters.ID = resultID;
                         parameters.TypeName = "ExternalResult";
                         var result = ExternalDB.getResultCopy(lcName, scName, resName);
-                        parameters.Data = (result.modifyRefCoordSys(ExternalDB, 0)).getData();
+                        parameters.Data = (result.modifyRefCoordSys(ExternalDB, 0)).getData(); // Result in GlobalCSys
 
                         ResultCreator resultCreator = ResultCreator.GetResultCreatorByParams(parameters);
                         resultCreators.Add(resultCreator);
