@@ -195,6 +195,10 @@ namespace Ariadne.Kernel
             return true;
         }
 
+        /// <summary>
+        /// The method tries to build a LCS for the current element
+        /// </summary>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
         private bool TryBuildLCS()
         {
             if (_parentModel == null)
