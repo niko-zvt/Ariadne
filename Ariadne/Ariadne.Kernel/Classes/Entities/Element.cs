@@ -58,6 +58,13 @@ namespace Ariadne.Kernel
         public abstract bool IsPointBelong(Vector3D point);
 
         /// <summary>
+        /// Get UV-coords by point location in 3D space.
+        /// </summary>
+        /// <param name="point">Target point.</param>
+        /// <returns>UV-coords or NULL.</returns>
+        protected abstract Vector3D GetUVCoordsPoint(Vector3D point);
+
+        /// <summary>
         /// Build local coordinate system of element
         /// </summary>
         /// <returns>Local CS of element or null</returns>
@@ -167,7 +174,7 @@ namespace Ariadne.Kernel
             return ref _boundingBox;
         }
 
-        public ref LocalCSys GetElementLCS()
+        public ref LocalCSys GetElementLCSAsRef()
         {
             return ref _localCSys;
         }

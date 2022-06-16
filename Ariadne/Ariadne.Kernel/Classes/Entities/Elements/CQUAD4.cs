@@ -42,6 +42,39 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
+        /// Get UV-coords by point location in 3D space.
+        /// </summary>
+        /// <param name="point">Target point.</param>
+        /// <returns>UV-coords or NULL.</returns>
+        protected override Vector3D GetUVCoordsPoint(Vector3D point)
+        {
+            // Check point
+            if (IsPointBelong(point) != true)
+                return null;
+
+            // 2. Calculate affine map GCS -> LCS
+            var LCS = GetElementLCSAsRef();
+            var GCS = GlobalCSys.Instance;
+            var transform_L2G = new AffineMap3D(GCS, LCS);
+
+            // 3. Calculate target point and corners in LCS
+            var corners = GetCornerNodes();
+            var localN1 = transform_L2G.TransformPoint(corners.GetByIndex(0).Coords);
+            var localN2 = transform_L2G.TransformPoint(corners.GetByIndex(1).Coords);
+            var localN3 = transform_L2G.TransformPoint(corners.GetByIndex(2).Coords);
+            var localN4 = transform_L2G.TransformPoint(corners.GetByIndex(3).Coords);
+            var localPoint = transform_L2G.TransformPoint(point);
+
+            // TODO: LCS -> UV
+
+            // 4. Calculate LCS -> UV
+
+            // 5. Return uv
+
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
         /// Build local coordinate system of element.
         /// </summary>
         /// <returns>Local CS or null</returns>

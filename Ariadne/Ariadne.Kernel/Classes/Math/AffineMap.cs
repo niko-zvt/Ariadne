@@ -71,6 +71,21 @@
         }
 
         /// <summary>
+        /// Constructor by coordinate systems
+        /// </summary>
+        /// <param name="sourceCS">Source CSys</param>
+        /// <param name="targetCS">Target CSys</param>
+        public AffineMap3D(CoordinateSystem sourceCS, CoordinateSystem targetCS)
+        {
+            _T = sourceCS.Origin - targetCS.Origin;
+
+            throw new System.NotImplementedException();
+            // TODO: _M = Calculate M 
+            _S = new Vector3D();
+            _I = 1.0f;
+        }
+
+        /// <summary>
         /// Constructor by transformation vectors and translation vector.
         /// </summary>
         /// <param name="i">First transformation vector.</param>
@@ -83,6 +98,18 @@
             _T = T;
             _S = new Vector3D();
             _I = 1.0f;
+        }
+
+        /// <summary>
+        /// Transform point
+        /// </summary>
+        /// <param name="point">Target point</param>
+        /// <returns>Result point after affine mapping</returns>
+        public Vector3D TransformPoint(Vector3D point)
+        {
+            var rPoint = _M * point;
+            var trPoint = rPoint + _T;
+            return trPoint;
         }
 
         /// <summary>

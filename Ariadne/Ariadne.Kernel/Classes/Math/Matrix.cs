@@ -339,6 +339,32 @@ namespace Ariadne.Kernel.Math
         public float ZZ { get { return _values[2, 2]; } set { _values[2, 2] = value; } }
 
         /// <summary>
+        /// Dot multiplication operator.
+        /// </summary>
+        /// <param name="a">Matrix</param>
+        /// <param name="b">Vector</param>
+        /// <returns>Resulting vector after dot multiplication.</returns>
+        public static Vector3D operator *(Matrix3x3 a, Vector3D b)
+        {
+            var vector = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(b.ToArray());
+            var newVector = a._values * vector;
+            return new Vector3D(newVector.ToArray());
+        }
+
+        /// <summary>
+        /// Dot multiplication operator.
+        /// </summary>
+        /// <param name="a">Vector</param>
+        /// <param name="b">Matrix</param>
+        /// <returns>Resulting vector after dot multiplication.</returns>
+        public static Vector3D operator *(Vector3D a, Matrix3x3 b)
+        {
+            var vector = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
+            var newVector = b._values * vector;
+            return new Vector3D(newVector.ToArray());
+        }
+
+        /// <summary>
         /// Returns the matrix type
         /// </summary>
         /// <returns>Matrix type</returns>
