@@ -33,6 +33,19 @@ namespace Ariadne.Kernel.Math
 
             return _vectorData.ToArray();
         }
+
+        /// <summary>
+        /// Virtual method to return the type of the vector
+        /// </summary>
+        /// <returns>Type of vector</returns>
+        public abstract VectorType GetVectorType();
+    }
+
+    public enum VectorType
+    {
+        Vector2D,
+        Vector3D,
+        VectorND
     }
 
     /// <summary>
@@ -311,6 +324,15 @@ namespace Ariadne.Kernel.Math
         {
             return new Vector3D(a._vectorData / b);
         }
+
+        /// <summary>
+        /// Method return the type of the vector
+        /// </summary>
+        /// <returns>Type of vector</returns>
+        public override VectorType GetVectorType()
+        {
+            return VectorType.Vector3D;
+        }
     }
 
     /// <summary>
@@ -474,6 +496,15 @@ namespace Ariadne.Kernel.Math
         public static VectorND operator -(VectorND a)
         {
             return new VectorND((-a._vectorData).ToArray());
+        }
+
+        /// <summary>
+        /// Method return the type of the vector
+        /// </summary>
+        /// <returns>Type of vector</returns>
+        public override VectorType GetVectorType()
+        {
+            return VectorType.VectorND;
         }
     }
 }
