@@ -66,7 +66,7 @@ namespace Ariadne.Kernel
         public static DB Create(string pathToBDF, string pathToOP2 = null, string pathToXDB = null, string pathToSES = null)
         {
             // TODO: Use TRY-CATCH
-            DB database = new DB(pathToBDF, pathToOP2, pathToXDB, pathToSES);
+            var database = new DB(pathToBDF, pathToOP2, pathToXDB, pathToSES);
             return database.IsValid() ? database : null;
         }
 
