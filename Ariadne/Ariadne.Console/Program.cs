@@ -8,8 +8,8 @@ namespace Ariadne.Console
         // Paths to the sample files
         private const string pathToDAT = @"Examples\Ex-000\model-000.dat";
         private const string pathToOP2 = @"Examples\Ex-000\model-000.op2";
-        //private const string pathToSES = @"..\Examples\Ex-000\model-000.ses";
-        //private const string pathToXDB = @"..\Examples\Ex-000\model-000.xdb";
+        //private const string pathToSES = @"Examples\Ex-000\model-000.ses";
+        //private const string pathToXDB = @"Examples\Ex-000\model-000.xdb";
 
         static void Main(string[] args)
         {
