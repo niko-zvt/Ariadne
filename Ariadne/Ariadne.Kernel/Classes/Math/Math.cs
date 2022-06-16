@@ -44,6 +44,19 @@ namespace Ariadne.Kernel.Math
         }
 
         /// <summary>
+        /// Dimension type
+        /// </summary>
+        public enum DimensionType
+        {
+            D0 = 0,
+            D1 = 1,
+            D2 = 2,
+            D3 = 3,
+            D4 = 4,
+            DN = int.MaxValue
+        }
+
+        /// <summary>
         /// Calculate the principal invariants
         /// </summary>
         /// <param name="squareMatrix">Second-rank tensor / 3x3 matrix</param>
