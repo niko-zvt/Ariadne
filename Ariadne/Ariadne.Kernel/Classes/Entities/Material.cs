@@ -5,7 +5,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the material
     /// </summary>
-    abstract class Material
+    public abstract class Material
     {
         /// <summary>
         /// Material data
@@ -41,7 +41,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the material creator
     /// </summary>
-    abstract class MaterialCreator
+    public abstract class MaterialCreator
     {
         /// <summary>
         /// Protected base constructor for implementing abstract parameter passing when creating a specific material class.
@@ -122,7 +122,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// The basic structure of the generalized parameters of the material
     /// </summary>
-    struct MaterialParams
+    public struct MaterialParams
     {
         /// <summary>
         /// Material identifier
@@ -148,7 +148,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Enumeration of all available types of materials
     /// </summary>
-    enum MaterialType
+    public enum MaterialType
     {
         Undefine,
         Isotropic,
@@ -159,7 +159,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Enumeration of all available subtypes of materials
     /// </summary>
-    enum MaterialSubtype
+    public enum MaterialSubtype
     {
         MAT1,
         MAT2,

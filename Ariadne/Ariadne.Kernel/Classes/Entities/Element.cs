@@ -7,7 +7,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the element
     /// </summary>
-    abstract class Element
+    public abstract class Element
     {
         /// <summary>
         /// Parent model
@@ -264,7 +264,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the element creator
     /// </summary>
-    abstract class ElementCreator
+    public abstract class ElementCreator
     {
         /// <summary>
         /// Protected base constructor for implementing abstract parameter passing when creating a specific element class.
@@ -312,7 +312,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// The basic structure of the generalized parameters of the element
     /// </summary>
-    struct ElementParams
+    public struct ElementParams
     {
         /// <summary>
         /// Element identifier
@@ -353,7 +353,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Enumeration of all available types of elements
     /// </summary>
-    enum ElementType
+    public enum ElementType
     {
         CELAS1,
         CELAS2,

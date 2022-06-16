@@ -3,7 +3,7 @@
     /// <summary>
     /// Abstract class for hiding the implementation of the CoordinateSystem class
     /// </summary>
-    abstract class CoordinateSystem
+    public abstract class CoordinateSystem
     {
         /// <summary>
         /// Coordinate system specific data
@@ -20,7 +20,7 @@
     /// <summary>
     /// Enumeration of all available types of coordinate systems
     /// </summary>
-    enum CoordinateSystemType
+    public enum CoordinateSystemType
     {
         GlobalCS,
         LocalCS,
@@ -29,7 +29,7 @@
     /// <summary>
     /// Class singleton of a global coordinate system in three-dimensional space
     /// </summary>
-    sealed class GlobalCSys : CoordinateSystem
+    public sealed class GlobalCSys : CoordinateSystem
     {
         /// <summary>
         /// Lazy instance holder
@@ -117,7 +117,7 @@
     /// <summary>
     /// Class of a local coordinate system in three-dimensional space
     /// </summary>
-    sealed class LocalCSys : CoordinateSystem
+    public sealed class LocalCSys : CoordinateSystem
     {
         /// <summary>
         /// Default constructor.

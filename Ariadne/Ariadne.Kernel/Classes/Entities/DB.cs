@@ -8,7 +8,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Class for hiding the database implementation of the FeResPost library
     /// </summary>
-    class DB
+    public class DB
     {
         /// <summary>
         /// Nastran database

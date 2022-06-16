@@ -5,7 +5,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the property
     /// </summary>
-    abstract class Property
+    public abstract class Property
     {
         /// <summary>
         /// Property data
@@ -41,7 +41,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the property creator
     /// </summary>
-    abstract class PropertyCreator
+    public abstract class PropertyCreator
     {
         /// <summary>
         /// Protected base constructor for implementing abstract parameter passing when creating a specific property class.
@@ -85,7 +85,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// The basic structure of the generalized parameters of the property
     /// </summary>
-    struct PropertyParams
+    public struct PropertyParams
     {
         /// <summary>
         /// Property identifier
@@ -106,7 +106,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Enumeration of all available types of properties
     /// </summary>
-    enum PropertyType
+    public enum PropertyType
     {
         PBAR,
         PBARL,

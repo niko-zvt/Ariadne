@@ -9,7 +9,7 @@ namespace Ariadne.Kernel
     /// A generalized set is needed to hide a specific implementation of the object storage mechanism. 
     /// The source mechanism can be an array, a list, a tree, or other structure.
     /// </summary>
-    class ResultSet : IEnumerable
+    public class ResultSet : IEnumerable
     {
         /// <summary>
         /// Specific storage collection
@@ -122,7 +122,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Result enumerator class
     /// </summary>
-    class ResultEnumerator : IEnumerator
+    public class ResultEnumerator : IEnumerator
     {
         /// <summary>
         /// Array for enumeration

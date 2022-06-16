@@ -5,41 +5,41 @@ using System.Collections.Generic;
 namespace Ariadne.Kernel
 {
     /// <summary>
-    /// Class for storing a generalized set of elements.
+    /// Class for storing a generalized set of materials.
     /// A generalized set is needed to hide a specific implementation of the object storage mechanism. 
     /// The source mechanism can be an array, a list, a tree, or other structure.
     /// </summary>
-    class ElementSet : IEnumerable
+    public class MaterialSet : IEnumerable
     {
         /// <summary>
         /// Specific storage collection
         /// </summary>
-        private Dictionary<int, Element> _collection;
+        private Dictionary<int, Material> _collection;
 
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public ElementSet()
+        public MaterialSet()
         {
-            _collection = new Dictionary<int, Element>();
+            _collection = new Dictionary<int, Material>();
         }
 
         /// <summary>
-        /// The method returns the element according to its ID
+        /// The method returns the material according to its ID
         /// </summary>
-        /// <param name="id">Element ID</param>
-        /// <returns>Specific element</returns>
-        public Element GetByID(int id)
+        /// <param name="id">Material ID</param>
+        /// <returns>Specific material</returns>
+        public Material GetByID(int id)
         {
-            return _collection.TryGetValue(id, out Element value) ? value : null;
+            return _collection.TryGetValue(id, out Material value) ? value : null;
         }
 
         /// <summary>
-        /// The method returns the element according to its ordinal index in the collection
+        /// The method returns the node according to its ordinal index in the collection
         /// </summary>
         /// <param name="index">Index</param>
-        /// <returns>Specific element</returns>
-        public Element GetByIndex(int index)
+        /// <returns>Specific material</returns>
+        public Material GetByIndex(int index)
         {
             if (index < 0 || index >= _collection.Count)
                 return null;
@@ -56,9 +56,9 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the Dictionary<int, Element>
+        /// Returns an enumerator that iterates through the Dictionary<int, Material>
         /// </summary>
-        /// <returns>A Dictionary<int, Element>.Enumerator structure for the Dictionary<int, Element></returns>
+        /// <returns>A Dictionary<int, Material>.Enumerator structure for the Dictionary<int, Material></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -67,38 +67,35 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Implementation for the GetEnumerator method
         /// </summary>
-        /// <returns>Element enumerator</returns>
-        public ElementEnumerator GetEnumerator()
+        /// <returns>Material enumerator</returns>
+        public MaterialEnumerator GetEnumerator()
         {
-            return new ElementEnumerator(_collection);
+            return new MaterialEnumerator(_collection);
         }
 
         /// <summary>
         /// Adds the specified key and value to the collection
         /// </summary>
-        /// <param name="id">Element ID</param>
-        /// <param name="value">Specific element</param>
-        public bool TryAdd(int id, Element value)
+        /// <param name="id">Material ID</param>
+        /// <param name="value">Specific material</param>
+        public void Add(int id, Material value)
         {
-            if (_collection is null)
-                return false;
-
-            return _collection.TryAdd(id, value);
+            _collection.Add(id, value);
         }
 
         /// <summary>
         /// Indexer declaration
         /// </summary>
-        /// <param name="id">Element ID</param>
-        /// <returns>Specific element</returns>
-        public Element this[int id]
+        /// <param name="id">Material ID</param>
+        /// <returns>Specific material</returns>
+        public Material this[int id]
         {
             get { return GetByID(id); }
-            set { TryAdd(id, value); }
+            set { Add(id, value); }
         }
 
         /// <summary>
-        /// Gets the number of ID/Elements pairs contained in the collection
+        /// Gets the number of ID/Materials pairs contained in the collection
         /// </summary>
         public int Count
         {
@@ -107,14 +104,14 @@ namespace Ariadne.Kernel
     }
 
     /// <summary>
-    /// Element enumerator class
+    /// Material enumerator class
     /// </summary>
-    class ElementEnumerator : IEnumerator
+    public class MaterialEnumerator : IEnumerator
     {
         /// <summary>
         /// Array for enumeration
         /// </summary>
-        private KeyValuePair<int, Element>[] _array;
+        private KeyValuePair<int, Material>[] _array;
 
         /// <summary>
         /// Position
@@ -125,9 +122,9 @@ namespace Ariadne.Kernel
         /// Сonstructor for enumerator
         /// </summary>
         /// <param name="dic">Input dictionary</param>
-        public ElementEnumerator(Dictionary<int, Element> dic)
+        public MaterialEnumerator(Dictionary<int, Material> dic)
         {
-            var list = new List<KeyValuePair<int, Element>>(dic);
+            var list = new List<KeyValuePair<int, Material>>(dic);
             _array = list.ToArray();
         }
 
@@ -163,7 +160,7 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Returns the current specific object
         /// </summary>
-        public Element Current
+        public Material Current
         {
             get
             {

@@ -9,7 +9,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the shape functions
     /// </summary>
-    abstract class ShapeFunction
+    public abstract class ShapeFunction
     {
         protected List<Functor> _localFunctors = new List<Functor>();
 
@@ -51,7 +51,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Enumeration of all available types of shape functions and dimension
     /// </summary>
-    enum ShapeFunctionType
+    public enum ShapeFunctionType
     {
         Rod_2 = 1,
         Beam_2 = 1,

@@ -8,7 +8,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// The class implements the main entity of the model for data manipulation
     /// </summary>
-    class Model
+    public class Model
     {
         /// <summary>
         /// Materials contained in the model

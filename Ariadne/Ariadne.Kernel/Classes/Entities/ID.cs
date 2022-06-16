@@ -3,7 +3,7 @@
     /// <summary>
     /// Abstract class for representation identifiers
     /// </summary>
-    abstract class ID
+    public abstract class ID
     {
     }
 }

@@ -5,7 +5,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the result
     /// </summary>
-    abstract class Result
+    public abstract class Result
     {
         /// <summary>
         /// Protected constructor with parameters
@@ -45,7 +45,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Abstract class of the result creator
     /// </summary>
-    abstract class ResultCreator
+    public abstract class ResultCreator
     {
         /// <summary>
         /// Protected base constructor for implementing abstract parameter passing when creating a specific result class.
@@ -89,7 +89,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Class of result identifier
     /// </summary>
-    class ResultID : ID
+    public class ResultID : ID
     {
         /// <summary>
         /// Result name separator
@@ -182,7 +182,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// The basic structure of the generalized parameters of the result
     /// </summary>
-    struct ResultParams
+    public struct ResultParams
     {
         /// <summary>
         /// Load case name
@@ -203,7 +203,7 @@ namespace Ariadne.Kernel
     /// <summary>
     /// Enumeration of all available types of results
     /// </summary>
-    enum ResultType
+    public enum ResultType
     {
         FeResPostResult,
     }
