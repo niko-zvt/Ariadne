@@ -163,9 +163,9 @@ namespace Ariadne.Kernel.CGAL
 
             // 2. Deserialize JSON box from C++ lib
             if (string.IsNullOrEmpty(jsonStr))
-                throw new System.ArgumentNullException("OOBB GetBoundingBoxByJSON - JsonAttribute string is string.Empty or null");
+                throw new System.ArgumentNullException("AABB GetBoundingBoxByJSON - JsonAttribute string is string.Empty or null");
 
-            const int countOOBBPoints = 2;
+            const int countAABBPoints = 2;
             string[] jsonBoxes = jsonStr.Split('\n');
 
             List<Vector3D> boxPoints = new List<Vector3D>();
@@ -175,10 +175,10 @@ namespace Ariadne.Kernel.CGAL
                     boxPoints.Add(JsonSerializer.Deserialize<Vector3D>(jsonBox));
             }
 
-            if (boxPoints.Count != countOOBBPoints)
-                throw new System.ArgumentOutOfRangeException("OOBB GetBoundingBoxByJSON - JSON contains less/greater than 2 points!");
+            if (boxPoints.Count != countAABBPoints)
+                throw new System.ArgumentOutOfRangeException("AABB GetBoundingBoxByJSON - JSON contains less/greater than 2 points!");
 
-            aabb = AABoundingBox.CreateByPoints(points[0], points[1]);
+            aabb = AABoundingBox.CreateByPoints(boxPoints[0], boxPoints[1]);
 
             return true;
         }
