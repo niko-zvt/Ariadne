@@ -83,7 +83,7 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="point">Target point.</param>
         /// <returns>UV-coords or NULL.</returns>
-        protected override Vector3D GetUVCoordsPoint(Vector3D point)
+        public override Vector3D GetUVCoordsPoint(Vector3D point)
         {
             throw new System.NotImplementedException();
         }

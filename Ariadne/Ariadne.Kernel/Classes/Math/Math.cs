@@ -319,5 +319,40 @@ namespace Ariadne.Kernel.Math
 
             return startBase * (1 - weight) + endBase * weight;
         }
+
+        public static HValue CalculateDeterminant(HValue[,] m)
+        {
+            var length = m.Length;
+            var rank = m.Rank;
+
+            if (rank != 2)
+                throw new System.ArgumentException("Array rank != 2!");
+
+            var isSquare = m.GetLength(0) == m.GetLength(1);
+
+            if (length == 4 && isSquare)
+            {
+                return m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0];
+            }
+            else if (length == 9 && isSquare)
+            {
+                return m[0, 0] * m[1, 1] * m[2, 2] - m[0, 0] * m[1, 2] * m[2, 1] - m[0, 1] * m[1, 0] * m[2, 2] + m[0, 1] * m[1, 2] * m[2, 0] + m[0, 2] * m[1, 0] * m[2, 1] - m[0, 2] * m[1, 1] * m[2, 0];
+            }
+            else if (length == 16 && isSquare)
+            {
+                return  m[0, 0] * m[1, 1] * m[2, 2] * m[3, 3] - m[0, 0] * m[1, 1] * m[2, 3] * m[3, 2] - m[0, 0] * m[1, 2] * m[2, 1] * m[3, 3]
+                    + m[0, 0] * m[1, 2] * m[2, 3] * m[3, 1] + m[0, 0] * m[1, 3] * m[2, 1] * m[3, 2] - m[0, 0] * m[1, 3] * m[2, 2] * m[3, 1]
+                    - m[0, 1] * m[1, 0] * m[2, 2] * m[3, 3] + m[0, 1] * m[1, 0] * m[2, 3] * m[3, 2] + m[0, 1] * m[1, 2] * m[2, 0] * m[3, 3]
+                    - m[0, 1] * m[1, 2] * m[2, 3] * m[3, 0] - m[0, 1] * m[1, 3] * m[2, 0] * m[3, 2] + m[0, 1] * m[1, 3] * m[2, 2] * m[3, 0]
+                    + m[0, 2] * m[1, 0] * m[2, 1] * m[3, 3] - m[0, 2] * m[1, 0] * m[2, 3] * m[3, 1] - m[0, 2] * m[1, 1] * m[2, 0] * m[3, 3]
+                    + m[0, 2] * m[1, 1] * m[2, 3] * m[3, 0] + m[0, 2] * m[1, 3] * m[2, 0] * m[3, 1] - m[0, 2] * m[1, 3] * m[2, 1] * m[3, 0]
+                    - m[0, 3] * m[1, 0] * m[2, 1] * m[3, 2] + m[0, 3] * m[1, 0] * m[2, 2] * m[3, 1] + m[0, 3] * m[1, 1] * m[2, 0] * m[3, 2]
+                    - m[0, 3] * m[1, 1] * m[2, 2] * m[3, 0] - m[0, 3] * m[1, 2] * m[2, 0] * m[3, 1] + m[0, 3] * m[1, 2] * m[2, 1] * m[3, 0];
+            }
+            else
+            {
+                throw new System.IndexOutOfRangeException();
+            }
+        }
     }
 }

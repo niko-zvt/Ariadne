@@ -46,7 +46,7 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="point">Target point.</param>
         /// <returns>UV-coords or NULL.</returns>
-        protected override Vector3D GetUVCoordsPoint(Vector3D point)
+        public override Vector3D GetUVCoordsPoint(Vector3D point)
         {
             // Check point
             if (IsPointBelong(point) != true)
@@ -55,15 +55,18 @@ namespace Ariadne.Kernel
             // 2. Calculate affine map GCS -> LCS
             var LCS = GetElementLCSAsRef();
             var GCS = GlobalCSys.Instance;
-            var transform_L2G = new AffineMap3D(GCS, LCS);
+            //var transform_L2G = new AffineMap3D(GCS, LCS);
 
             // 3. Calculate target point and corners in LCS
             var corners = GetCornerNodes();
-            var localN1 = transform_L2G.TransformPoint(corners.GetByIndex(0).Coords);
-            var localN2 = transform_L2G.TransformPoint(corners.GetByIndex(1).Coords);
-            var localN3 = transform_L2G.TransformPoint(corners.GetByIndex(2).Coords);
-            var localN4 = transform_L2G.TransformPoint(corners.GetByIndex(3).Coords);
-            var localPoint = transform_L2G.TransformPoint(point);
+            var localN1 = AffineMap3D.TransformPoint(corners.GetByIndex(0).Coords, LCS, GCS);
+            var localN2 = AffineMap3D.TransformPoint(corners.GetByIndex(1).Coords, LCS, GCS);
+            var localN3 = AffineMap3D.TransformPoint(corners.GetByIndex(2).Coords, LCS, GCS);
+            var localN4 = AffineMap3D.TransformPoint(corners.GetByIndex(3).Coords, LCS, GCS);
+            var localPoint = AffineMap3D.TransformPoint(point, LCS, GCS);
+
+            System.Console.WriteLine(localPoint.ToString());
+
 
             // TODO: LCS -> UV
 

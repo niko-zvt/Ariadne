@@ -333,6 +333,11 @@ namespace Ariadne.Kernel.Math
         {
             return VectorType.Vector3D;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + $":\t{X},\t{Y},\t{Z}";
+        }
     }
 
     /// <summary>

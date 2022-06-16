@@ -407,6 +407,8 @@ namespace Ariadne.Kernel
             if(nodesData.Count != elementNodes.Count)
                 return false;
 
+            var uv = element.GetUVCoordsPoint(location);
+
             // TODO: Calculate the stress through the shape function
             // 1. Calculate UV-coords of point
             // 2. Calculate the stress through the shape function

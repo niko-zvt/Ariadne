@@ -62,7 +62,7 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="point">Target point.</param>
         /// <returns>UV-coords or NULL.</returns>
-        protected abstract Vector3D GetUVCoordsPoint(Vector3D point);
+        public abstract Vector3D GetUVCoordsPoint(Vector3D point);
 
         /// <summary>
         /// Build local coordinate system of element
