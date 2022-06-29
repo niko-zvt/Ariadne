@@ -19,6 +19,45 @@ namespace Ariadne.Kernel.Math
         /// </summary>
         /// <returns>Type of matrix</returns>
         public abstract MatrixType GetMatrixType();
+
+        /// <summary>
+        /// Dimension of matrix
+        /// </summary>
+        /// <returns>Dimension</returns>
+        public int GetDimension()
+        {
+            return GetSize().Length;
+        }
+
+        /// <summary>
+        /// Inverse the matrix
+        /// </summary>
+        public void InverseSelf()
+        {
+            _values = _values.Inverse();
+        }
+
+        /// <summary>
+        /// Inverse the matrix
+        /// </summary>
+        /// <returns>New matrix</returns>
+        public abstract Matrix Inverse();
+
+        /// <summary>
+        /// Size of matrix
+        /// </summary>
+        /// <returns>Size as array</returns>
+        public abstract int[] GetSize();
+
+        /// <summary>
+        /// Returns this matrix as a multidimensional array. The returned array will be independent
+        /// from this matrix. A new memory block will be allocated for the array.
+        /// </summary>
+        /// <returns>A multidimensional containing the values of this matrix.</returns>
+        public float[,] ToArray()
+        {
+            return _values.ToArray();
+        }
     }
 
     /// <summary>
@@ -155,7 +194,7 @@ namespace Ariadne.Kernel.Math
 
             _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
 
-            if(isTranspose = true)
+            if(isTranspose == true)
                 _values = _values.Transpose();
         }
 
@@ -365,6 +404,18 @@ namespace Ariadne.Kernel.Math
         }
 
         /// <summary>
+        /// Dot multiplication operator.
+        /// </summary>
+        /// <param name="a">Matrix</param>
+        /// <param name="b">Matrix</param>
+        /// <returns>Resulting matrix after dot multiplication.</returns>
+        public static Matrix3x3 operator *(Matrix3x3 a, Matrix3x3 b)
+        {
+            var newMatrix = a._values * b._values;
+            return new Matrix3x3(newMatrix.ToArray());
+        }
+
+        /// <summary>
         /// Returns the matrix type
         /// </summary>
         /// <returns>Matrix type</returns>
@@ -380,6 +431,24 @@ namespace Ariadne.Kernel.Math
         public override string ToString()
         {
             return GetMatrixType().ToString();
+        }
+
+        /// <summary>
+        /// Size of matrix
+        /// </summary>
+        /// <returns>Size as array</returns>
+        public override int[] GetSize()
+        {
+            return new int[] { 3, 3 };
+        }
+
+        /// <summary>
+        /// Inverse the matrix
+        /// </summary>
+        /// <returns>New matrix</returns>
+        public override Matrix Inverse()
+        {
+            return new Matrix3x3(_values.Inverse());
         }
     }
 
@@ -465,15 +534,6 @@ namespace Ariadne.Kernel.Math
         public float Trace()
         {
             return _values.Trace();
-        }
-
-        /// <summary>
-        /// Inverse the matrix
-        /// </summary>
-        /// <returns></returns>
-        public void Inverse()
-        {
-            _values = _values.Inverse();
         }
 
         /// <summary>
@@ -575,6 +635,24 @@ namespace Ariadne.Kernel.Math
         public override string ToString()
         {
             return GetMatrixType().ToString();
+        }
+
+        /// <summary>
+        /// Size of matrix
+        /// </summary>
+        /// <returns>Size as array</returns>
+        public override int[] GetSize()
+        {
+            return new int[] {_values.RowCount, _values.ColumnCount };
+        }
+
+        /// <summary>
+        /// Inverse the matrix
+        /// </summary>
+        /// <returns>New matrix</returns>
+        public override Matrix Inverse()
+        {
+            return new MatrixNxM(_values.Inverse());
         }
     }
 }
