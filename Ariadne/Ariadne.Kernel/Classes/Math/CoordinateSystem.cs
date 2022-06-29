@@ -3,7 +3,7 @@
     /// <summary>
     /// Abstract class for hiding the implementation of the CoordinateSystem class
     /// </summary>
-    public abstract class CoordinateSystem
+    public abstract class CoordinateSystem : IMappable
     {
         /// <summary>
         /// Coordinate system specific data
@@ -11,10 +11,23 @@
         protected MathNet.Spatial.Euclidean.CoordinateSystem _coordSys;
 
         /// <summary>
-        /// Virtual method to return the type of the coordinate system
+        /// Virtual method to return the type of the coordinate system.
         /// </summary>
         /// <returns>Type of coordinate system</returns>
         public abstract CoordinateSystemType GetCoordinateSystemType();
+
+        /// <summary>
+        /// Virtual method to get affine map of transformation to global coordinate system.
+        /// </summary>
+        /// <returns>Affine map of transformation to global coordinate system.</returns>
+        public abstract AffineMap GetMapToGlobalCS();
+
+        /// <summary>
+        /// Get affine map of transformation from this coordinate system to another coordinate system.
+        /// </summary>
+        /// <param name="coordinateSystem">Another coordinate system.</param>
+        /// <returns>Affine map of transformation.</returns>
+        public abstract object GetMapTo(CoordinateSystem anotherCS);
 
         /// <summary>
         /// X-axis of local coordinate system
@@ -112,6 +125,26 @@
         {
             return CoordinateSystemType.GlobalCS;
         }
+
+        public override AffineMap GetMapTo(CoordinateSystem anotherCS)
+        {
+            if (this != anotherCS)
+            {
+                AffineMap fromTo = GetMapToGlobalCS();
+                if (fromTo.Degenerated() == false)
+                {
+                    var invMap = fromTo.InvMap();
+
+                    return invMap.Multiply(anotherCS.GetMapToGlobalCS());
+                }
+            }
+            return new AffineMap3D();
+        }
+
+        public override AffineMap GetMapToGlobalCS()
+        {
+            return new AffineMap3D();
+        }
     }
 
     /// <summary>
@@ -139,7 +172,7 @@
             var oX = ((MathNet.Spatial.Euclidean.Vector3D)xAxis).Normalize();
             var oY = ((MathNet.Spatial.Euclidean.Vector3D)yAxis).Normalize();
             var oZ = ((MathNet.Spatial.Euclidean.Vector3D)zAxis).Normalize();
-            var O = (MathNet.Spatial.Euclidean.Point3D)zAxis;
+            var O = (MathNet.Spatial.Euclidean.Point3D)origin;
             _coordSys = new MathNet.Spatial.Euclidean.CoordinateSystem(O, oX, oY, oZ);
         }
 
@@ -150,6 +183,26 @@
         public override CoordinateSystemType GetCoordinateSystemType()
         {
             return CoordinateSystemType.LocalCS;
+        }
+
+        public override AffineMap GetMapTo(CoordinateSystem anotherCS)
+        {
+            if (this != anotherCS)
+            {
+                AffineMap fromTo = GetMapToGlobalCS();
+                if (fromTo.Degenerated() == false)
+                {
+                    var invMap = fromTo.InvMap();
+
+                    return invMap.Multiply(anotherCS.GetMapToGlobalCS());
+                }
+            }
+            return new AffineMap3D();
+        }
+
+        public override AffineMap GetMapToGlobalCS()
+        {
+            return new AffineMap3D(new Matrix3x3(XAxis, YAxis, ZAxis), Origin);
         }
     }
 }

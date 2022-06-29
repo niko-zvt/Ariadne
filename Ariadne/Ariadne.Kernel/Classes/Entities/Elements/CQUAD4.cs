@@ -55,7 +55,6 @@ namespace Ariadne.Kernel
             // 2. Calculate affine map GCS -> LCS
             var LCS = GetElementLCSAsRef();
             var GCS = GlobalCSys.Instance;
-            //var transform_L2G = new AffineMap3D(GCS, LCS);
 
             // 3. Calculate target point and corners in LCS
             var corners = GetCornerNodes();
