@@ -34,13 +34,15 @@ _PowerShell Method:_
 
 #### 3.1. [Install CGAL with the Vcpkg Library Manager](https://doc.cgal.org/latest/Manual/windows.html)
 
-Because of a bug with gmp in vcpkg for windows, you need to install yasm-tool in 32 bits to be able to correctly build gmp 64bits, needed for cgal:
+Because of a bug with gmp in vcpkg for windows, you need to install yasm-tool in 32-bits to be able to correctly build gmp 64-bits, needed for cgal:
 
     ./vcpkg.exe install yasm-tool:x86-windows
 
 You are now ready to install CGAL:
 
     ./vcpkg.exe install cgal:x64-windows
+
+#### 3.2. Install other libraries
 
 Some CGAL packages also have additional dependencies.
 Sometimes you may need to install additional packages, such as [`gmp`](https://vcpkg.info/port/gmp) or [`eigen3`](https://vcpkg.info/port/eigen3). Use the suffix `{package_name}:x64-windows` to build for a specific platform.
