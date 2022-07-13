@@ -186,15 +186,15 @@ namespace Ariadne.Kernel.Math
             var pZ = point.Z;
 
             var m1 = new HValue[,] { { (HValue)new Vector3D(), (HValue)targetCS.XAxis,   (HValue)targetCS.YAxis,   (HValue)targetCS.ZAxis   },
-                                    { (HValue)pX, (HValue)sourceCS.XAxis.X, (HValue)sourceCS.YAxis.X, (HValue)sourceCS.ZAxis.X },
-                                    { (HValue)pY, (HValue)sourceCS.XAxis.Y, (HValue)sourceCS.YAxis.Y, (HValue)sourceCS.ZAxis.Y },
-                                    { (HValue)pZ, (HValue)sourceCS.XAxis.Z, (HValue)sourceCS.YAxis.Z, (HValue)sourceCS.ZAxis.Z } };
+                                     { (HValue)pX,             (HValue)sourceCS.XAxis.X, (HValue)sourceCS.YAxis.X, (HValue)sourceCS.ZAxis.X },
+                                     { (HValue)pY,             (HValue)sourceCS.XAxis.Y, (HValue)sourceCS.YAxis.Y, (HValue)sourceCS.ZAxis.Y },
+                                     { (HValue)pZ,             (HValue)sourceCS.XAxis.Z, (HValue)sourceCS.YAxis.Z, (HValue)sourceCS.ZAxis.Z }  };
 
             var m2 = new HValue[,] { { (HValue)sourceCS.XAxis.X, (HValue)sourceCS.YAxis.X, (HValue)sourceCS.ZAxis.X },
-                                      { (HValue)sourceCS.XAxis.Y, (HValue)sourceCS.YAxis.Y, (HValue)sourceCS.ZAxis.Y },
-                                      { (HValue)sourceCS.XAxis.Z, (HValue)sourceCS.YAxis.Z, (HValue)sourceCS.ZAxis.Z } };
+                                     { (HValue)sourceCS.XAxis.Y, (HValue)sourceCS.YAxis.Y, (HValue)sourceCS.ZAxis.Y },
+                                     { (HValue)sourceCS.XAxis.Z, (HValue)sourceCS.YAxis.Z, (HValue)sourceCS.ZAxis.Z }  };
 
-            var firstD = Utils.CalculateDeterminant(m1);
+            var firstD  = Utils.CalculateDeterminant(m1);
             var secondD = Utils.CalculateDeterminant(m2);
 
             var vec = -1 * (firstD / secondD);
