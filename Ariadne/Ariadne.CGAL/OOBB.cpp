@@ -50,4 +50,5 @@ int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size
     {
         auto wt = ex.what();
     }
+    return 1;
 }

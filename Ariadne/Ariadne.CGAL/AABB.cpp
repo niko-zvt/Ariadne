@@ -50,4 +50,5 @@ int32_t __stdcall GetAxisAlignedBoundingBox(AriadnePoint3D* points, int size, No
     {
         auto wt = ex.what();
     }
+    return 1;
 }

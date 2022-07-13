@@ -22,4 +22,4 @@
 /// <returns>
 /// - true in the case, when the result is valid
 /// </returns>
-extern "C" int32_t ARIADNE_CGAL_API __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D * points, int size, Notification notification);
+extern "C" int32_t ARIADNE_CGAL_API __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size, Notification notification);

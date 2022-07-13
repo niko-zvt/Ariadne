@@ -48,8 +48,11 @@
     <None Update="Libs\FeResPost.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libgmp-10.dll">
+    <None Update="Libs\gmp-10.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Libs\libgmp-10.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

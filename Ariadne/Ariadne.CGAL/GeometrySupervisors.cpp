@@ -65,6 +65,7 @@ int32_t __stdcall IsPointBelongToGrid(AriadnePoint3D point, AriadnePoint3D* elem
     {
         auto wt = ex.what();
     }
+    return 1;
 }
 
 int32_t __stdcall SegmentsIntersection(AriadnePoint3D a1, AriadnePoint3D a2, AriadnePoint3D b1, AriadnePoint3D b2, Notification notification)
@@ -138,4 +139,5 @@ int32_t __stdcall SegmentsIntersection(AriadnePoint3D a1, AriadnePoint3D a2, Ari
     {
         auto wt = ex.what();
     }
+    return 1;
 }
