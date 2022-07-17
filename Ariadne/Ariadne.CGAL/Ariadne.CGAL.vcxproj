@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="AffineTransformation.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Ariadne.h" />
     <ClInclude Include="OOBB.h" />
@@ -167,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="AffineTransformation.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GeometrySupervisors.cpp" />
     <ClCompile Include="OOBB.cpp" />
