@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "AABB.h"
 
-int32_t __stdcall GetAxisAlignedBoundingBox(AriadnePoint3D* points, int size, Notification notification)
+int32_t __stdcall GetAxisAlignedBoundingBox(AriadneVector3D* points, int size, Notification notification)
 {
     try
     {

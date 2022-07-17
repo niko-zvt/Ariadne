@@ -21,13 +21,22 @@
 
 typedef void(__stdcall* Notification)(const char*);
 
-// Ariadne.Kernel Point3D
-typedef struct _AriadnePoint3D
+// Ariadne.Kernel Vector3D
+typedef struct _AriadneVector3D
 {
     float x;
     float y;
     float z;
-} AriadnePoint3D;
+} AriadneVector3D;
+
+// Ariadne.Kernel LCS
+typedef struct _AriadneLCS
+{
+    AriadneVector3D origin;
+    AriadneVector3D xAxis;
+    AriadneVector3D yAxis;
+    AriadneVector3D zAxis;
+} AriadneLCS;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef Kernel::Point_3                                         Point3D;
@@ -40,3 +49,4 @@ typedef CGAL::Triangulation_3<Kernel>                           Triangulation;
 typedef Triangulation::Cell_handle                              Cell_handle;
 typedef Triangulation::Vertex_handle                            Vertex_handle;
 typedef Triangulation::Locate_type                              Locate_type;
+typedef CGAL::Aff_transformation_3<Kernel>                      Transformation3D;

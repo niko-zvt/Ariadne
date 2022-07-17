@@ -25,6 +25,11 @@ namespace Ariadne.Kernel
         private LocalCSys _localCSys = null;
 
         /// <summary>
+        /// Natural coordinates matrix (UV-coords)
+        /// </summary>
+        private Matrix _naturalCoordMatrix = null;
+
+        /// <summary>
         /// Protected constructor with parameters
         /// </summary>
         /// <param name="parameters">Element parameters</param>
@@ -65,10 +70,22 @@ namespace Ariadne.Kernel
         public abstract Vector3D GetUVCoordsPoint(Vector3D point);
 
         /// <summary>
-        /// Build local coordinate system of element
+        /// Build a centroid coords of current element.
         /// </summary>
-        /// <returns>Local CS of element or null</returns>
+        /// <returns>Centroid coords.</returns>
+        protected abstract Vector3D BuildElementCentroid();
+
+        /// <summary>
+        /// Build local coordinate system of element.
+        /// </summary>
+        /// <returns>Local CS of element or null.</returns>
         protected abstract LocalCSys BuildElementLCS();
+
+        /// <summary>
+        /// Build a matrix of coefficients to determine natural coordinates.
+        /// </summary>
+        /// <returns>Matrix of coefficients.</returns>
+        protected abstract Matrix BuildNaturalCoordMatrix();
 
         /// <summary>
         /// Element identifier
@@ -84,6 +101,11 @@ namespace Ariadne.Kernel
         /// Coordinates
         /// </summary>
         public Vector3D Coords { get; protected set; }
+
+        /// <summary>
+        /// Centroid coordinates
+        /// </summary>
+        public Vector3D CentroidCoords { get; protected set; }
 
         /// <summary>
         /// Identifier of the element property
@@ -132,9 +154,9 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// The method returns a reference to a set of element corner nodes
+        /// The method returns a reference to a set of element corner nodes.
         /// </summary>
-        /// <returns>Reference to a set of element corner nodes</returns>
+        /// <returns>Reference to a set of element corner nodes.</returns>
         public NodeSet GetCornerNodes()
         {
             if (_parentModel == null)
@@ -157,26 +179,39 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// The method returns a reference to the parent model of the element
+        /// The method returns a reference to the parent model of the element.
         /// </summary>
-        /// <returns>Reference to the parent model</returns>
+        /// <returns>Reference to the parent model.</returns>
         public ref object GetParentModelRef()
         {
             return ref _parentModel;
         }
 
         /// <summary>
-        /// The method returns a reference to a bounding box of element
+        /// The method returns a reference to a bounding box of element.
         /// </summary>
-        /// <returns>Reference to a bounding box of element</returns>
+        /// <returns>Reference to a bounding box of element.</returns>
         public ref BoundingBox GetBoundingBoxAsRef()
         {
             return ref _boundingBox;
         }
 
+        /// <summary>
+        /// Get local coordinate system of element as reference. 
+        /// </summary>
+        /// <returns>Reference to a local coordinate system.</returns>
         public ref LocalCSys GetElementLCSAsRef()
         {
             return ref _localCSys;
+        }
+
+        /// <summary>
+        /// Get natural coordinates matrix (for UV-coords).
+        /// </summary>
+        /// <returns>Reference to a natural coordinates matrix.</returns>
+        protected ref Matrix GetElementNaturalMatrixAsRef()
+        {
+            return ref _naturalCoordMatrix;
         }
 
         /// <summary>
@@ -198,6 +233,29 @@ namespace Ariadne.Kernel
 
             if(_boundingBox == null)
                 throw new ArgumentNullException("Bounding box of element is null");
+
+            return true;
+        }
+
+        /// <summary>
+        /// The method tries to build a centroid coords for the current element
+        /// </summary>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        private bool TryBuildCentroid()
+        {
+            if (_parentModel == null)
+                throw new ArgumentNullException("The parent model of element is null");
+
+            if (!(_parentModel is Model))
+                throw new InvalidCastException("The parent model object is not the model type");
+
+            if (NodeIDs == null || NodeIDs.Count <= 0)
+                throw new ArgumentNullException("Set of node IDs is null or empty");
+
+            CentroidCoords = BuildElementCentroid();
+
+            if (CentroidCoords == null)
+                throw new ArgumentNullException("Centroid of element is null");
 
             return true;
         }
@@ -226,6 +284,32 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
+        /// The method tries to build a natural coordinates matrix for the current element
+        /// </summary>
+        /// <returns>Returns true if the result is successful, otherwise - false</returns>
+        private bool TryBuildNaturalCoords()
+        {
+            if (_parentModel == null)
+                throw new ArgumentNullException("The parent model of element is null");
+
+            if (!(_parentModel is Model))
+                throw new InvalidCastException("The parent model object is not the model type");
+
+            if (NodeIDs == null || NodeIDs.Count <= 0)
+                throw new ArgumentNullException("Set of node IDs is null or empty");
+
+            if (_localCSys == null)
+                throw new ArgumentNullException("Local CS of element is null");
+
+            _naturalCoordMatrix = BuildNaturalCoordMatrix();
+
+            if (_naturalCoordMatrix == null)
+                throw new ArgumentNullException("Natural coordinates matrix of element is null");
+
+            return true;
+        }
+
+        /// <summary>
         /// The method updates the content of the element, binds the nodes through a specific model,
         /// which is passed by reference. This method is called when constructing a specific model 
         /// through the reflection mechanism. Be careful and call the method only in the context of 
@@ -238,8 +322,13 @@ namespace Ariadne.Kernel
             _parentModel = parentModel;
 
             var result_BBox = TryBuildBoundingBoxesToElements();
+            var result_Centroid = TryBuildCentroid();
             var result_LCS = TryBuildLCS();
-            var result = result_BBox && result_LCS;
+            var result_NaturalCoords = TryBuildNaturalCoords();
+            var result = result_BBox &&
+                         result_Centroid &&
+                         result_LCS && 
+                         result_NaturalCoords;
 
             return result;
         }

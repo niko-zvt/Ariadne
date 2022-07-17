@@ -40,7 +40,8 @@ namespace Ariadne.Kernel.Math
         {
             Null,
             Point,
-            Segment
+            Segment,
+            Line
         }
 
         /// <summary>
@@ -273,6 +274,21 @@ namespace Ariadne.Kernel.Math
         public static IntersectionType CalculateIntersectionOfTwoSegments(Vector3D A1, Vector3D A2, Vector3D B1, Vector3D B2, out List<Vector3D> intersectionPoints)
         {
             var result = LibraryImport.SelectCGAL().CGAL_GetIntersectionOfTwoSegments(A1, A2, B1, B2, out intersectionPoints);
+            return result;
+        }
+
+        /// <summary>
+        /// Calculate the intersection of two lines.
+        /// </summary>
+        /// <param name="A1">Start point of the first line</param>
+        /// <param name="A2">End point of the first line</param>
+        /// <param name="B1">Start point of the second line</param>
+        /// <param name="B2">End point of the second line</param>
+        /// <param name="intersectionPoints">List of intersection points</param>
+        /// <returns>Intersection type</returns>
+        public static IntersectionType CalculateIntersectionOfTwoLines(Vector3D A1, Vector3D A2, Vector3D B1, Vector3D B2, out List<Vector3D> intersectionPoints)
+        {
+            var result = LibraryImport.SelectCGAL().CGAL_GetIntersectionOfTwoLines(A1, A2, B1, B2, out intersectionPoints);
             return result;
         }
 

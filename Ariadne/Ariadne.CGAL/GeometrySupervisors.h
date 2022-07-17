@@ -30,7 +30,7 @@
 ///  - OUTSIDE_CONVEX_HULL - if the point lies at the outside convex hull.<br/>
 ///  - OUTSIDE_AFFINE_HULL - if the point lies at the outside affine hull.<br/>
 /// </returns>
-extern "C" int32_t ARIADNE_CGAL_API __stdcall IsPointBelongToGrid(AriadnePoint3D point, AriadnePoint3D * elementPoints, int size, Notification notification);
+extern "C" int32_t ARIADNE_CGAL_API __stdcall IsPointBelongToGrid(AriadneVector3D point, AriadneVector3D * elementPoints, int size, Notification notification);
 
 /// <summary>
 /// The method determines the intersection of two segments defined by the start and end points.
@@ -47,4 +47,21 @@ extern "C" int32_t ARIADNE_CGAL_API __stdcall IsPointBelongToGrid(AriadnePoint3D
 ///  - POINT   - if the intersection is a point.<br/>
 ///  - SEGMENT - if the intersection is a segment.<br/>
 /// </returns>
-extern "C" int32_t ARIADNE_CGAL_API __stdcall SegmentsIntersection(AriadnePoint3D a1, AriadnePoint3D a2, AriadnePoint3D b1, AriadnePoint3D b2, Notification notification);
+extern "C" int32_t ARIADNE_CGAL_API __stdcall SegmentsIntersection(AriadneVector3D a1, AriadneVector3D a2, AriadneVector3D b1, AriadneVector3D b2, Notification notification);
+
+/// <summary>
+/// The method determines the intersection of two lines defined by the start and end points.
+/// </summary>
+/// <param name="A1">Start point of first line.</param>
+/// <param name="A2">End point of first line.</param>
+/// <param name="B1">Start point of second line.</param>
+/// <param name="B2">End point of second line.</param>
+/// <param name="notification">Intersection type as JSON string.</param>
+/// <returns>
+/// <para> - true in the case, when the result is valid.</para>
+/// JSON contain:<br/>
+///  - NULL    - if there are no intersection points.<br/>
+///  - POINT   - if the intersection is a point.<br/>
+///  - LINE	   - if the intersection is a line.<br/>
+/// </returns>
+extern "C" int32_t ARIADNE_CGAL_API __stdcall LinesIntersection(AriadneVector3D a1, AriadneVector3D a2, AriadneVector3D b1, AriadneVector3D b2, Notification notification);

@@ -71,6 +71,16 @@ namespace Ariadne.Kernel.Math
         }
 
         /// <summary>
+        /// Forms the vector {Value, Value, Value}
+        /// </summary>
+        /// <param name="value">Value</param>
+        public Vector3D(float value)
+        {
+            float[] values = { value, value, value };
+            _vectorData = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(values);
+        }
+
+        /// <summary>
         /// Constructor by float values {X, Y, Z}
         /// </summary>
         /// <param name="x">X</param>

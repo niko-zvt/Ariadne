@@ -87,6 +87,25 @@ namespace Ariadne.Kernel
         {
             throw new System.NotImplementedException();
         }
+
+        /// <summary>
+        /// Build a matrix of coefficients to determine natural coordinates
+        /// </summary>
+        /// <returns>Matrix of coefficients</returns>
+        protected override Matrix BuildNaturalCoordMatrix()
+        {
+            //throw new System.NotImplementedException();
+            return new Matrix3x3();
+        }
+
+        /// <summary>
+        /// Build a centroid coords of current element.
+        /// </summary>
+        /// <returns>Centroid coords.</returns>
+        protected override Vector3D BuildElementCentroid()
+        {
+            return Coords;
+        }
     }
 
     /// <summary>

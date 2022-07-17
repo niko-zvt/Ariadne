@@ -61,7 +61,7 @@ namespace Ariadne.Kernel.Libs
         /// <param name="A2">End point of first segment.</param>
         /// <param name="B1">Start point of second segment.</param>
         /// <param name="B2">End point of second segment.</param>
-        /// <param name="intersectionPoints">List of ntersection points.</param>
+        /// <param name="intersectionPoints">List of intersection points.</param>
         /// <returns>
         /// Intersection type:<br/>
         ///  - Null    - if there are no intersection points.<br/>
@@ -69,5 +69,32 @@ namespace Ariadne.Kernel.Libs
         ///  - Segment - if the intersection is a segment.<br/>
         /// </returns>
         public Utils.IntersectionType CGAL_GetIntersectionOfTwoSegments(Vector3D A1, Vector3D A2, Vector3D B1, Vector3D B2, out List<Vector3D> intersectionPoints);
+
+        /// <summary>
+        /// The method determines the intersection of two lines defined by the start and end points.
+        /// </summary>
+        /// <param name="A1">Start point of first line.</param>
+        /// <param name="A2">End point of first line.</param>
+        /// <param name="B1">Start point of second line.</param>
+        /// <param name="B2">End point of second line.</param>
+        /// <param name="intersectionPoints">List of intersection points.</param>
+        /// <returns>
+        /// Intersection type:<br/>
+        ///  - Null    - if there are no intersection points.<br/>
+        ///  - Point   - if the intersection is a point.<br/>
+        ///  - Line    - if the intersection is a line.<br/>
+        /// </returns>
+        public Utils.IntersectionType CGAL_GetIntersectionOfTwoLines(Vector3D A1, Vector3D A2, Vector3D B1, Vector3D B2, out List<Vector3D> intersectionPoints);
+
+        /// <summary>
+        /// The method calculate affine transformation of point (Source To Target CS)
+        /// </summary>
+        /// <param name="point">Point</param>
+        /// <param name="sourceCS">Source coordinate system</param>
+        /// <param name="targetCS">Target coordinate system</param>
+        /// <returns>
+        /// - true in the case, when the result is valid.
+        /// </returns>
+        public bool CGAL_TransformPoint(Vector3D point, CoordinateSystem sourceCS, CoordinateSystem targetCS, out Vector3D transformPoint);
     }
 }

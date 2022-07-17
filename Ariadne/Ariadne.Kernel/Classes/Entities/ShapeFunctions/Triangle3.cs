@@ -20,6 +20,7 @@ namespace Ariadne.Kernel
             _localFunctors.Add(new Functor(LocalN1));
             _localFunctors.Add(new Functor(LocalN2));
             _localFunctors.Add(new Functor(LocalN3));
+            _globalFunctor = null;
         }
 
         /// <summary>

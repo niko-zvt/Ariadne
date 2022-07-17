@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "OOBB.h"
 
-int32_t __stdcall GetOptimalOrientedBoundingBox(AriadnePoint3D* points, int size, Notification notification)
+int32_t __stdcall GetOptimalOrientedBoundingBox(AriadneVector3D* points, int size, Notification notification)
 {
     try
     {

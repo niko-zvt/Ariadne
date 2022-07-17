@@ -3,7 +3,7 @@
 #include "GeometrySupervisors.h"
 #include <CGAL/Side_of_triangle_mesh.h>
 
-int32_t __stdcall IsPointBelongToGrid(AriadnePoint3D point, AriadnePoint3D* elementPoints, int size, Notification notification)
+int32_t __stdcall IsPointBelongToGrid(AriadneVector3D point, AriadneVector3D* elementPoints, int size, Notification notification)
 {
     try 
     {
@@ -68,7 +68,7 @@ int32_t __stdcall IsPointBelongToGrid(AriadnePoint3D point, AriadnePoint3D* elem
     return 1;
 }
 
-int32_t __stdcall SegmentsIntersection(AriadnePoint3D a1, AriadnePoint3D a2, AriadnePoint3D b1, AriadnePoint3D b2, Notification notification)
+int32_t __stdcall SegmentsIntersection(AriadneVector3D a1, AriadneVector3D a2, AriadneVector3D b1, AriadneVector3D b2, Notification notification)
 {
     try
     {
@@ -108,6 +108,80 @@ int32_t __stdcall SegmentsIntersection(AriadnePoint3D a1, AriadnePoint3D a2, Ari
                 x = s->end().x();
                 y = s->end().y();
                 z = s->end().z();
+                length = std::sqrt(x * x + y * y + z * z);
+                str += "{\"Length\":" + std::to_string(length) +
+                    ",\"X\":" + std::to_string(x) +
+                    ",\"Y\":" + std::to_string(y) +
+                    ",\"Z\":" + std::to_string(z) + "}\n";
+            }
+
+            // IF POINT
+            const Kernel::Point_3* p = boost::get<Kernel::Point_3>(&*result);
+            if (p)
+            {
+                str = "{\"IntersectionType\":\"POINT\"}\n";
+                x = p->x();
+                y = p->y();
+                z = p->z();
+                length = std::sqrt(x * x + y * y + z * z);
+                str += "{\"Length\":" + std::to_string(length) +
+                    ",\"X\":" + std::to_string(x) +
+                    ",\"Y\":" + std::to_string(y) +
+                    ",\"Z\":" + std::to_string(z) + "}\n";
+            }
+        }
+
+        // 5. Export result
+        notification(str.c_str());
+        return 0;
+    }
+    catch (const std::exception& ex)
+    {
+        auto wt = ex.what();
+    }
+    return 1;
+}
+
+int32_t __stdcall LinesIntersection(AriadneVector3D a1, AriadneVector3D a2, AriadneVector3D b1, AriadneVector3D b2, Notification notification)
+{
+    try
+    {
+        // 1. Create target point
+        std::string str = "{\"IntersectionType\":\"NULL\"}\n";
+
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        double length = 0.0;
+
+        // 2. Create segments
+        auto line1 = Line3D((Point3D(a1.x, a1.y, a1.z)), (Point3D(a2.x, a2.y, a2.z)));
+        auto line2 = Line3D((Point3D(b1.x, b1.y, b1.z)), (Point3D(b2.x, b2.y, b2.z)));
+
+        // 3. Intersect segments
+        auto result = CGAL::intersection(line1, line2);
+
+        // 4. Build result
+        if (result)
+        {
+            // IF LINE
+            const Kernel::Line_3* l = boost::get<Kernel::Line_3>(&*result);
+            if (l)
+            {
+                // Line point
+                str = "{\"IntersectionType\":\"LINE\"}\n";
+                x = l->point().x();
+                y = l->point().y();
+                z = l->point().z();
+                length = std::sqrt(x * x + y * y + z * z);
+                str += "{\"Length\":" + std::to_string(length) +
+                    ",\"X\":" + std::to_string(x) +
+                    ",\"Y\":" + std::to_string(y) +
+                    ",\"Z\":" + std::to_string(z) + "}\n";
+                // Line direction
+                x = l->direction().dx();
+                y = l->direction().dy();
+                z = l->direction().dz();
                 length = std::sqrt(x * x + y * y + z * z);
                 str += "{\"Length\":" + std::to_string(length) +
                     ",\"X\":" + std::to_string(x) +

@@ -6,13 +6,27 @@ namespace Ariadne.Kernel.CGAL
     /// CGAL Point3D
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct CGAL_Point
+    public struct CGAL_Vector3D
     {
         public float X, Y, Z;
 
-        public CGAL_Point(float x, float y, float z)
+        public CGAL_Vector3D(float x, float y, float z)
         {
             X = x; Y = y; Z = z;
+        }
+    }
+
+    /// <summary>
+    /// CGAL LCS
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CGAL_LCS
+    {
+        public CGAL_Vector3D O, X, Y, Z;
+
+        public CGAL_LCS(CGAL_Vector3D o, CGAL_Vector3D x, CGAL_Vector3D y, CGAL_Vector3D z)
+        {
+            O = o; X = x; Y = y; Z = z;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Ariadne.Kernel.CGAL
         /// - true in the case, when the result is valid
         /// </returns>
         [DllImport("Ariadne.CGAL.x64", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "GetOptimalOrientedBoundingBox")]
-        private static extern int GetOptimalOrientedBoundingBox([In] CGAL_Point[] points, [In] int size, Notification notification);
+        private static extern int GetOptimalOrientedBoundingBox([In] CGAL_Vector3D[] points, [In] int size, Notification notification);
 
         /// <summary>
         /// Get axis-aligned bounding box
@@ -36,7 +36,7 @@ namespace Ariadne.Kernel.CGAL
         /// - true in the case, when the result is valid
         /// </returns>
         [DllImport("Ariadne.CGAL.x64", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "GetAxisAlignedBoundingBox")]
-        private static extern int GetAxisAlignedBoundingBox([In] CGAL_Point[] points, [In] int size, Notification notification);
+        private static extern int GetAxisAlignedBoundingBox([In] CGAL_Vector3D[] points, [In] int size, Notification notification);
 
         /// <summary>
         /// The method determines whether a point belongs to a grid created on the basis of a point cloud.
@@ -56,7 +56,7 @@ namespace Ariadne.Kernel.CGAL
         ///  - OUTSIDE_AFFINE_HULL - if the point lies at the outside affine hull.<br/>
         /// </returns>
         [DllImport("Ariadne.CGAL.x64", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "IsPointBelongToGrid")]
-        private static extern int IsPointBelongToGrid([In] CGAL_Point point, [In] CGAL_Point[] meshPoints, [In] int size, Notification notification);
+        private static extern int IsPointBelongToGrid([In] CGAL_Vector3D point, [In] CGAL_Vector3D[] meshPoints, [In] int size, Notification notification);
 
         /// <summary>
         /// The method determines the intersection of two segments defined by the start and end points.
@@ -74,7 +74,28 @@ namespace Ariadne.Kernel.CGAL
         ///  - SEGMENT - if the intersection is a segment.<br/>
         /// </returns>
         [DllImport("Ariadne.CGAL.x64", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "SegmentsIntersection")]
-        private static extern int SegmentsIntersection([In] CGAL_Point A1, [In] CGAL_Point A2, [In] CGAL_Point B1, [In] CGAL_Point B2, Notification notification);
+        private static extern int SegmentsIntersection([In] CGAL_Vector3D A1, [In] CGAL_Vector3D A2, [In] CGAL_Vector3D B1, [In] CGAL_Vector3D B2, Notification notification);
+
+        /// <summary>
+        /// The method determines the intersection of two lines defined by the start and end points.
+        /// </summary>
+        /// <param name="A1">Start point of first line.</param>
+        /// <param name="A2">End point of first line.</param>
+        /// <param name="B1">Start point of second line.</param>
+        /// <param name="B2">End point of second line.</param>
+        /// <param name="notification">Intersection type as JSON string.</param>
+        /// <returns>
+        /// <para> - true in the case, when the result is valid.</para>
+        /// JSON contain:<br/>
+        ///  - NULL    - if there are no intersection points.<br/>
+        ///  - POINT   - if the intersection is a point.<br/>
+        ///  - LINE    - if the intersection is a line.<br/>
+        /// </returns>
+        [DllImport("Ariadne.CGAL.x64", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "LinesIntersection")]
+        private static extern int LinesIntersection([In] CGAL_Vector3D A1, [In] CGAL_Vector3D A2, [In] CGAL_Vector3D B1, [In] CGAL_Vector3D B2, Notification notification);
+
+        [DllImport("Ariadne.CGAL.x64", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "TransformPoint")]
+        private static extern int TransformPoint([In] CGAL_Vector3D point, [In] CGAL_LCS sourceCS, [In] CGAL_LCS targetCS, Notification notification);
 
         #endregion
 
@@ -91,11 +112,11 @@ namespace Ariadne.Kernel.CGAL
         public bool CGAL_GetOOBB(List<Vector3D> points, out OOBoundingBox oobb)
         {
             int countOfPoints = points.Count;
-            CGAL.CGAL_Point[] cgalPoints = new CGAL.CGAL_Point[countOfPoints];
+            CGAL.CGAL_Vector3D[] cgalPoints = new CGAL.CGAL_Vector3D[countOfPoints];
             int index = 0;
             foreach (var point in points)
             {
-                cgalPoints[index] = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
+                cgalPoints[index] = new CGAL.CGAL_Vector3D(point.X, point.Y, point.Z);
                 index++;
             }
 
@@ -147,11 +168,11 @@ namespace Ariadne.Kernel.CGAL
         public bool CGAL_GetAABB(List<Vector3D> points, out AABoundingBox aabb)
         {
 
-            CGAL.CGAL_Point[] cgalPoints = new CGAL.CGAL_Point[points.Count];
+            CGAL.CGAL_Vector3D[] cgalPoints = new CGAL.CGAL_Vector3D[points.Count];
             int index = 0;
             foreach (var point in points)
             {
-                cgalPoints[index] = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
+                cgalPoints[index] = new CGAL.CGAL_Vector3D(point.X, point.Y, point.Z);
                 index++;
             }
 
@@ -199,14 +220,14 @@ namespace Ariadne.Kernel.CGAL
         /// </returns>
         public Utils.LocationType CGAL_IsBelongToGrid(Vector3D point, List<Vector3D> pointCloudOfGrid)
         {
-            CGAL.CGAL_Point targetPoint = new CGAL.CGAL_Point(point.X, point.Y, point.Z);
+            CGAL.CGAL_Vector3D targetPoint = new CGAL.CGAL_Vector3D(point.X, point.Y, point.Z);
             int countOfPoints = pointCloudOfGrid.Count;
-            CGAL.CGAL_Point[] meshPoints = new CGAL.CGAL_Point[countOfPoints];
+            CGAL.CGAL_Vector3D[] meshPoints = new CGAL.CGAL_Vector3D[countOfPoints];
             
             int index = 0;
             foreach (var currentPoint in pointCloudOfGrid)
             {
-                meshPoints[index] = new CGAL.CGAL_Point(currentPoint.X, currentPoint.Y, currentPoint.Z);
+                meshPoints[index] = new CGAL.CGAL_Vector3D(currentPoint.X, currentPoint.Y, currentPoint.Z);
                 index++;
             }
 
@@ -253,7 +274,7 @@ namespace Ariadne.Kernel.CGAL
         /// <param name="A2">End point of first segment.</param>
         /// <param name="B1">Start point of second segment.</param>
         /// <param name="B2">End point of second segment.</param>
-        /// <param name="intersectionPoints">List of ntersection points.</param>
+        /// <param name="intersectionPoints">List of intersection points.</param>
         /// <returns>
         /// Intersection type:<br/>
         ///  - Null    - if there are no intersection points.<br/>
@@ -263,10 +284,10 @@ namespace Ariadne.Kernel.CGAL
         public Utils.IntersectionType CGAL_GetIntersectionOfTwoSegments(Vector3D A1, Vector3D A2, Vector3D B1, Vector3D B2, out List<Vector3D> intersectionPoints)
         {
             // 1. Run CGAL
-            CGAL_Point A_start = new CGAL_Point(A1.X, A1.Y, A1.Z);
-            CGAL_Point A_end = new CGAL_Point(A2.X, A2.Y, A2.Z);
-            CGAL_Point B_start = new CGAL_Point(B1.X, B1.Y, B1.Z);
-            CGAL_Point B_end = new CGAL_Point(B2.X, B2.Y, B2.Z);
+            CGAL_Vector3D A_start = new CGAL_Vector3D(A1.X, A1.Y, A1.Z);
+            CGAL_Vector3D A_end = new CGAL_Vector3D(A2.X, A2.Y, A2.Z);
+            CGAL_Vector3D B_start = new CGAL_Vector3D(B1.X, B1.Y, B1.Z);
+            CGAL_Vector3D B_end = new CGAL_Vector3D(B2.X, B2.Y, B2.Z);
 
             var jsonString = string.Empty;
             int result = SegmentsIntersection(A_start, A_end, B_start, B_end, str => { jsonString = str; });
@@ -310,6 +331,120 @@ namespace Ariadne.Kernel.CGAL
             }
             return type;
         }
+
+        /// <summary>
+        /// The method determines the intersection of two lines defined by the start and end points.
+        /// </summary>
+        /// <param name="A1">Start point of first line.</param>
+        /// <param name="A2">End point of first line.</param>
+        /// <param name="B1">Start point of second line.</param>
+        /// <param name="B2">End point of second line.</param>
+        /// <param name="intersectionPoints">List of intersection points.</param>
+        /// <returns>
+        /// Intersection type:<br/>
+        ///  - Null    - if there are no intersection points.<br/>
+        ///  - Point   - if the intersection is a point.<br/>
+        ///  - Line - if the intersection is a line.<br/>
+        /// </returns>
+        public Utils.IntersectionType CGAL_GetIntersectionOfTwoLines(Vector3D A1, Vector3D A2, Vector3D B1, Vector3D B2, out List<Vector3D> intersectionPoints)
+        {
+            // 1. Run CGAL
+            CGAL_Vector3D A_start = new CGAL_Vector3D(A1.X, A1.Y, A1.Z);
+            CGAL_Vector3D A_end = new CGAL_Vector3D(A2.X, A2.Y, A2.Z);
+            CGAL_Vector3D B_start = new CGAL_Vector3D(B1.X, B1.Y, B1.Z);
+            CGAL_Vector3D B_end = new CGAL_Vector3D(B2.X, B2.Y, B2.Z);
+
+            var jsonString = string.Empty;
+            int result = LinesIntersection(A_start, A_end, B_start, B_end, str => { jsonString = str; });
+
+            if (result == 1 || string.IsNullOrEmpty(jsonString))
+                throw new System.Exception("CGAL lib is fail!");
+
+            // 2. Deserialize JSON points from C++ lib
+            var type = Utils.IntersectionType.Null;
+            string[] jsonStrings = jsonString.Split('\n');
+            intersectionPoints = new List<Vector3D>();
+            foreach (var str in jsonStrings)
+            {
+                if (string.IsNullOrEmpty(str) == true)
+                    continue;
+
+                if (str.Contains("IntersectionType"))
+                {
+                    if (str.Contains("NULL"))
+                    {
+                        type = Utils.IntersectionType.Null;
+                    }
+                    else if (str.Contains("POINT"))
+                    {
+                        type = Utils.IntersectionType.Point;
+                    }
+                    else if (str.Contains("LINE"))
+                    {
+                        type = Utils.IntersectionType.Line;
+                    }
+                    else
+                    {
+                        throw new System.FormatException("Intersection type is invalid!");
+                    }
+                    continue;
+                }
+                else
+                {
+                    intersectionPoints.Add(JsonSerializer.Deserialize<Vector3D>(str));
+                }
+            }
+            return type;
+        }
+
+        /// <summary>
+        /// The method transform point from source coordinate system to target coordinate system.
+        /// </summary>
+        /// <param name="point">Point.</param>
+        /// <param name="sourceCS">Source coordinate system.</param>
+        /// <param name="targetCS">Target coordinate system.</param>
+        /// <returns>
+        /// - true in the case, when the result is valid.
+        /// </returns>
+        public bool CGAL_TransformPoint(Vector3D point, CoordinateSystem sourceCS, CoordinateSystem targetCS, out Vector3D transformPoint)
+        {
+            // 1. Run CGAL
+            CGAL_Vector3D P = new CGAL_Vector3D(point.X, point.Y, point.Z);
+            CGAL_LCS source = new CGAL_LCS(new CGAL_Vector3D(sourceCS.Origin.X , sourceCS.Origin.Y, sourceCS.Origin.Z),
+                                           new CGAL_Vector3D(sourceCS.XAxis.X, sourceCS.XAxis.Y, sourceCS.XAxis.Z),
+                                           new CGAL_Vector3D(sourceCS.YAxis.X, sourceCS.YAxis.Y, sourceCS.YAxis.Z),
+                                           new CGAL_Vector3D(sourceCS.ZAxis.X, sourceCS.ZAxis.Y, sourceCS.ZAxis.Z));
+            CGAL_LCS target = new CGAL_LCS(new CGAL_Vector3D(targetCS.Origin.X, targetCS.Origin.Y, targetCS.Origin.Z),
+                                           new CGAL_Vector3D(targetCS.XAxis.X, targetCS.XAxis.Y, targetCS.XAxis.Z),
+                                           new CGAL_Vector3D(targetCS.YAxis.X, targetCS.YAxis.Y, targetCS.YAxis.Z),
+                                           new CGAL_Vector3D(targetCS.ZAxis.X, targetCS.ZAxis.Y, targetCS.ZAxis.Z));
+
+
+            var jsonString = string.Empty;
+            int result = TransformPoint(P, source, target, str => { jsonString = str; });
+
+            if (result == 1 || string.IsNullOrEmpty(jsonString))
+                throw new System.Exception("CGAL lib is fail!");
+
+            // 2. Deserialize JSON points from C++ lib
+            var type = Utils.IntersectionType.Null;
+            string[] jsonStrings = jsonString.Split('\n');
+            transformPoint = null;
+            foreach (var str in jsonStrings)
+            {
+                if (string.IsNullOrEmpty(str) == true)
+                    continue;
+
+                transformPoint = JsonSerializer.Deserialize<Vector3D>(str);
+            }
+            
+            if (transformPoint == null)
+                return false;
+
+            return true;
+        }
+
+
 
         #endregion
     }

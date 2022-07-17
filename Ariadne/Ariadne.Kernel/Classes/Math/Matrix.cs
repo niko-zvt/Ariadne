@@ -571,6 +571,45 @@ namespace Ariadne.Kernel.Math
             return new VectorND(x.ToArray());
         }
 
+        public Vector3D MultyPly(Vector3D vector)
+        {
+            var b = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(vector.ToArray());
+            
+            var x = _values.Multiply(b);
+            
+            return new Vector3D(x.ToArray());
+        }
+
+        public List<Vector3D> MultyPly(List<Vector3D> vectors)
+        {
+            var xValues = new float[vectors.Count];
+            var yValues = new float[vectors.Count];
+            var zValues = new float[vectors.Count];
+
+            for(int i = 0; i < vectors.Count; i++)
+            {
+                xValues[i] = vectors[i].X;
+                yValues[i] = vectors[i].Y;
+                zValues[i] = vectors[i].Z;
+            }
+
+            var x = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(xValues);
+            var y = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(yValues);
+            var z = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(zValues);
+
+            x = _values.Multiply(x);
+            y = _values.Multiply(y);
+            z = _values.Multiply(z);
+
+            var resultVectors = new List<Vector3D>();
+            for (int i = 0; i < vectors.Count; i++)
+            {
+                resultVectors.Add(new Vector3D(x[i], y[i], z[i]));
+            }
+
+            return resultVectors;
+        }
+
         /// <summary>
         /// Raises this square matrix to a positive integer exponent and places the result into the result matrix
         /// </summary>
@@ -635,6 +674,18 @@ namespace Ariadne.Kernel.Math
         public override string ToString()
         {
             return GetMatrixType().ToString();
+        }
+
+        public static MatrixNxM ConvertToMatrix(List<Vector3D> vectors)
+        {
+            var m = new float[vectors.Count, 3];
+            for(int i = 0; i < vectors.Count; i++)
+            {
+                m[i, 0] = vectors[i].X;
+                m[i, 1] = vectors[i].Y;
+                m[i, 2] = vectors[i].Z;
+            }
+            return new MatrixNxM(m);
         }
 
         /// <summary>

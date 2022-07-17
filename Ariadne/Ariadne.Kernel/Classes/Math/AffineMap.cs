@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ariadne.Kernel.Libs;
+using System;
 
 namespace Ariadne.Kernel.Math
 {
@@ -97,6 +98,12 @@ namespace Ariadne.Kernel.Math
             _I = 1.0f;
         }
 
+        public AffineMap3D(Matrix3x3 R, Vector3D T, Vector3D S, float I) : this(R, T)
+        {
+            _S = S;
+            _I = I;
+        }
+
         /// <summary>
         /// Constructor by coordinate systems
         /// </summary>
@@ -104,9 +111,11 @@ namespace Ariadne.Kernel.Math
         /// <param name="targetCS">Target CSys</param>
         public AffineMap3D(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
-            _T = sourceCS.Origin - targetCS.Origin;
             throw new System.NotImplementedException();
-            // TODO: _M = Calculate M 
+            
+            // TODO: CGAL Calculate
+            // _T = sourceCS.Origin - targetCS.Origin;
+            // _M = Calculate M 
             //_S = new Vector3D();
             //_I = 1.0f;
         }
@@ -155,6 +164,7 @@ namespace Ariadne.Kernel.Math
         {
             throw new NotImplementedException();
 
+            // CGAL
             //if (affineMap is AffineMap3D)
             //{
             //    var anotherMap = affineMap as AffineMap3D;
@@ -181,31 +191,12 @@ namespace Ariadne.Kernel.Math
 
         public static Vector3D TransformPoint(Vector3D point, CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
-            var pX = point.X;
-            var pY = point.Y;
-            var pZ = point.Z;
+            var result = LibraryImport.SelectCGAL().CGAL_TransformPoint(point, sourceCS, targetCS, out var transformPoint);
 
-            var m1 = new HValue[,] { { (HValue)new Vector3D(), (HValue)targetCS.XAxis,   (HValue)targetCS.YAxis,   (HValue)targetCS.ZAxis   },
-                                     { (HValue)pX,             (HValue)sourceCS.XAxis.X, (HValue)sourceCS.YAxis.X, (HValue)sourceCS.ZAxis.X },
-                                     { (HValue)pY,             (HValue)sourceCS.XAxis.Y, (HValue)sourceCS.YAxis.Y, (HValue)sourceCS.ZAxis.Y },
-                                     { (HValue)pZ,             (HValue)sourceCS.XAxis.Z, (HValue)sourceCS.YAxis.Z, (HValue)sourceCS.ZAxis.Z }  };
-
-            var m2 = new HValue[,] { { (HValue)sourceCS.XAxis.X, (HValue)sourceCS.YAxis.X, (HValue)sourceCS.ZAxis.X },
-                                     { (HValue)sourceCS.XAxis.Y, (HValue)sourceCS.YAxis.Y, (HValue)sourceCS.ZAxis.Y },
-                                     { (HValue)sourceCS.XAxis.Z, (HValue)sourceCS.YAxis.Z, (HValue)sourceCS.ZAxis.Z }  };
-
-            var firstD  = Utils.CalculateDeterminant(m1);
-            var secondD = Utils.CalculateDeterminant(m2);
-
-            var vec = -1 * (firstD / secondD);
-
-            if (vec.IsVector == false)
-                throw new System.ArithmeticException();
-
-            if (vec.Vector.Size != 3)
-                throw new System.IndexOutOfRangeException();
-
-            return new Vector3D(vec.Vector.GetValueAt(0), vec.Vector.GetValueAt(1), vec.Vector.GetValueAt(2));
+            if (result == false)
+                return new Vector3D(float.NaN);
+            else
+                return transformPoint;
         }
 
         /// <summary>
@@ -240,7 +231,7 @@ namespace Ariadne.Kernel.Math
             var value = Utils.CalculateDeterminant(matrix);
 
             if (value.IsVector == true)
-                return 0.0f;
+                return float.NaN;
 
             return value.Float;
         }

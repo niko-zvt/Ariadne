@@ -14,12 +14,13 @@
 #include "Ariadne.h"
 
 /// <summary>
-/// Get optimal oriented bounding box
+/// Transform point
 /// </summary>
-/// <param name="points">Point cloud</param>
-/// <param name="size">Size of point cloud</param>
-/// <param name="notification">Optimal oriented bounding box as JSON string</param>
+/// <param name="point">Point</param>
+/// <param name="source">Source CS</param>
+/// <param name="target">Target CS</param>
+/// <param name="notification">Transform point as JSON string</param>
 /// <returns>
 /// - true in the case, when the result is valid
 /// </returns>
-extern "C" int32_t ARIADNE_CGAL_API __stdcall GetOptimalOrientedBoundingBox(AriadneVector3D* points, int size, Notification notification);
+extern "C" int32_t ARIADNE_CGAL_API __stdcall TransformPoint(AriadneVector3D point, AriadneLCS source, AriadneLCS target, Notification notification);

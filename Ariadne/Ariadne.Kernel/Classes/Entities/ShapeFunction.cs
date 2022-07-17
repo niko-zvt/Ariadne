@@ -6,12 +6,16 @@ namespace Ariadne.Kernel
 {
     public delegate float Functor(float u, float v, float w);
 
+    public delegate Vector3D GlobalFunctor(Vector3D point, MatrixNxM coeffs);
+
     /// <summary>
     /// Abstract class of the shape functions
     /// </summary>
     public abstract class ShapeFunction
     {
         protected List<Functor> _localFunctors = new List<Functor>();
+
+        protected GlobalFunctor _globalFunctor = null;
 
         /// <summary>
         /// Dimension of shape function
@@ -39,6 +43,14 @@ namespace Ariadne.Kernel
                 matrixes.Add(i, matix);
             }
             return matrixes;
+        }
+
+        public Vector3D CalculateShape(Vector3D coords, MatrixNxM coeffs)
+        {
+            if (_globalFunctor != null)
+                return _globalFunctor(coords, coeffs);
+
+            return new Vector3D(float.NaN, float.NaN, float.NaN);
         }
 
         /// <summary>
