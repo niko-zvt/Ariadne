@@ -46,7 +46,7 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="point">Target point.</param>
         /// <returns>UV-coords or NULL.</returns>
-        public override Vector3D GetUVCoordsPoint(Vector3D point)
+        public override Vector3D GetUVCoordsByPoint(Vector3D point)
         {
             // 1. Check point
             if (IsPointBelong(point) != true)
@@ -60,6 +60,8 @@ namespace Ariadne.Kernel
 
             // 4. Calculate UV-coords
             var uv = ShapeFunction.CalculateUV(localPoint, GetNodes());
+
+            var test = ShapeFunction.CalculateXYZ(uv, GetNodes());
 
             if (uv == null)
                 throw new System.ArgumentNullException("Natural coords is null!");
@@ -107,87 +109,6 @@ namespace Ariadne.Kernel
                 return false;
 
             return true;
-        }
-
-        /// <summary>
-        /// Build a matrix of coefficients to determine natural coordinates
-        /// </summary>
-        /// <returns>Matrix of coefficients</returns>
-        protected override Matrix BuildNaturalCoordMatrix()
-        {
-            //
-            // See INFO_NATURAL_COORDS.md and        
-            //
-            // Sulaiman Y. Abo Diab, "Complete Pascal Interpolation Scheme
-            // For Approximating The Geometry Of A Quadrilateral Element"
-            // DOI: https://doi.org/10.48550/arXiv.1709.04765
-            //
-
-            // 1. Local and Global CS's
-            var LCS = GetElementLCSAsRef();
-            var GCS = GlobalCSys.Instance;
-            var globalToLocalMap = LCS.GetMapToLocalCS();
-
-            // 2. Get nodes, centroid and origin point
-            var corners = GetCornerNodes();
-            var localN1 = globalToLocalMap.TransformPoint(corners.GetByIndex(0).Coords);
-            var localN2 = globalToLocalMap.TransformPoint(corners.GetByIndex(1).Coords);
-            var localN3 = globalToLocalMap.TransformPoint(corners.GetByIndex(2).Coords);
-            var localN4 = globalToLocalMap.TransformPoint(corners.GetByIndex(3).Coords);
-            var localOrigin = globalToLocalMap.TransformPoint(Coords);
-            var localCentroid = globalToLocalMap.TransformPoint(CentroidCoords);
-
-            // 3. Calculate P5 and P6 points
-            Vector3D P5 = null;
-            Vector3D P6 = null;
-            if (Utils.CalculateIntersectionOfTwoLines(localN1, localN2, localN4, localN3, out var firstPoint) == Utils.IntersectionType.Point)
-                P5 = firstPoint[0];
-            if (Utils.CalculateIntersectionOfTwoLines(localN2, localN3, localN1, localN4, out var secondPoint) == Utils.IntersectionType.Point)
-                P6 = secondPoint[0];
-
-            if (P5 == null || P6 == null)
-                throw new System.ArgumentException("CQUAD4 is a cquare!");
-
-            // 4. Calculate mid-points
-            var RG = localOrigin;
-            var R7 = (localN1 + localN2) / 2;
-            var R8 = (localN2 + localN3) / 2;
-            var R9 = (localN3 + localN4) / 2;
-            var R10 = (localN4 + localN1) / 2;
-
-            // 5. Construct a matrix of natural coordinates of nodes
-            var t1_1 = (P5 - RG).Length / (R8 - RG).Length;
-            var t1_2 = -1 * ((P5 - RG).Length / (R10 - RG).Length);
-
-            var t2_1 = (P6 - RG).Length / (R9 - RG).Length;
-            var t2_2 = -1 * ((P6 - RG).Length / (R7 - RG).Length);
-
-            float t1 = t1_1;
-            float t2 = t2_1;
-
-            var A = new MatrixNxM(new float[,] { {  1, -1, -1,   1,    1,   1   },
-                                                 {  1,  1, -1,   1,   -1,   1   },
-                                                 {  1,  1,  1,   1,    1,   1   },
-                                                 {  1, -1,  1,   1,   -1,   1   },
-                                                 {  1, t1,  0, t1*t1,  0,   0   },
-                                                 {  1,  0, t2,   0,    0, t2*t2 }  });
-
-            var detA = A.Determinant();
-            if(detA <= 0.0f)
-                throw new System.ArgumentException("det(A) < 0!");
-
-            var B = A.Inverse() as MatrixNxM;
-
-            var coordsNodes = new List<Vector3D>() { localN1,
-                                                     localN2,
-                                                     localN3,
-                                                     localN4,
-                                                     P5,
-                                                     P6 };
-            
-            var a = MatrixNxM.ConvertToMatrix(B.MultyPly(coordsNodes));
-
-            return a;
         }
 
         /// <summary>

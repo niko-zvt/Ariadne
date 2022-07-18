@@ -62,7 +62,7 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="point">Target point.</param>
         /// <returns>UV-coords or NULL.</returns>
-        public abstract Vector3D GetUVCoordsPoint(Vector3D point);
+        public abstract Vector3D GetUVCoordsByPoint(Vector3D point);
 
         /// <summary>
         /// Build a centroid coords of current element.
@@ -75,12 +75,6 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <returns>Local CS of element or null.</returns>
         protected abstract LocalCSys BuildElementLCS();
-
-        /// <summary>
-        /// Build a matrix of coefficients to determine natural coordinates.
-        /// </summary>
-        /// <returns>Matrix of coefficients.</returns>
-        protected abstract Matrix BuildNaturalCoordMatrix();
 
         /// <summary>
         /// Element identifier

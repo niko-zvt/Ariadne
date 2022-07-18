@@ -83,19 +83,9 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="point">Target point.</param>
         /// <returns>UV-coords or NULL.</returns>
-        public override Vector3D GetUVCoordsPoint(Vector3D point)
+        public override Vector3D GetUVCoordsByPoint(Vector3D point)
         {
             throw new System.NotImplementedException();
-        }
-
-        /// <summary>
-        /// Build a matrix of coefficients to determine natural coordinates
-        /// </summary>
-        /// <returns>Matrix of coefficients</returns>
-        protected override Matrix BuildNaturalCoordMatrix()
-        {
-            //throw new System.NotImplementedException();
-            return new Matrix3x3();
         }
 
         /// <summary>
