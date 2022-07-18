@@ -14,7 +14,6 @@ namespace Ariadne.Kernel
     public abstract class ShapeFunction
     {
         protected List<Functor> _localFunctors = new List<Functor>();
-
         protected GlobalFunctor _globalFunctor = null;
 
         /// <summary>
@@ -28,29 +27,24 @@ namespace Ariadne.Kernel
         /// </summary>
         public int Size { get { return _localFunctors.Count; } }
 
-        /// <summary>
-        /// Virtual method to return a matrixes of shape values ​​calculated from a vector
-        /// </summary>
-        /// <param name="naturalCoords">Natural coordinates of point</param>
-        /// <returns>Matrixes of shape values</returns>
-        public Dictionary<int, Matrix3x3> GetMatrixFromNaturalPoint(Vector3D naturalCoords)
-        {
-            var matrixes = new Dictionary<int, Matrix3x3>();
-            for (int i = 0; i < Size; i++)
-            {
-                var C = _localFunctors[i](naturalCoords.X, naturalCoords.Y, naturalCoords.Z);
-                var matix = Matrix3x3.BuildDiagonal(C, C, C);
-                matrixes.Add(i, matix);
-            }
-            return matrixes;
-        }
-
         public Vector3D CalculateUV(Vector3D coords, NodeSet nodes)
         {
             if (_globalFunctor != null)
                 return _globalFunctor(coords, nodes);
 
             return new Vector3D(float.NaN, float.NaN, float.NaN);
+        }
+
+        public Vector3D CalculateXYZ(Vector3D uv, NodeSet nodes)
+        {
+            var xyz = new Vector3D();
+            for (int i = 0; i < Size; i++)
+            {
+                xyz.X += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodes.GetByIndex(i).Coords.X;
+                xyz.Y += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodes.GetByIndex(i).Coords.Y;
+                xyz.Z += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodes.GetByIndex(i).Coords.Z;
+            }
+            return xyz;
         }
 
         /// <summary>

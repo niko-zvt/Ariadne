@@ -22,7 +22,7 @@ namespace Ariadne.Kernel
             _localFunctors.Add(new Functor(LocalN2));
             _localFunctors.Add(new Functor(LocalN3));
             _localFunctors.Add(new Functor(LocalN4));
-            _globalFunctor = new GlobalFunctor(CalculateUV);
+            _globalFunctor = new GlobalFunctor(CalculateUVCoords);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Ariadne.Kernel
             return float.NaN;
         }
 
-        public Vector3D CalculateUV(Vector3D point, NodeSet nodes)
+        private Vector3D CalculateUVCoords(Vector3D point, NodeSet nodes)
         {
             // TODO: Calculate UV from
             // x = N1*x1 + N2*x2 + N3*x3 + N4*x4;
@@ -97,6 +97,8 @@ namespace Ariadne.Kernel
             // z = 0;
             // Ni = 1/4 * (1+r*ri) * (1+s*si);
             // Newton-Raphson method
+            if (nodes.Count != Size)
+                throw new System.ArgumentOutOfRangeException("In quadrilateral4 shape function count of nodes != 4");
 
             throw new System.NotImplementedException();
         }
