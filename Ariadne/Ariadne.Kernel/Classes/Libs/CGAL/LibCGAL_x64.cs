@@ -427,7 +427,6 @@ namespace Ariadne.Kernel.CGAL
                 throw new System.Exception("CGAL lib is fail!");
 
             // 2. Deserialize JSON points from C++ lib
-            var type = Utils.IntersectionType.Null;
             string[] jsonStrings = jsonString.Split('\n');
             transformPoint = null;
             foreach (var str in jsonStrings)
