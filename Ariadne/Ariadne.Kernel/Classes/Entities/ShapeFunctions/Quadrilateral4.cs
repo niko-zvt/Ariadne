@@ -22,7 +22,7 @@ namespace Ariadne.Kernel
             _localFunctors.Add(new Functor(LocalN2));
             _localFunctors.Add(new Functor(LocalN3));
             _localFunctors.Add(new Functor(LocalN4));
-            _globalFunctor = new GlobalFunctor(GlobalShape);
+            _globalFunctor = new GlobalFunctor(CalculateUV);
         }
 
         /// <summary>
@@ -89,33 +89,16 @@ namespace Ariadne.Kernel
             return float.NaN;
         }
 
-        public Vector3D GlobalShape(Vector3D point, MatrixNxM coeffs)
+        public Vector3D CalculateUV(Vector3D point, NodeSet nodes)
         {
-            var sizeA = coeffs.GetSize()[0];
-            var sizeB = coeffs.GetSize()[1];
-            if (sizeA != 6 || sizeB != 3)
-                throw new System.ArgumentOutOfRangeException("Matrix is not a 6x2!");
+            // TODO: Calculate UV from
+            // x = N1*x1 + N2*x2 + N3*x3 + N4*x4;
+            // y = N1*y1 + N2*y2 + N3*y3 + N4*y4;
+            // z = 0;
+            // Ni = 1/4 * (1+r*ri) * (1+s*si);
+            // Newton-Raphson method
 
-            // TODO: Check calculation by Maple!
-            //throw new System.ArithmeticException("ERROR!");
-
-            var nX = (coeffs.GetValueAt(0, 0) * 1) + 
-                     (coeffs.GetValueAt(1, 0) * point.X) + 
-                     (coeffs.GetValueAt(2, 0) * point.Y) + 
-                     (coeffs.GetValueAt(3, 0) * point.X * point.X) +
-                     (coeffs.GetValueAt(4, 0) * point.X * point.Y) +
-                     (coeffs.GetValueAt(5, 0) * point.Y * point.Y);
-
-            var nY = (coeffs.GetValueAt(0, 1) * 1) +
-                     (coeffs.GetValueAt(1, 1) * point.X) +
-                     (coeffs.GetValueAt(2, 1) * point.Y) +
-                     (coeffs.GetValueAt(3, 1) * point.X * point.X) +
-                     (coeffs.GetValueAt(4, 1) * point.X * point.Y) +
-                     (coeffs.GetValueAt(5, 1) * point.Y * point.Y);
-
-            var nZ = 0;
-
-            return new Vector3D(nX, nY, nZ);
+            throw new System.NotImplementedException();
         }
 
         /// <summary>

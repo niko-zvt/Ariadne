@@ -186,18 +186,6 @@ namespace Ariadne.Kernel.Math
             _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
         }
 
-        public Matrix3x3(Vector3D i, Vector3D j, Vector3D k, bool isTranspose = false)
-        {
-            float[,] values = { { i.X, i.Y, i.Z },
-                                { j.X, j.Y, j.Z },
-                                { k.X, k.Y, k.Z }};
-
-            _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(values);
-
-            if(isTranspose == true)
-                _values = _values.Transpose();
-        }
-
         /// <summary>
         /// Constructor by float array
         /// </summary>
@@ -386,7 +374,7 @@ namespace Ariadne.Kernel.Math
         public static Vector3D operator *(Matrix3x3 a, Vector3D b)
         {
             var vector = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(b.ToArray());
-            var newVector = a._values * vector;
+            var newVector = a._values.Multiply(vector);
             return new Vector3D(newVector.ToArray());
         }
 
@@ -399,7 +387,7 @@ namespace Ariadne.Kernel.Math
         public static Vector3D operator *(Vector3D a, Matrix3x3 b)
         {
             var vector = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.DenseOfArray(a.ToArray());
-            var newVector = b._values * vector;
+            var newVector = b._values.Multiply(vector);
             return new Vector3D(newVector.ToArray());
         }
 
@@ -412,6 +400,18 @@ namespace Ariadne.Kernel.Math
         public static Matrix3x3 operator *(Matrix3x3 a, Matrix3x3 b)
         {
             var newMatrix = a._values * b._values;
+            return new Matrix3x3(newMatrix.ToArray());
+        }
+
+        /// <summary>
+        /// Dot multiplication operator.
+        /// </summary>
+        /// <param name="a">Value</param>
+        /// <param name="b">Matrix</param>
+        /// <returns>Resulting matrix after dot multiplication.</returns>
+        public static Matrix3x3 operator *(float a, Matrix3x3 b)
+        {
+            var newMatrix = a * b._values;
             return new Matrix3x3(newMatrix.ToArray());
         }
 
@@ -704,6 +704,149 @@ namespace Ariadne.Kernel.Math
         public override Matrix Inverse()
         {
             return new MatrixNxM(_values.Inverse());
+        }
+    }
+
+
+    /// <summary>
+    /// Reduced row Echelon form
+    /// </summary>
+    public class ReducedRowEchelonForm
+    {
+
+        private double[,] rref;
+        private int rows;
+        private int cols;
+
+        private int[] pivot;
+        private int? freeCount;
+
+        /// <summary>
+        ///   Reduces a matrix to reduced row Echelon form.
+        /// </summary>
+        /// 
+        /// <param name="value">The matrix to be reduced.</param>
+        /// <param name="inPlace">
+        ///   Pass <see langword="true"/> to perform the reduction in place. The matrix
+        ///   <paramref name="value"/> will be destroyed in the process, resulting in less
+        ///   memory consumption.</param>
+        ///   
+        public ReducedRowEchelonForm(double[,] value, bool inPlace = false)
+        {
+            if (value == null)
+                throw new System.ArgumentNullException("value");
+
+            rref = inPlace ? value : (double[,])value.Clone();
+
+            int lead = 0;
+            rows = rref.GetLength(0);
+            cols = rref.GetLength(1);
+
+            pivot = new int[rows];
+            for (int i = 0; i < pivot.Length; i++)
+                pivot[i] = i;
+
+
+            for (int r = 0; r < rows; r++)
+            {
+                if (cols <= lead)
+                    break;
+
+                int i = r;
+
+                while (rref[i, lead] == 0)
+                {
+                    i++;
+
+                    if (i >= rows)
+                    {
+                        i = r;
+
+                        if (lead < cols - 1)
+                            lead++;
+                        else break;
+                    }
+                }
+
+                if (i != r)
+                {
+                    // Swap rows i and r
+                    for (int j = 0; j < cols; j++)
+                    {
+                        var temp = rref[r, j];
+                        rref[r, j] = rref[i, j];
+                        rref[i, j] = temp;
+                    }
+
+                    // Update indices
+                    {
+                        var temp = pivot[r];
+                        pivot[r] = pivot[i];
+                        pivot[i] = temp;
+                    }
+                }
+
+                // Set to reduced row echelon form
+                var div = rref[r, lead];
+                if (div != 0)
+                {
+                    for (int j = 0; j < cols; j++)
+                        rref[r, j] /= div;
+                }
+
+                for (int j = 0; j < rows; j++)
+                {
+                    if (j != r)
+                    {
+                        var sub = rref[j, lead];
+                        for (int k = 0; k < cols; k++)
+                            rref[j, k] -= (sub * rref[r, k]);
+                    }
+                }
+
+                lead++;
+            }
+        }
+
+        /// <summary>
+        ///   Gets the pivot indicating the position
+        ///   of the original rows before the swap.
+        /// </summary>
+        /// 
+        public int[] Pivot { get { return pivot; } }
+
+        /// <summary>
+        ///   Gets the matrix in row reduced Echelon form.
+        /// </summary>
+        public double[,] Result { get { return rref; } }
+
+        /// <summary>
+        ///   Gets the number of free variables (linear
+        ///   dependent rows) in the given matrix.
+        /// </summary>
+        public int FreeVariables
+        {
+            get
+            {
+                if (freeCount == null)
+                    freeCount = count();
+
+                return freeCount.Value;
+            }
+        }
+
+        private int count()
+        {
+            for (int i = rows - 1; i >= 0; i--)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (rref[i, j] != 0)
+                        return rows - i - 1;
+                }
+            }
+
+            return 0;
         }
     }
 }

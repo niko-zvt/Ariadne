@@ -25,11 +25,6 @@ namespace Ariadne.Kernel
         private LocalCSys _localCSys = null;
 
         /// <summary>
-        /// Natural coordinates matrix (UV-coords)
-        /// </summary>
-        private Matrix _naturalCoordMatrix = null;
-
-        /// <summary>
         /// Protected constructor with parameters
         /// </summary>
         /// <param name="parameters">Element parameters</param>
@@ -206,15 +201,6 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// Get natural coordinates matrix (for UV-coords).
-        /// </summary>
-        /// <returns>Reference to a natural coordinates matrix.</returns>
-        protected ref Matrix GetElementNaturalMatrixAsRef()
-        {
-            return ref _naturalCoordMatrix;
-        }
-
-        /// <summary>
         /// The method tries to form a bounding box for the current element
         /// </summary>
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
@@ -284,32 +270,6 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// The method tries to build a natural coordinates matrix for the current element
-        /// </summary>
-        /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        private bool TryBuildNaturalCoords()
-        {
-            if (_parentModel == null)
-                throw new ArgumentNullException("The parent model of element is null");
-
-            if (!(_parentModel is Model))
-                throw new InvalidCastException("The parent model object is not the model type");
-
-            if (NodeIDs == null || NodeIDs.Count <= 0)
-                throw new ArgumentNullException("Set of node IDs is null or empty");
-
-            if (_localCSys == null)
-                throw new ArgumentNullException("Local CS of element is null");
-
-            _naturalCoordMatrix = BuildNaturalCoordMatrix();
-
-            if (_naturalCoordMatrix == null)
-                throw new ArgumentNullException("Natural coordinates matrix of element is null");
-
-            return true;
-        }
-
-        /// <summary>
         /// The method updates the content of the element, binds the nodes through a specific model,
         /// which is passed by reference. This method is called when constructing a specific model 
         /// through the reflection mechanism. Be careful and call the method only in the context of 
@@ -324,11 +284,9 @@ namespace Ariadne.Kernel
             var result_BBox = TryBuildBoundingBoxesToElements();
             var result_Centroid = TryBuildCentroid();
             var result_LCS = TryBuildLCS();
-            var result_NaturalCoords = TryBuildNaturalCoords();
             var result = result_BBox &&
                          result_Centroid &&
-                         result_LCS && 
-                         result_NaturalCoords;
+                         result_LCS;
 
             return result;
         }

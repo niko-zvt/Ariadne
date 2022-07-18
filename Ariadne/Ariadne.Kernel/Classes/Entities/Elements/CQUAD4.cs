@@ -53,17 +53,13 @@ namespace Ariadne.Kernel
                 return null;
 
             // 2. Calculate affine map GCS -> LCS
-            var LCS = GetElementLCSAsRef();
-            var GCS = GlobalCSys.Instance;
+            var map = GetElementLCSAsRef().GetMapToLocalCS();
 
             // 3. Calculate target point in LCS
-            var localPoint = AffineMap3D.TransformPoint(point, LCS, GCS);
+            var localPoint = map.TransformPoint(point);
 
-            var matrix = GetElementNaturalMatrixAsRef() as MatrixNxM;
-            if (matrix == null || matrix is not MatrixNxM)
-                throw new System.ArgumentNullException("Natural coords matrix is null!");
-
-            var uv = ShapeFunction.CalculateShape(localPoint, matrix);
+            // 4. Calculate UV-coords
+            var uv = ShapeFunction.CalculateUV(localPoint, GetNodes());
 
             if (uv == null)
                 throw new System.ArgumentNullException("Natural coords is null!");
@@ -130,15 +126,16 @@ namespace Ariadne.Kernel
             // 1. Local and Global CS's
             var LCS = GetElementLCSAsRef();
             var GCS = GlobalCSys.Instance;
+            var globalToLocalMap = LCS.GetMapToLocalCS();
 
             // 2. Get nodes, centroid and origin point
             var corners = GetCornerNodes();
-            var localN1 = AffineMap3D.TransformPoint(corners.GetByIndex(0).Coords, LCS, GCS);
-            var localN2 = AffineMap3D.TransformPoint(corners.GetByIndex(1).Coords, LCS, GCS);
-            var localN3 = AffineMap3D.TransformPoint(corners.GetByIndex(2).Coords, LCS, GCS);
-            var localN4 = AffineMap3D.TransformPoint(corners.GetByIndex(3).Coords, LCS, GCS);
-            var localOrigin = AffineMap3D.TransformPoint(Coords, LCS, GCS);
-            var localCentroid = AffineMap3D.TransformPoint(CentroidCoords, LCS, GCS);
+            var localN1 = globalToLocalMap.TransformPoint(corners.GetByIndex(0).Coords);
+            var localN2 = globalToLocalMap.TransformPoint(corners.GetByIndex(1).Coords);
+            var localN3 = globalToLocalMap.TransformPoint(corners.GetByIndex(2).Coords);
+            var localN4 = globalToLocalMap.TransformPoint(corners.GetByIndex(3).Coords);
+            var localOrigin = globalToLocalMap.TransformPoint(Coords);
+            var localCentroid = globalToLocalMap.TransformPoint(CentroidCoords);
 
             // 3. Calculate P5 and P6 points
             Vector3D P5 = null;
@@ -157,19 +154,6 @@ namespace Ariadne.Kernel
             var R8 = (localN2 + localN3) / 2;
             var R9 = (localN3 + localN4) / 2;
             var R10 = (localN4 + localN1) / 2;
-
-            System.Console.WriteLine(localN1);
-            System.Console.WriteLine(localN2);
-            System.Console.WriteLine(localN3);
-            System.Console.WriteLine(localN4);
-            System.Console.WriteLine(localOrigin);
-            System.Console.WriteLine(localCentroid);
-            System.Console.WriteLine(P5);
-            System.Console.WriteLine(P6);
-            System.Console.WriteLine(R7);
-            System.Console.WriteLine(R8);
-            System.Console.WriteLine(R9);
-            System.Console.WriteLine(R10);
 
             // 5. Construct a matrix of natural coordinates of nodes
             var t1_1 = (P5 - RG).Length / (R8 - RG).Length;

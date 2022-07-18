@@ -17,17 +17,16 @@
         public abstract CoordinateSystemType GetCoordinateSystemType();
 
         /// <summary>
-        /// Virtual method to get affine map of transformation to global coordinate system.
+        /// Virtual method to get affine map of transformation from local (current) to global coordinate system.
         /// </summary>
         /// <returns>Affine map of transformation to global coordinate system.</returns>
-        public abstract AffineMap GetMapToGlobalCS();
+        public abstract AffineMap3D GetMapToGlobalCS();
 
         /// <summary>
-        /// Get affine map of transformation from this coordinate system to another coordinate system.
+        /// Virtual method to get affine map of transformation from global to local (current) coordinate system.
         /// </summary>
-        /// <param name="coordinateSystem">Another coordinate system.</param>
-        /// <returns>Affine map of transformation.</returns>
-        public abstract object GetMapTo(CoordinateSystem anotherCS);
+        /// <returns>Affine map of transformation to local coordinate system.</returns>
+        public abstract AffineMap3D GetMapToLocalCS();
 
         /// <summary>
         /// X-axis of local coordinate system
@@ -126,24 +125,23 @@
             return CoordinateSystemType.GlobalCS;
         }
 
-        public override AffineMap GetMapTo(CoordinateSystem anotherCS)
+        public override AffineMap3D GetMapToGlobalCS()
         {
-            if (this != anotherCS)
-            {
-                AffineMap fromTo = GetMapToGlobalCS();
-                if (fromTo.Degenerated() == false)
-                {
-                    var invMap = fromTo.InvMap();
-
-                    return invMap.Multiply(anotherCS.GetMapToGlobalCS());
-                }
-            }
-            return new AffineMap3D();
+            return new AffineMap3D(new Matrix3x3(XAxis.X, YAxis.X, ZAxis.X,
+                                                 XAxis.Y, YAxis.Y, ZAxis.Y,
+                                                 XAxis.Z, YAxis.Z, ZAxis.Z), Origin);
         }
 
-        public override AffineMap GetMapToGlobalCS()
+        public override AffineMap3D GetMapToLocalCS()
         {
-            return new AffineMap3D();
+            var rotation = (new Matrix3x3() { XX = XAxis.X, XY = YAxis.X, XZ = ZAxis.X,
+                                              YX = XAxis.Y, YY = YAxis.Y, YZ = ZAxis.Y,  
+                                              ZX = XAxis.Z, ZY = YAxis.Z, ZZ = ZAxis.Z }
+                           ).Inverse() as Matrix3x3;
+
+            var translation = -1.0f * rotation * Origin;
+
+            return new AffineMap3D(rotation, translation);
         }
     }
 
@@ -158,6 +156,19 @@
         public LocalCSys()
         {
             _coordSys = new MathNet.Spatial.Euclidean.CoordinateSystem();
+        }
+
+        /// <summary>
+        /// Constructor along the global axis and origin point.
+        /// </summary>
+        /// <param name="origin">Origin point</param>
+        public LocalCSys(Vector3D origin)
+        {
+            var oX = ((MathNet.Spatial.Euclidean.Vector3D)new Vector3D(1, 0, 0)).Normalize();
+            var oY = ((MathNet.Spatial.Euclidean.Vector3D)new Vector3D(0, 1, 0)).Normalize();
+            var oZ = ((MathNet.Spatial.Euclidean.Vector3D)new Vector3D(0, 0, 1)).Normalize();
+            var O = (MathNet.Spatial.Euclidean.Point3D)origin;
+            _coordSys = new MathNet.Spatial.Euclidean.CoordinateSystem(O, oX, oY, oZ);
         }
 
         /// <summary>
@@ -185,24 +196,23 @@
             return CoordinateSystemType.LocalCS;
         }
 
-        public override AffineMap GetMapTo(CoordinateSystem anotherCS)
+        public override AffineMap3D GetMapToGlobalCS()
         {
-            if (this != anotherCS)
-            {
-                AffineMap fromTo = GetMapToGlobalCS();
-                if (fromTo.Degenerated() == false)
-                {
-                    var invMap = fromTo.InvMap();
-
-                    return invMap.Multiply(anotherCS.GetMapToGlobalCS());
-                }
-            }
-            return new AffineMap3D();
+            return new AffineMap3D(new Matrix3x3(XAxis.X, YAxis.X, ZAxis.X,
+                                                 XAxis.Y, YAxis.Y, ZAxis.Y,
+                                                 XAxis.Z, YAxis.Z, ZAxis.Z), Origin);
         }
 
-        public override AffineMap GetMapToGlobalCS()
+        public override AffineMap3D GetMapToLocalCS()
         {
-            return new AffineMap3D(new Matrix3x3(XAxis, YAxis, ZAxis), Origin);
+            var rotation = (new Matrix3x3() { XX = XAxis.X, XY = YAxis.X, XZ = ZAxis.X,
+                                              YX = XAxis.Y, YY = YAxis.Y, YZ = ZAxis.Y,  
+                                              ZX = XAxis.Z, ZY = YAxis.Z, ZZ = ZAxis.Z }
+                           ).Inverse() as Matrix3x3;
+
+            var translation = -1.0f * rotation * Origin;
+
+            return new AffineMap3D(rotation, translation);
         }
     }
 }

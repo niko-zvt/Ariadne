@@ -57,7 +57,7 @@ namespace Ariadne.Kernel.Math
         /// <summary>
         /// Transformation matrix.
         /// </summary>
-        private Matrix3x3 _M;
+        private Matrix3x3 _R;
 
         /// <summary>
         /// Translation vector.
@@ -79,7 +79,7 @@ namespace Ariadne.Kernel.Math
         /// </summary>
         public AffineMap3D()
         {
-            _M = new Matrix3x3(1, 1, 1);
+            _R = new Matrix3x3(1, 1, 1);
             _T = new Vector3D();
             _S = new Vector3D();
             _I = 1.0f;
@@ -92,7 +92,7 @@ namespace Ariadne.Kernel.Math
         /// <param name="T">Translation vector.</param>
         public AffineMap3D(Matrix3x3 R, Vector3D T)
         {
-            _M = R;
+            _R = R;
             _T = T;
             _S = new Vector3D();
             _I = 1.0f;
@@ -104,42 +104,11 @@ namespace Ariadne.Kernel.Math
             _I = I;
         }
 
-        /// <summary>
-        /// Constructor by coordinate systems
-        /// </summary>
-        /// <param name="sourceCS">Source CSys</param>
-        /// <param name="targetCS">Target CSys</param>
-        public AffineMap3D(CoordinateSystem sourceCS, CoordinateSystem targetCS)
-        {
-            throw new System.NotImplementedException();
-            
-            // TODO: CGAL Calculate
-            // _T = sourceCS.Origin - targetCS.Origin;
-            // _M = Calculate M 
-            //_S = new Vector3D();
-            //_I = 1.0f;
-        }
-
-        /// <summary>
-        /// Constructor by transformation vectors and translation vector.
-        /// </summary>
-        /// <param name="i">First transformation vector.</param>
-        /// <param name="j">Second transformation vector.</param>
-        /// <param name="k">Third transformation vector.</param>
-        /// <param name="T">Translation vector.</param>
-        public AffineMap3D(Vector3D i, Vector3D j, Vector3D k, Vector3D T)
-        {
-            _M = new Matrix3x3(i, j, k);
-            _T = T;
-            _S = new Vector3D();
-            _I = 1.0f;
-        }
-
         public AffineMap3D(float[,] array)
         {
             if (array.GetLength(0) == 4 || array.GetLength(1) == 4)
             {
-                _M = new Matrix3x3(array[0, 0], array[0, 1], array[0, 2],
+                _R = new Matrix3x3(array[0, 0], array[0, 1], array[0, 2],
                                    array[1, 0], array[1, 1], array[1, 2],
                                    array[2, 0], array[2, 1], array[2, 2]);
                 
@@ -155,6 +124,17 @@ namespace Ariadne.Kernel.Math
             }
         }
 
+        public AffineMap3D(CoordinateSystem cs)
+        {
+            _R = new Matrix3x3() { XX = cs.XAxis.X, XY = cs.YAxis.X, XZ = cs.ZAxis.X,
+                                   YX = cs.XAxis.Y, YY = cs.YAxis.Y, YZ = cs.ZAxis.Y,  
+                                   ZX = cs.XAxis.Z, ZY = cs.YAxis.Z, ZZ = cs.ZAxis.Z };
+
+            _T = cs.Origin;
+            _S = new Vector3D();
+            _I = 1.0f;
+        }
+
         /// <summary>
         /// Multiply affine maps.
         /// </summary>
@@ -168,8 +148,8 @@ namespace Ariadne.Kernel.Math
             //if (affineMap is AffineMap3D)
             //{
             //    var anotherMap = affineMap as AffineMap3D;
-            //    // TODO: _M = Rotate(anotherMap._M);
-            //    _M = _M * anotherMap._M; // ERROR!!!
+            //    // TODO: _R = Rotate(anotherMap._R);
+            //    _R = _R * anotherMap._R; // ERROR!!!
             //    _T.X += anotherMap._T.X;
             //    _T.Y += anotherMap._T.Y;
             //    _T.Z += anotherMap._T.Z;
@@ -184,19 +164,65 @@ namespace Ariadne.Kernel.Math
         /// <returns>Result point after affine mapping</returns>
         public Vector3D TransformPoint(Vector3D point)
         {
-            var rPoint = _M * point;
-            var trPoint = rPoint + _T;
-            return trPoint;
+            return _R * point + _T;
         }
 
-        public static Vector3D TransformPoint(Vector3D point, CoordinateSystem sourceCS, CoordinateSystem targetCS)
+        public static AffineMap3D GetChangeBasisMap(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
-            var result = LibraryImport.SelectCGAL().CGAL_TransformPoint(point, sourceCS, targetCS, out var transformPoint);
+            return GetChangeBasisMap(sourceCS, targetCS, sourceCS.Origin - targetCS.Origin);
+        }
 
-            if (result == false)
-                return new Vector3D(float.NaN);
-            else
-                return transformPoint;
+        protected static AffineMap3D GetChangeBasisMap(CoordinateSystem sourceCS, CoordinateSystem targetCS, Vector3D translation)
+        {
+            var AB = new double[,] { { sourceCS.XAxis.X, sourceCS.XAxis.Y, sourceCS.XAxis.Z, targetCS.XAxis.X, targetCS.XAxis.Y, targetCS.XAxis.Z },
+                                     { sourceCS.YAxis.X, sourceCS.YAxis.Y, sourceCS.YAxis.Z, targetCS.YAxis.X, targetCS.YAxis.Y, targetCS.YAxis.Z },
+                                     { sourceCS.ZAxis.X, sourceCS.ZAxis.Y, sourceCS.ZAxis.Z, targetCS.ZAxis.X, targetCS.ZAxis.Y, targetCS.ZAxis.Z } };
+
+            var CD = new Math.ReducedRowEchelonForm(AB).Result;
+
+            if (CD.GetLength(0) != 3 || CD.GetLength(1) != 6)
+                throw new System.ArgumentOutOfRangeException("CD is not a 3x6 matrix!");
+
+            var D = new double[,] { { CD[0,3], CD[0,4], CD[0,5] },
+                                    { CD[1,3], CD[1,4], CD[1,5] },
+                                    { CD[2,3], CD[2,4], CD[2,5] } };
+
+
+            var R = (new Matrix3x3(D)).Inverse() as Matrix3x3;
+
+            var T = new Vector3D();
+            if (translation != null)
+                T = translation;
+
+            var S = new Vector3D();
+            var I = 1.0f;
+
+            return new AffineMap3D(R, T, S, I);
+        }
+
+        public static Vector3D ChangeBasis(Vector3D point, CoordinateSystem sourceCS, CoordinateSystem targetCS)
+        {
+            var map = GetChangeBasisMap(sourceCS, targetCS);
+            return map.TransformPoint(point);
+        }
+
+        public static Vector3D GlobalToLocalCS(Vector3D globalPoint, CoordinateSystem localCS)
+        {
+            var rotation = (new Matrix3x3() { XX = localCS.XAxis.X, XY = localCS.YAxis.X, XZ = localCS.ZAxis.X,
+                                              YX = localCS.XAxis.Y, YY = localCS.YAxis.Y, YZ = localCS.ZAxis.Y,  
+                                              ZX = localCS.XAxis.Z, ZY = localCS.YAxis.Z, ZZ = localCS.ZAxis.Z }
+                           ).Inverse() as Matrix3x3;
+
+            var translation = -1.0f * rotation * localCS.Origin;
+
+            var map = new AffineMap3D(rotation, translation);
+            return map.TransformPoint(globalPoint);
+        }
+
+        public static Vector3D LocalToGlobalCS(Vector3D localPoint, CoordinateSystem localCS)
+        {
+            var map = new AffineMap3D(localCS);
+            return map.TransformPoint(localPoint);
         }
 
         /// <summary>
@@ -223,9 +249,9 @@ namespace Ariadne.Kernel.Math
         /// <returns>Determinant</returns>
         public override float Determinant()
         {
-            var matrix = new HValue[,] { { (HValue)_M.XX, (HValue)_M.XY,   (HValue)_M.XZ,   (HValue)_T.X   },
-                                         { (HValue)_M.YX, (HValue)_M.YY,   (HValue)_M.YZ,   (HValue)_T.Y   },
-                                         { (HValue)_M.ZX, (HValue)_M.ZY,   (HValue)_M.ZZ,   (HValue)_T.Z   },
+            var matrix = new HValue[,] { { (HValue)_R.XX, (HValue)_R.XY,   (HValue)_R.XZ,   (HValue)_T.X   },
+                                         { (HValue)_R.YX, (HValue)_R.YY,   (HValue)_R.YZ,   (HValue)_T.Y   },
+                                         { (HValue)_R.ZX, (HValue)_R.ZY,   (HValue)_R.ZZ,   (HValue)_T.Z   },
                                          { (HValue)_S.X,  (HValue)_S.Y,    (HValue)_S.Z,    (HValue)_I   } };
             
             var value = Utils.CalculateDeterminant(matrix);
@@ -238,9 +264,9 @@ namespace Ariadne.Kernel.Math
 
         public override AffineMap InvMap()
         {
-            var array = new float[,] { { _M.XX, _M.XY, _M.XZ, _T.X   },
-                                       { _M.YX, _M.YY, _M.YZ, _T.Y   },
-                                       { _M.ZX, _M.ZY, _M.ZZ, _T.Z   },
+            var array = new float[,] { { _R.XX, _R.XY, _R.XZ, _T.X   },
+                                       { _R.YX, _R.YY, _R.YZ, _T.Y   },
+                                       { _R.ZX, _R.ZY, _R.ZZ, _T.Z   },
                                        { _S.X, _S.Y,   _S.Z,  _I   } };
 
             MatrixNxM matrix = new MatrixNxM(array);

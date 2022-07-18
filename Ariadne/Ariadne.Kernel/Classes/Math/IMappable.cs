@@ -2,8 +2,10 @@
 {
     public interface IMappable
     {
-        public AffineMap GetMapToGlobalCS();
+        public AffineMap3D GetMapToGlobalCS();
 
-        public object GetMapTo(CoordinateSystem coordinateSystem);
+        public AffineMap3D GetMapToLocalCS();
+
+        //public object GetMapTo(CoordinateSystem coordinateSystem);
     }
 }

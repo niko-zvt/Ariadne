@@ -6,7 +6,7 @@ namespace Ariadne.Kernel
 {
     public delegate float Functor(float u, float v, float w);
 
-    public delegate Vector3D GlobalFunctor(Vector3D point, MatrixNxM coeffs);
+    public delegate Vector3D GlobalFunctor(Vector3D point, NodeSet nodes);
 
     /// <summary>
     /// Abstract class of the shape functions
@@ -45,10 +45,10 @@ namespace Ariadne.Kernel
             return matrixes;
         }
 
-        public Vector3D CalculateShape(Vector3D coords, MatrixNxM coeffs)
+        public Vector3D CalculateUV(Vector3D coords, NodeSet nodes)
         {
             if (_globalFunctor != null)
-                return _globalFunctor(coords, coeffs);
+                return _globalFunctor(coords, nodes);
 
             return new Vector3D(float.NaN, float.NaN, float.NaN);
         }
