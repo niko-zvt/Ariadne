@@ -689,6 +689,18 @@ namespace Ariadne.Kernel.Math
         }
 
         /// <summary>
+        /// Dot multiplication operator.
+        /// </summary>
+        /// <param name="a">Value</param>
+        /// <param name="b">Matrix</param>
+        /// <returns>Resulting matrix after dot multiplication.</returns>
+        public static MatrixNxM operator *(float a, MatrixNxM b)
+        {
+            var newMatrix = a * b._values;
+            return new MatrixNxM(newMatrix.ToArray());
+        }
+
+        /// <summary>
         /// Size of matrix
         /// </summary>
         /// <returns>Size as array</returns>
