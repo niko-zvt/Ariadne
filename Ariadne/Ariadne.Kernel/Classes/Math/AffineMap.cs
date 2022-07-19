@@ -1,5 +1,6 @@
 ﻿using Ariadne.Kernel.Libs;
 using System;
+using System.Collections.Generic;
 
 namespace Ariadne.Kernel.Math
 {
@@ -165,6 +166,16 @@ namespace Ariadne.Kernel.Math
         public Vector3D TransformPoint(Vector3D point)
         {
             return _R * point + _T;
+        }
+
+        public List<Vector3D> TransformPoints(List<Vector3D> points)
+        {
+            var transformPoints = new List<Vector3D>();
+            foreach(var point in points)
+            {
+                transformPoints.Add(_R * point + _T);
+            }
+            return transformPoints;
         }
 
         public static AffineMap3D GetChangeBasisMap(CoordinateSystem sourceCS, CoordinateSystem targetCS)

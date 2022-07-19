@@ -6,7 +6,7 @@ namespace Ariadne.Kernel
 {
     public delegate float Functor(float u, float v, float w);
 
-    public delegate Vector3D GlobalFunctor(Vector3D point, NodeSet nodes);
+    public delegate Vector3D GlobalFunctor(Vector3D point, List<Vector3D> nodesCoords);
 
     /// <summary>
     /// Abstract class of the shape functions
@@ -27,22 +27,22 @@ namespace Ariadne.Kernel
         /// </summary>
         public int Size { get { return _localFunctors.Count; } }
 
-        public Vector3D CalculateUV(Vector3D coords, NodeSet nodes)
+        public Vector3D CalculateUV(Vector3D coords, List<Vector3D> nodesCoords)
         {
             if (_globalFunctor != null)
-                return _globalFunctor(coords, nodes);
+                return _globalFunctor(coords, nodesCoords);
 
             return new Vector3D(float.NaN, float.NaN, float.NaN);
         }
 
-        public Vector3D CalculateXYZ(Vector3D uv, NodeSet nodes)
+        public Vector3D CalculateXYZ(Vector3D uv, List<Vector3D> nodesCoords)
         {
             var xyz = new Vector3D();
             for (int i = 0; i < Size; i++)
             {
-                xyz.X += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodes.GetByIndex(i).Coords.X;
-                xyz.Y += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodes.GetByIndex(i).Coords.Y;
-                xyz.Z += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodes.GetByIndex(i).Coords.Z;
+                xyz.X += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodesCoords[i].X;
+                xyz.Y += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodesCoords[i].Y;
+                xyz.Z += _localFunctors[i](uv.X, uv.Y, uv.Z) * nodesCoords[i].Z;
             }
             return xyz;
         }

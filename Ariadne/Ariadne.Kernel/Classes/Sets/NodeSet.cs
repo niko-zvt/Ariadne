@@ -50,6 +50,17 @@ namespace Ariadne.Kernel
             return list;
         }
 
+        public List<float[]> GetAllCoords()
+        {
+            var list = new List<float[]>();
+            foreach(int id in _collection.Keys)
+            {
+                var item = _collection.TryGetValue(id, out Node value) ? value : null;
+                list.Add(new float[] { item.Coords.X, item.Coords.Y, item.Coords.Z });
+            }
+            return list;
+        }
+
         /// <summary>
         /// The method returns the node according to its ordinal index in the collection
         /// </summary>

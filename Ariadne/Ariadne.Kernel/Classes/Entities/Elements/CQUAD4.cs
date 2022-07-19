@@ -58,10 +58,18 @@ namespace Ariadne.Kernel
             // 3. Calculate target point in LCS
             var localPoint = map.TransformPoint(point);
 
-            // 4. Calculate UV-coords
-            var uv = ShapeFunction.CalculateUV(localPoint, GetNodes());
+            // 4. Calculate coords of nodes in LCS
+            var coorsOfNodes = new List<Vector3D>();
+            foreach(var coord in GetCornerNodes().GetAllCoords())
+            {
+                coorsOfNodes.Add(new Vector3D(coord));
+            }
+            var localCoorsOfNodes = map.TransformPoints(coorsOfNodes);
 
-            var test = ShapeFunction.CalculateXYZ(uv, GetNodes());
+            // 4. Calculate UV-coords
+            var uv = ShapeFunction.CalculateUV(point, coorsOfNodes);
+
+            var test = ShapeFunction.CalculateXYZ(uv, coorsOfNodes);
 
             if (uv == null)
                 throw new System.ArgumentNullException("Natural coords is null!");
