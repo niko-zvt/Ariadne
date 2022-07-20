@@ -89,7 +89,7 @@ namespace Ariadne.Kernel
             return float.NaN;
         }
 
-        private Vector3D CalculateUVCoords(Vector3D point, List<Vector3D> nodesCoords)
+        private Vector3D CalculateUVCoords(Vector3D point, List<Vector3D> nodalCoords)
         {
             // TODO: Calculate UV from
             // x = N1*x1 + N2*x2 + N3*x3 + N4*x4;
@@ -97,10 +97,10 @@ namespace Ariadne.Kernel
             // z = 0;
             // Ni = 1/4 * (1+r*ri) * (1+s*si);
             // Newton-Raphson method
-            if (nodesCoords.Count != Size)
+            if (nodalCoords.Count != Size)
                 throw new System.ArgumentOutOfRangeException("In quadrilateral4 shape function count of nodes != 4");
 
-            var uv = new Optimizer(point, nodesCoords).Calculate(new Vector3D()) ;
+            var uv = new Optimizer(point, nodalCoords).Calculate(new Vector3D()) ;
             return uv;
         }
 
