@@ -17,9 +17,9 @@ namespace Ariadne.Kernel
         /// </summary>
         private Triangle3()
         {
-            _localFunctors.Add(new Functor(LocalN1));
-            _localFunctors.Add(new Functor(LocalN2));
-            _localFunctors.Add(new Functor(LocalN3));
+            _localFunctors.Add(new ShapeFunctor(LocalN1));
+            _localFunctors.Add(new ShapeFunctor(LocalN2));
+            _localFunctors.Add(new ShapeFunctor(LocalN3));
             _globalFunctor = null;
         }
 
