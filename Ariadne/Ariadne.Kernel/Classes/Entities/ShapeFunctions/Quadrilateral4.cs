@@ -110,11 +110,11 @@ namespace Ariadne.Kernel
             };
 
             // 3. Preparing the optimizer
-            var optimizer = new Optimizer2D(f);
+            var optimizer = new CoordinateDescentAlgorithm(f);
 
             // 4. Find optimum UV-coords
-            optimizer.FindMin(out var results);
-            if (results.Length != SpaceDimension)
+            var result = optimizer.FindMin(out var results);
+            if (result == false || results.Length != SpaceDimension)
                 throw new System.ArgumentException("Optimizer fail!");
 
             // 5. Return UV-coords
