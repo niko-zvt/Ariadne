@@ -60,21 +60,21 @@ namespace Ariadne.Kernel
 
             // 4. Calculate coords of nodes in LCS
             var coorsOfNodes = new List<Vector3D>();
-            foreach(var coord in GetCornerNodes().GetAllCoords())
+            foreach(var coord in GetNodes().GetAllCoords())
             {
                 coorsOfNodes.Add(new Vector3D(coord));
             }
             var localCoorsOfNodes = map.TransformPoints(coorsOfNodes);
 
             // 4. Calculate UV-coords
-            var uv = ShapeFunction.CalculateUV(point, coorsOfNodes);
+            var uvw = ShapeFunction.FindUVW(point, coorsOfNodes);
 
-            var test = ShapeFunction.CalculateXYZ(uv, coorsOfNodes);
+            var test = ShapeFunction.Calculate(uvw, coorsOfNodes);
 
-            if (uv == null)
-                throw new System.ArgumentNullException("Natural coords is null!");
+            if (uvw.IsValid() == false)
+                throw new System.ArgumentNullException("Natural coords is NAN!");
 
-            return uv;
+            return uvw;
         }
 
         /// <summary>
