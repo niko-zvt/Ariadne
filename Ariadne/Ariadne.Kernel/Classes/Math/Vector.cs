@@ -23,7 +23,7 @@ namespace Ariadne.Kernel.Math
         public int Size { get { return (int)_vectorData.Count; } }
 
         /// <summary>
-        /// Concer to array
+        /// Convert to array
         /// </summary>
         /// <returns>Float array</returns>
         public float[] ToArray()
@@ -32,6 +32,37 @@ namespace Ariadne.Kernel.Math
                 throw new System.ArgumentNullException("Vector data is null!");
 
             return _vectorData.ToArray();
+        }
+
+        /// <summary>
+        /// Check vector is valid.
+        /// </summary>
+        /// <returns>True if success result, otherwise - false.</returns>
+        public bool IsValid()
+        {
+            if (_vectorData == null ||
+                _vectorData.Count < 0 ||
+                IsContain(float.NaN))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Check the vector for the content of a specific value.
+        /// </summary>
+        /// <param name="value">The value we are looking for in the vector.</param>
+        /// <returns>True if success result, otherwise - false.</returns>
+        public bool IsContain(float value)
+        {
+            if (_vectorData == null)
+                return false;
+
+            var vector = _vectorData.AsArray();
+
+            bool exists = System.Array.Exists(vector, element => element == value);
+
+            return exists;
         }
 
         /// <summary>
@@ -207,17 +238,38 @@ namespace Ariadne.Kernel.Math
         }
 
         /// <summary>
+        /// Normalizes vector to a unit vector.
+        /// And return new normalized vector.
+        /// </summary>
+        /// <returns>Normalized vector</returns>
+        public Vector3D Normalize()
+        {
+            return Normalize(1.0f);
+        }
+
+        /// <summary>
+        /// Normalizes vector to a unit vector with respect to the p-norm.
+        /// And return new normalized vector.
+        /// </summary>
+        /// <returns>Normalized vector</returns>
+        public Vector3D Normalize(float length)
+        {
+            var normVectorData = _vectorData.Normalize(length);
+            return new Vector3D(normVectorData);
+        }
+
+        /// <summary>
         /// Normalizes this vector to a unit vector.
         /// </summary>
-        public void Normalize()
+        public void NormalizeSelf()
         {
-            Normalize(1.0f);
+            NormalizeSelf(1.0f);
         }
 
         /// <summary>
         /// Normalizes this vector to a unit vector with respect to the p-norm.
         /// </summary>
-        private void Normalize(float length)
+        private void NormalizeSelf(float length)
         {
             _vectorData = _vectorData.Normalize(length);
         }
