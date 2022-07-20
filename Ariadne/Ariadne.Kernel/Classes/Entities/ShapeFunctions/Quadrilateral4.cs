@@ -4,29 +4,29 @@ using System.Collections.Generic;
 namespace Ariadne.Kernel
 {
     /// <summary>
-    /// Class representing 4-node quadrilateral shape function
+    /// Class representing 4-node quadrilateral shape function.
     /// </summary>
     sealed class Quadrilateral4 : ShapeFunction
     {
         /// <summary>
-        /// Lazy instance holder
+        /// Lazy instance holder.
         /// </summary>
         private static readonly System.Lazy<Quadrilateral4> instanceHolder = new System.Lazy<Quadrilateral4>(() => new Quadrilateral4());
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor.
         /// </summary>
         private Quadrilateral4()
         {
-            _localFunctors.Add(new Functor(LocalN1));
-            _localFunctors.Add(new Functor(LocalN2));
-            _localFunctors.Add(new Functor(LocalN3));
-            _localFunctors.Add(new Functor(LocalN4));
-            _globalFunctor = new GlobalFunctor(CalculateUVCoords);
+            _localFunctors.Add(new ShapeFunctor(LocalN1));
+            _localFunctors.Add(new ShapeFunctor(LocalN2));
+            _localFunctors.Add(new ShapeFunctor(LocalN3));
+            _localFunctors.Add(new ShapeFunctor(LocalN4));
+            _globalFunctor = new GlobalShapeFunctor(FindUVCoords);
         }
 
         /// <summary>
-        /// Instance of Quadrilateral4 shape function
+        /// Instance of Quadrilateral4 shape function.
         /// </summary>
         public static Quadrilateral4 GetFunction
         {
@@ -34,11 +34,11 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// First shape function
+        /// First shape function.
         /// </summary>
-        /// <param name="u">Parameter U</param>
-        /// <param name="v">Parameter V</param>
-        /// <returns>Value of shape function</returns>
+        /// <param name="u">Parameter U.</param>
+        /// <param name="v">Parameter V.</param>
+        /// <returns>Value of shape function.</returns>
         public float LocalN1(float u, float v, float w = 0.0f)
         {
             if (Math.Utils.IsNaturalCoordinate(u, v))
@@ -48,11 +48,11 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// Second shape function
+        /// Second shape function.
         /// </summary>
-        /// <param name="u">Parameter U</param>
-        /// <param name="v">Parameter V</param>
-        /// <returns>Value of shape function</returns>
+        /// <param name="u">Parameter U.</param>
+        /// <param name="v">Parameter V.</param>
+        /// <returns>Value of shape function.</returns>
         public float LocalN2(float u, float v, float w = 0.0f)
         {
             if (Math.Utils.IsNaturalCoordinate(u, v))
@@ -62,11 +62,11 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// Third shape function
+        /// Third shape function.
         /// </summary>
-        /// <param name="u">Parameter U</param>
-        /// <param name="v">Parameter V</param>
-        /// <returns>Value of shape function</returns>
+        /// <param name="u">Parameter U.</param>
+        /// <param name="v">Parameter V.</param>
+        /// <returns>Value of shape function.</returns>
         public float LocalN3(float u, float v, float w = 0.0f)
         {
             if (Math.Utils.IsNaturalCoordinate(u, v))
@@ -76,11 +76,11 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
-        /// Fourth shape function
+        /// Fourth shape function.
         /// </summary>
-        /// <param name="u">Parameter U</param>
-        /// <param name="v">Parameter V</param>
-        /// <returns>Value of shape function</returns>
+        /// <param name="u">Parameter U.</param>
+        /// <param name="v">Parameter V.</param>
+        /// <returns>Value of shape function.</returns>
         public float LocalN4(float u, float v, float w = 0.0f)
         {
             if (Math.Utils.IsNaturalCoordinate(u, v))
@@ -89,25 +89,43 @@ namespace Ariadne.Kernel
             return float.NaN;
         }
 
-        private Vector3D CalculateUVCoords(Vector3D point, List<Vector3D> nodalCoords)
+        /// <summary>
+        /// Find the UV-coords by solving the two-dimensional optimization problem.
+        /// </summary>
+        /// <param name="point">Target point in XYZ-space.</param>
+        /// <param name="nodalCoords">Nodal coordinates from a specific CQUAD4 element.</param>
+        /// <returns>UV-coords.</returns>
+        private Vector3D FindUVCoords(Vector3D point, List<Vector3D> nodalCoords)
         {
-            // TODO: Calculate UV from
-            // x = N1*x1 + N2*x2 + N3*x3 + N4*x4;
-            // y = N1*y1 + N2*y2 + N3*y3 + N4*y4;
-            // z = 0;
-            // Ni = 1/4 * (1+r*ri) * (1+s*si);
-            // Newton-Raphson method
+            // 1. Check size
             if (nodalCoords.Count != Size)
                 throw new System.ArgumentOutOfRangeException("In quadrilateral4 shape function count of nodes != 4");
 
-            var uv = new Optimizer(point, nodalCoords).Calculate(new Vector3D()) ;
+            // 2. Preparing the optimization function
+            System.Func<float, float, float> f = (u,v) =>
+            {
+                var uvw = new Vector3D(u, v, 0);
+                var probPoint = Calculate(uvw, nodalCoords);
+                return (probPoint - point).Length;
+            };
+
+            // 3. Preparing the optimizer
+            var optimizer = new Optimizer2D(f);
+
+            // 4. Find optimum UV-coords
+            optimizer.FindMin(out var results);
+            if (results.Length != SpaceDimension)
+                throw new System.ArgumentException("Optimizer fail!");
+
+            // 5. Return UV-coords
+            var uv = new Vector3D(results[0], results[1], 0);
             return uv;
         }
 
         /// <summary>
-        /// Returns the shape function type
+        /// Returns the shape function type.
         /// </summary>
-        /// <returns>Shape function type</returns>
+        /// <returns>Shape function type.</returns>
         public override ShapeFunctionType GetShapeFunctionType()
         {
             return ShapeFunctionType.Quadrilateral_4;

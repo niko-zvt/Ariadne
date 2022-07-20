@@ -1,20 +1,32 @@
 ﻿using Ariadne.Kernel.Math;
-using System;
 using System.Collections.Generic;
 
 namespace Ariadne.Kernel
 {
-    public delegate float Functor(float u, float v, float w);
+    /// <summary>
+    /// Delegate defining a single node shape function.
+    /// </summary>
+    /// <param name="u">U-coordinate.</param>
+    /// <param name="v">V-coordinate.</param>
+    /// <param name="w">W-coordinate.</param>
+    /// <returns></returns>
+    public delegate float ShapeFunctor(float u, float v, float w);
 
-    public delegate Vector3D GlobalFunctor(Vector3D coords, List<Vector3D> nodalValues);
+    /// <summary>
+    /// Delegate defining the general form of the shape function.
+    /// </summary>
+    /// <param name="coords">XYZ-coords vector.</param>
+    /// <param name="nodalValues">Nodal values - characteristic coefficients of the shape function.</param>
+    /// <returns></returns>
+    public delegate Vector3D GlobalShapeFunctor(Vector3D coords, List<Vector3D> nodalValues);
 
     /// <summary>
     /// Abstract class of the shape functions
     /// </summary>
     public abstract class ShapeFunction
     {
-        protected List<Functor> _localFunctors = new List<Functor>();
-        protected GlobalFunctor _globalFunctor = null;
+        protected List<ShapeFunctor> _localFunctors = new List<ShapeFunctor>();
+        protected GlobalShapeFunctor _globalFunctor = null;
 
         /// <summary>
         /// Dimension of shape function
@@ -27,6 +39,12 @@ namespace Ariadne.Kernel
         /// </summary>
         public int Size { get { return _localFunctors.Count; } }
 
+        /// <summary>
+        /// Find the UVW-coords by solving the optimization problem.
+        /// </summary>
+        /// <param name="xyz">Target point in XYZ-space.</param>
+        /// <param name="nodalCoords">Nodal coordinates from a specific element.</param>
+        /// <returns>UVW-coords.</returns>
         public Vector3D FindUVW(Vector3D xyz, List<Vector3D> nodalCoords)
         {
             if (_globalFunctor != null)
@@ -35,6 +53,12 @@ namespace Ariadne.Kernel
             return new Vector3D(float.NaN, float.NaN, float.NaN);
         }
 
+        /// <summary>
+        /// Calculate specific value by solve general form a shape function. 
+        /// </summary>
+        /// <param name="uvw">Target point in UVW-space.</param>
+        /// <param name="nodalValues">Nodal values from a specific element.</param>
+        /// <returns></returns>
         public Vector3D Calculate(Vector3D uvw, List<Vector3D> nodalValues)
         {
             if (Size != nodalValues.Count)
