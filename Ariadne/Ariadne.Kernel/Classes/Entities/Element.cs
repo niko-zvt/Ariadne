@@ -61,8 +61,8 @@ namespace Ariadne.Kernel
         /// Get UV-coords by point location in 3D space.
         /// </summary>
         /// <param name="point">Target point.</param>
-        /// <returns>UV-coords or NULL.</returns>
-        public abstract Vector3D GetUVCoordsByPoint(Vector3D point);
+        /// <returns>UVW-coords or NULL.</returns>
+        public abstract Vector3D GetUVWCoordsByPoint(Vector3D point);
 
         /// <summary>
         /// Build a centroid coords of current element.

@@ -45,34 +45,29 @@ namespace Ariadne.Kernel
         /// Get UV-coords by point location in 3D space.
         /// </summary>
         /// <param name="point">Target point.</param>
-        /// <returns>UV-coords or NULL.</returns>
-        public override Vector3D GetUVCoordsByPoint(Vector3D point)
+        /// <returns>UVW-coords or NULL.</returns>
+        public override Vector3D GetUVWCoordsByPoint(Vector3D point)
         {
             // 1. Check point
             if (IsPointBelong(point) != true)
                 return null;
 
-            // 2. Calculate affine map GCS -> LCS
-            var map = GetElementLCSAsRef().GetMapToLocalCS();
-
-            // 3. Calculate target point in LCS
-            var localPoint = map.TransformPoint(point);
-
-            // 4. Calculate coords of nodes in LCS
+            // 2. Calculate coords of nodes in LCS
             var coorsOfNodes = new List<Vector3D>();
             foreach(var coord in GetNodes().GetAllCoords())
             {
                 coorsOfNodes.Add(new Vector3D(coord));
             }
-            var localCoorsOfNodes = map.TransformPoints(coorsOfNodes);
 
-            // 4. Calculate UV-coords
+            // 3. Calculate UVW-coords
             var uvw = ShapeFunction.FindUVW(point, coorsOfNodes);
-
-            var test = ShapeFunction.Calculate(uvw, coorsOfNodes);
-
             if (uvw.IsValid() == false)
                 throw new System.ArgumentNullException("Natural coords is NAN!");
+
+            // 4. Calculate prob - the difference between a real point and its approximation
+            var prob = ShapeFunction.Calculate(uvw, coorsOfNodes);
+            if ((point - prob).Length > Utils.LinearTolerance)
+                throw new System.ArgumentNullException("Natural coords is invalid!");
 
             return uvw;
         }

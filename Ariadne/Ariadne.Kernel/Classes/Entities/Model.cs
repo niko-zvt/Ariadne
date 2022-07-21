@@ -380,15 +380,22 @@ namespace Ariadne.Kernel
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
         private bool GetStressInElementByIDAndPoint(int elementID, Vector3D location, out Matrix3x3 stress, bool forceCheck = false)
         {
+            // 0. Init stress value
             stress = null;
 
+            // 1. Force check that the point belongs to the element
             if (forceCheck == true && CheckPointBelongElement(elementID, location) == false)
                 return false;
 
+            // 2. Get element
             var element = Elements.GetByID(elementID);
             if (element == null)
                 return false;
 
+            // 3. Get UVW-coords
+            var uvw = element.GetUVWCoordsByPoint(location);
+
+            // 4. Get nodes
             var elementNodes = new NodeSet();
             foreach(var nodeID in element.NodeIDs)
             {
@@ -397,6 +404,7 @@ namespace Ariadne.Kernel
             if (elementNodes.Count <= 0)
                 return false;
 
+            // 5. Get nodal data
             var nodesData = new List<(int NodeID, Vector3D NodeLocation, Matrix3x3 NodeStress)>();
             foreach (var node in elementNodes)
             {
@@ -407,11 +415,11 @@ namespace Ariadne.Kernel
             if(nodesData.Count != elementNodes.Count)
                 return false;
 
-            var uv = element.GetUVCoordsByPoint(location);
+            // TODO:
+            // 6. Calculate the stress through the shape function
+            // element.ShapeFunction.Calculate(uvw, nodalData);
 
-            // TODO: Calculate the stress through the shape function
-            // 1. Calculate UV-coords of point
-            // 2. Calculate the stress through the shape function
+            throw new NotImplementedException();
 
             return true;
         }
