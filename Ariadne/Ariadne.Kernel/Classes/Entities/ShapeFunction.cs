@@ -62,7 +62,7 @@ namespace Ariadne.Kernel
         public Vector3D Calculate(Vector3D uvw, List<Vector3D> nodalValues)
         {
             if (Size != nodalValues.Count)
-                throw new System.IndexOutOfRangeException("Size != Nodes!");
+                throw new System.IndexOutOfRangeException("Size != number of nodes!");
 
             var value = new Vector3D();
             for (int i = 0; i < Size; i++)
@@ -72,6 +72,21 @@ namespace Ariadne.Kernel
                 value.Z += _localFunctors[i](uvw.X, uvw.Y, uvw.Z) * nodalValues[i].Z;
             }
             return value;
+        }
+
+        public Matrix3x3 Calculate(Vector3D uvw, Set<Matrix3x3> nodalValues)
+        {
+            if (Size != nodalValues.Count)
+                throw new System.IndexOutOfRangeException("Size != number of matrixes!");
+
+            var values = new Matrix3x3();
+            for (int i = 0; i < Size; i++)
+            {
+                for(int x = 0; x < values.GetSize()[0]; x++)
+                    for (int y = 0; y < values.GetSize()[1]; y++)
+                        values[x, y] += _localFunctors[i](uvw.X, uvw.Y, uvw.Z) * nodalValues[i][x, y];
+            }
+            return values;
         }
 
         /// <summary>
