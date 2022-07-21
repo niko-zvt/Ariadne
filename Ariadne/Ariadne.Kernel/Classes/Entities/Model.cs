@@ -376,15 +376,16 @@ namespace Ariadne.Kernel
         /// <param name="elementID">Element ID</param>
         /// <param name="location">Point location</param>
         /// <param name="stress">Stress matrix</param>
-        /// <param name="forceCheck">If the parameter is true, then an explicit check is made that the point belongs to the element.</param>
+        /// <param name="isForceCheckLocation">If the parameter is true, then an explicit check is made that the point belongs to the element.</param>
+        /// <param name="isForceCheckNaN">If the parameter is true, then an explicit check is made that the stress matrix contain NaN.</param>
         /// <returns>Returns true if the result is successful, otherwise - false</returns>
-        private bool GetStressInElementByIDAndPoint(int elementID, Vector3D location, out Matrix3x3 stress, bool forceCheck = false)
+        private bool GetStressInElementByIDAndPoint(int elementID, Vector3D location, out Matrix3x3 stress, bool isForceCheckLocation = false, bool isForceCheckNaN = false)
         {
             // 0. Init stress value
             stress = null;
 
             // 1. Force check that the point belongs to the element
-            if (forceCheck == true && CheckPointBelongElement(elementID, location) == false)
+            if (isForceCheckLocation && CheckPointBelongElement(elementID, location) == false)
                 return false;
 
             // 2. Get element
@@ -405,21 +406,27 @@ namespace Ariadne.Kernel
                 return false;
 
             // 5. Get nodal data
-            var nodesData = new List<(int NodeID, Vector3D NodeLocation, Matrix3x3 NodeStress)>();
+            (IntSet NodeIDs, Set<Vector3D> NodalLocations, Set<Matrix3x3> NodalStresses) nodesData = (new IntSet(), new Set<Vector3D>(), new Set<Matrix3x3>());
             foreach (var node in elementNodes)
             {
                 var nodeResult = GetStressInNode(node.ID, out var nodeStress, out var nodeLocation);
-                nodesData.Add(new (node.ID, nodeLocation, nodeStress));
+                if (nodeResult is true)
+                {
+                    nodesData.NodeIDs.Add(node.ID);
+                    nodesData.NodalLocations.Add(nodeLocation);
+                    nodesData.NodalStresses.Add(nodeStress);
+                }
             }
 
-            if(nodesData.Count != elementNodes.Count)
+            if(nodesData.NodeIDs.Count != elementNodes.Count)
                 return false;
 
-            // TODO:
             // 6. Calculate the stress through the shape function
-            // element.ShapeFunction.Calculate(uvw, nodalData);
+            stress = element.ShapeFunction.Calculate(uvw, nodesData.NodalStresses);
 
-            throw new NotImplementedException();
+            // 7. Force check that the stress matrix contain NaN
+            if (isForceCheckNaN && stress.IsContain(float.NaN))
+                return false;
 
             return true;
         }
