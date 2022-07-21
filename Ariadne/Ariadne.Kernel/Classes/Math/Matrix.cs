@@ -1,5 +1,7 @@
 ﻿using MathNet.Numerics.LinearAlgebra.Double.Solvers;
 using MathNet.Numerics.LinearAlgebra.Solvers;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Ariadne.Kernel.Math
@@ -58,8 +60,66 @@ namespace Ariadne.Kernel.Math
         {
             return _values.ToArray();
         }
+
+        /// <summary>
+        /// Define the indexer to allow client code to use [] notation.
+        /// </summary>
+        /// <param name="i">First index (row)</param>
+        /// <param name="j">Second index (column)</param>
+        /// <returns></returns>
+        public float this[int i, int j]
+        {
+            get 
+            {
+                return _values.ToArray()[i,j];
+            }
+            set 
+            {
+                var newValues = _values.ToArray();
+                newValues[i,j] = value;
+                _values = MathNet.Numerics.LinearAlgebra.Matrix<float>.Build.DenseOfArray(newValues);
+            }
+        }
+
+        /// <summary>
+        /// Check matrix is valid.
+        /// </summary>
+        /// <returns>True if success result, otherwise - false.</returns>
+        public bool IsValid(bool forceCheckNaN)
+        {
+            if (_values == null ||
+                _values.RowCount <= 0 ||
+                _values.ColumnCount <= 0 ||
+                _values.ToArray().Length <= 0 ||
+                forceCheckNaN ? IsContain(float.NaN) : true)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Check the matrix for the content of a specific value.
+        /// </summary>
+        /// <param name="value">The value we are looking for in the matrix.</param>
+        /// <returns>True if success result, otherwise - false.</returns>
+        public bool IsContain(float value)
+        {
+            if (_values == null)
+                return false;
+
+            var array = _values.AsArray();
+
+            foreach (var element in array)
+            {
+                if(element == value)
+                    return true;
+            }
+
+            return false;
+        }
     }
 
+    
     /// <summary>
     /// Enumeration of all available types of matrix
     /// </summary>

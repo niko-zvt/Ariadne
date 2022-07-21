@@ -396,6 +396,10 @@ namespace Ariadne.Kernel.Math
             return VectorType.Vector3D;
         }
 
+        /// <summary>
+        /// Convert vector to string.
+        /// </summary>
+        /// <returns>Result string.</returns>
         public override string ToString()
         {
             return base.ToString() + $":\t{X},\t{Y},\t{Z}";
