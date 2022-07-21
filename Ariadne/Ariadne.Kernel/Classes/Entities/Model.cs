@@ -394,7 +394,7 @@ namespace Ariadne.Kernel
                 return false;
 
             // 3. Get UVW-coords
-            var uvw = element.GetUVWCoordsByPoint(location);
+            var uvw = element.GetUVWCoordsByPoint(location, true);
 
             // 4. Get nodes
             var elementNodes = new NodeSet();

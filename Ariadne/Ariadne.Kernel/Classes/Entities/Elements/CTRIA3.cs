@@ -82,8 +82,9 @@ namespace Ariadne.Kernel
         /// Get UV-coords by point location in 3D space.
         /// </summary>
         /// <param name="point">Target point.</param>
+        /// <param name="isCalculateByLCS">true - if you need to calculate UVW-coords by local CS, false - by global CS.</param>
         /// <returns>UV-coords or NULL.</returns>
-        public override Vector3D GetUVWCoordsByPoint(Vector3D point)
+        public override Vector3D GetUVWCoordsByPoint(Vector3D point, bool isCalculateByLCS = false)
         {
             throw new System.NotImplementedException();
         }

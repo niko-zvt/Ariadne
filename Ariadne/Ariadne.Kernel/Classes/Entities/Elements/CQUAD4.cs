@@ -45,8 +45,9 @@ namespace Ariadne.Kernel
         /// Get UV-coords by point location in 3D space.
         /// </summary>
         /// <param name="point">Target point.</param>
+        /// <param name="isCalculateByLCS">true - if you need to calculate UVW-coords by local CS, false - by global CS.</param>
         /// <returns>UVW-coords or NULL.</returns>
-        public override Vector3D GetUVWCoordsByPoint(Vector3D point)
+        public override Vector3D GetUVWCoordsByPoint(Vector3D point, bool isCalculateByLCS = false)
         {
             // 1. Check point
             if (IsPointBelong(point) != true)
@@ -59,12 +60,20 @@ namespace Ariadne.Kernel
                 coorsOfNodes.Add(new Vector3D(coord));
             }
 
-            // 3. Calculate UVW-coords
+            // 3. Points GCS -> LCS (optional)
+            if(isCalculateByLCS)
+            {
+                var map = new AffineMap3D(GetElementLCSAsRef());
+                point = map.TransformPoint(point);
+                coorsOfNodes = map.TransformPoints(coorsOfNodes);
+            }
+
+            // 4. Calculate UVW-coords
             var uvw = ShapeFunction.FindUVW(point, coorsOfNodes);
             if (uvw.IsValid() == false)
                 throw new System.ArgumentNullException("Natural coords is NAN!");
 
-            // 4. Calculate prob - the difference between a real point and its approximation
+            // 5. Calculate prob - the difference between a real point and its approximation
             var prob = ShapeFunction.Calculate(uvw, coorsOfNodes);
             if ((point - prob).Length > Utils.LinearTolerance)
                 throw new System.ArgumentNullException("Natural coords is invalid!");
