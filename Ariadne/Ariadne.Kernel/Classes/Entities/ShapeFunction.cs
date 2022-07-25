@@ -58,7 +58,7 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="uvw">Target point in UVW-space.</param>
         /// <param name="nodalValues">Nodal values from a specific element.</param>
-        /// <returns></returns>
+        /// <returns>Specific vector.</returns>
         public Vector3D Calculate(Vector3D uvw, List<Vector3D> nodalValues)
         {
             if (Size != nodalValues.Count)
@@ -74,6 +74,12 @@ namespace Ariadne.Kernel
             return value;
         }
 
+        /// <summary>
+        /// Calculate specific value by solve general form a shape function.
+        /// </summary>
+        /// <param name="uvw">Target point in UVW-space.</param>
+        /// <param name="nodalValues">Nodal values from a specific element.</param>
+        /// <returns>Specific matrix.</returns>
         public Matrix3x3 Calculate(Vector3D uvw, Set<Matrix3x3> nodalValues)
         {
             if (Size != nodalValues.Count)

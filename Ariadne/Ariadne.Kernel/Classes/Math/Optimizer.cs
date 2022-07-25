@@ -1,4 +1,4 @@
-﻿namespace Ariadne.Kernel.Math
+﻿namespace Ariadne.Kernel.Math.Optimizers
 {
     /// <summary>
     /// An abstract class representing any optimizers of functions.
