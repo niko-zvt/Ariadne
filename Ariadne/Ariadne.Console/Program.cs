@@ -31,7 +31,9 @@ namespace Ariadne.Console
             // Test methods
             var stress = new Matrix3x3();
             var resultNode = model.GetStressInNode(39, out stress, out var nCoords);
+            resultNode = model.GetStressInNode(87, out stress, out nCoords);
             var resultElement = model.GetStressInElement(39, out stress, out var eCoords);
+            resultElement = model.GetStressInElement(126, out stress, out eCoords);
 
             var testVectors = new List<Vector3D>()
             {

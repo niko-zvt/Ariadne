@@ -1,4 +1,5 @@
 ﻿using Ariadne.Kernel.Math;
+using System.Collections.Generic;
 
 namespace Ariadne.Kernel
 {
@@ -85,7 +86,38 @@ namespace Ariadne.Kernel
         /// <returns>UV-coords or NULL.</returns>
         public override Vector3D GetUVWCoordsByPoint(Vector3D point, bool isCalculateByLCS = false)
         {
-            throw new System.NotImplementedException();
+            var tolerance = 1e-4f;
+
+            // 1. Check point
+            if (IsPointBelong(point) != true)
+                return null;
+
+            // 2. Calculate coords of nodes in LCS
+            var coorsOfNodes = new List<Vector3D>();
+            foreach (var coord in GetNodes().GetAllCoords())
+            {
+                coorsOfNodes.Add(new Vector3D(coord));
+            }
+
+            // 3. Points GCS -> LCS (optional)
+            if (isCalculateByLCS)
+            {
+                var map = new AffineMap3D(GetElementLCSAsRef());
+                point = map.TransformPoint(point);
+                coorsOfNodes = map.TransformPoints(coorsOfNodes);
+            }
+
+            // 4. Calculate UVW-coords
+            var uvw = ShapeFunction.FindUVW(point, coorsOfNodes);
+            if (uvw.IsValid() == false)
+                throw new System.ArgumentNullException("Natural coords is NAN!");
+
+            // 5. Calculate prob - the difference between a real point and its approximation
+            var prob = ShapeFunction.Calculate(uvw, coorsOfNodes);
+            if ((point - prob).Length > tolerance)
+                throw new System.ArgumentNullException("Natural coords is invalid!");
+
+            return uvw;
         }
 
         /// <summary>
