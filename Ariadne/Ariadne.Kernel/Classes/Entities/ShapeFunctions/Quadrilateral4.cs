@@ -110,8 +110,8 @@ namespace Ariadne.Kernel
             };
 
             // 3. Preparing the optimizer
-            var initParams = (0, 0);
-            var optimizer = new CoordinateDescentAlgorithm(f, initParams);
+            var initParams = (-1, 1);
+            var optimizer = new Math.Optimizers.MethodOfNelderMead(f, initParams);
 
             // 4. Find optimum UV-coords
             var result = optimizer.FindMin(out var results);

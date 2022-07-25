@@ -15,7 +15,7 @@ namespace Ariadne.Kernel.Math
         /// <summary>
         /// Global linear tolerance
         /// </summary>
-        public const float LinearTolerance = 0.000001f;
+        public const float LinearTolerance = 1e-6f;
 
         /// <summary>
         /// Global angular tolerance

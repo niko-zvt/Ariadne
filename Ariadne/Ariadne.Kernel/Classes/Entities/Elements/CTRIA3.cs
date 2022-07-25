@@ -1,5 +1,4 @@
 ﻿using Ariadne.Kernel.Math;
-using System.Collections.Generic;
 
 namespace Ariadne.Kernel
 {

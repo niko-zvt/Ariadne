@@ -5,7 +5,7 @@ namespace Ariadne.Kernel.Math.Optimizers
     /// <summary>
     /// Coordinate descent is an optimization algorithm that successively minimizes along coordinate directions to find the minimum of a function.
     /// </summary>
-    public class CoordinateDescentAlgorithm : Optimizer2D, IIterativeOptimizer
+    public class MethodOfCoordinateDescent : Optimizer2D, IIterativeOptimizer
     {
         /// <summary>
         /// The total number of iterations.
@@ -29,7 +29,7 @@ namespace Ariadne.Kernel.Math.Optimizers
         /// <param name="function">Optimization function.</param>
         /// <param name="tolerance">Tolerance.</param>
         /// <param name="maxIterations">Maximum number of iterations.</param>
-        public CoordinateDescentAlgorithm(Func<float, float, float> function, (float x, float y) initialApprox, float tolerance = Utils.LinearTolerance, uint maxIterations = 100000)
+        public MethodOfCoordinateDescent(Func<float, float, float> function, (float x, float y) initialApprox, float tolerance = Utils.LinearTolerance, uint maxIterations = 100000)
         {
             _f = function;
             _maxIterations = maxIterations;
@@ -63,7 +63,7 @@ namespace Ariadne.Kernel.Math.Optimizers
 
                     // 2. Carry out one-dimensional optimization on the variable x_i,
                     // by any one-dimensional optimization method
-                    var optimizer = new GoldenSectionSearch(f, (-1, 1));
+                    var optimizer = new MethodOfGoldenSection(f, (-1, 1));
                     var results = new float[] { };
                     result = isMax ? optimizer.FindMax(out results) : optimizer.FindMin(out results);
                     if (result is not true)

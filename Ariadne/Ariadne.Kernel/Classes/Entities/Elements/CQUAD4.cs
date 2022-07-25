@@ -49,6 +49,8 @@ namespace Ariadne.Kernel
         /// <returns>UVW-coords or NULL.</returns>
         public override Vector3D GetUVWCoordsByPoint(Vector3D point, bool isCalculateByLCS = false)
         {
+            var tolerance = 1e-4f;
+
             // 1. Check point
             if (IsPointBelong(point) != true)
                 return null;
@@ -75,7 +77,7 @@ namespace Ariadne.Kernel
 
             // 5. Calculate prob - the difference between a real point and its approximation
             var prob = ShapeFunction.Calculate(uvw, coorsOfNodes);
-            if ((point - prob).Length > Utils.LinearTolerance)
+            if ((point - prob).Length > tolerance)
                 throw new System.ArgumentNullException("Natural coords is invalid!");
 
             return uvw;

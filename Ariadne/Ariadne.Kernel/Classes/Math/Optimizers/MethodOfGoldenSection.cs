@@ -9,7 +9,7 @@ namespace Ariadne.Kernel.Math.Optimizers
     /// The method is based on the principle of dividing the segment in the proportions of the golden section.
     /// It is one of the simplest computational methods for solving optimization problems.
     /// </summary>
-    public class GoldenSectionSearch : Optimizer1D, IIterativeOptimizer
+    public class MethodOfGoldenSection : Optimizer1D, IIterativeOptimizer
     {
         /// <summary>
         /// The total number of iterations.
@@ -39,7 +39,7 @@ namespace Ariadne.Kernel.Math.Optimizers
         /// <param name="interval">Search interval.</param>
         /// <param name="tolerance">Tolerance.</param>
         /// <param name="maxIterations">Maximum number of iterations.</param>
-        public GoldenSectionSearch(Func<float, float> function, (float Lower, float Upper) interval, float tolerance = Utils.LinearTolerance, uint maxIterations = 100000)
+        public MethodOfGoldenSection(Func<float, float> function, (float Lower, float Upper) interval, float tolerance = Utils.LinearTolerance, uint maxIterations = 100000)
         {
             _f = function;
             _interval = interval;
