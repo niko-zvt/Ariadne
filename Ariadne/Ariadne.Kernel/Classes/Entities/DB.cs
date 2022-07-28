@@ -25,7 +25,9 @@ namespace Ariadne.Kernel
         private DB(string pathToBDF, string pathToOP2 = null, string pathToXDB = null, string pathToSES = null)
         {
             // TODO: Use TRY-CATCH
-            if (String.IsNullOrEmpty(pathToBDF) || !File.Exists(pathToBDF))
+            var isNull = String.IsNullOrEmpty(pathToBDF);
+            var isEmpty = !File.Exists(pathToBDF);
+            if (isNull || isEmpty)
                 throw new ArgumentException("Parameter cannot be null or empty", nameof(pathToBDF));
 
             ExternalDB = new NastranDb
@@ -48,7 +50,6 @@ namespace Ariadne.Kernel
             if (!String.IsNullOrEmpty(pathToOP2) && File.Exists(pathToOP2))
             {
                 ExternalDB.readOp2(pathToOP2, "Results");
-
                 // TODO: WTF?!
                 //ExternalDB.generateCoordResults();
                 //ExternalDB.generateCoordResults("Fake Coords Case", "No SubCase", "coords");
