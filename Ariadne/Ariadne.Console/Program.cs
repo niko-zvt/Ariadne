@@ -5,11 +5,10 @@ namespace Ariadne.Console
 {
     class Program
     {
-        // Paths to the sample files
-        private const string pathToDAT = @"Examples\Ex-000\model-000.dat";
-        private const string pathToOP2 = @"Examples\Ex-000\model-000.op2";
-        //private const string pathToSES = @"Examples\Ex-000\model-000.ses";
-        //private const string pathToXDB = @"Examples\Ex-000\model-000.xdb";
+        // File formats and paths to the sample files
+        enum FileFormat { DAT, OP2, SES, XDB }
+        private const string example = "001";
+        private const string pathToFile = $"Examples\\Ex-{example}\\model-{example}.";
 
         delegate bool FuncCalculate(Vector3D coords, out Matrix3x3 stress);
 
@@ -20,10 +19,14 @@ namespace Ariadne.Console
             StreamWriter stdout = new StreamWriter(System.Console.OpenStandardOutput());
             stdout.AutoFlush = true;
 
+            // File path
+            var fullPathToFile = AppDomain.CurrentDomain.BaseDirectory + pathToFile + FileFormat.DAT.ToString();
+
             // Create FeResPost database
-            var fullPathToDAT = AppDomain.CurrentDomain.BaseDirectory + pathToDAT;
-            var fullPathToOP2 = AppDomain.CurrentDomain.BaseDirectory + pathToOP2;
-            var database = Kernel.DB.Create(fullPathToDAT, fullPathToOP2);
+            var database = Kernel.DB.Create(fullPathToFile + FileFormat.DAT.ToString(),
+                                            fullPathToFile + FileFormat.OP2.ToString(),
+                                            fullPathToFile + FileFormat.XDB.ToString(),
+                                            fullPathToFile + FileFormat.SES.ToString());
 
             // Create model
             var model = Kernel.Model.CreateByDatabase(database);
