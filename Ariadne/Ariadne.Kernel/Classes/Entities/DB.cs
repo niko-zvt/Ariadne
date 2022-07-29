@@ -88,24 +88,39 @@ namespace Ariadne.Kernel
 
             foreach (int id in ids)
             {
-                var card = ExternalDB.fillCard("Material", id);
+                // FeResPost User Manual:
+                // "Note that Nastran model may contain several material cards sharing a common ID, or several MPC cards with the same ID.
+                // When this case occurs, an exception is thrown.
+                // Therefore, for MPC or material cards, it is advised to use “fillCards” method instead of “fillCard”.
+                // An exception is also thown when no FEM item matching specified ID is found."
 
-                if (card != null && card[0] is string @string)
+                // fillCard(...) -> fillCards(...)
+
+                var cards = ExternalDB.fillCards("Material", id);
+
+                if (cards != null && cards is object[] @objects)
                 {
-                    parameters.ID = id;
-                    parameters.TypeName = MaterialCreator.GetMaterialTypeNameBySubtype(@string);
-                    parameters.SubtypeName = @string;
-                    parameters.Data = card;
+                    foreach (var card in @objects)
+                    {
+                        if (card != null && card is object[] @fields &&
+                            fields[0] != null && fields[0] is string @string)
+                        {
+                            parameters.ID = id;
+                            parameters.TypeName = MaterialCreator.GetMaterialTypeNameBySubtype(@string);
+                            parameters.SubtypeName = @string;
+                            parameters.Data = card;
 
-                    var creator = MaterialCreator.GetMaterialCreatorByParams(parameters);
-                    creators.Add(creator);
+                            var creator = MaterialCreator.GetMaterialCreatorByParams(parameters);
+                            creators.Add(creator);
+                        }
+                    }
                 }
             }
 
             foreach (var creator in creators)
             {
                 var material = creator.BuildMaterial();
-                materials.Add(material.ID, material);
+                materials.Add(material);
             }
 
             return materials;

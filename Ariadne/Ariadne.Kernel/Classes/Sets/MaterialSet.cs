@@ -14,14 +14,14 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Specific storage collection
         /// </summary>
-        private Dictionary<int, Material> _collection;
+        private List<Material> _collection;
 
         /// <summary>
         /// Default Constructor
         /// </summary>
         public MaterialSet()
         {
-            _collection = new Dictionary<int, Material>();
+            _collection = new List<Material>();
         }
 
         /// <summary>
@@ -29,9 +29,17 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="id">Material ID</param>
         /// <returns>Specific material</returns>
-        public Material GetByID(int id)
+        public MaterialSet GetByID(int id)
         {
-            return _collection.TryGetValue(id, out Material value) ? value : null;
+            var materials = new MaterialSet();
+            
+            foreach(var material in _collection)
+            {
+                if (material != null && material.ID == id)
+                    materials.Add(material);
+            }
+
+            return materials;
         }
 
         /// <summary>
@@ -44,15 +52,7 @@ namespace Ariadne.Kernel
             if (index < 0 || index >= _collection.Count)
                 return null;
 
-            int i = 0;
-            foreach (var item in _collection)
-            {
-                if (i == index)
-                    return item.Value;
-                i++;
-            }
-
-            return null;
+            return _collection[index];
         }
 
         /// <summary>
@@ -78,9 +78,9 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="id">Material ID</param>
         /// <param name="value">Specific material</param>
-        public void Add(int id, Material value)
+        public void Add(Material value)
         {
-            _collection.Add(id, value);
+            _collection.Add(value);
         }
 
         /// <summary>
@@ -88,10 +88,9 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="id">Material ID</param>
         /// <returns>Specific material</returns>
-        public Material this[int id]
+        public MaterialSet this[int id]
         {
             get { return GetByID(id); }
-            set { Add(id, value); }
         }
 
         /// <summary>
@@ -111,7 +110,7 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Array for enumeration
         /// </summary>
-        private KeyValuePair<int, Material>[] _array;
+        private Material[] _array;
 
         /// <summary>
         /// Position
@@ -121,10 +120,9 @@ namespace Ariadne.Kernel
         /// <summary>
         /// Сonstructor for enumerator
         /// </summary>
-        /// <param name="dic">Input dictionary</param>
-        public MaterialEnumerator(Dictionary<int, Material> dic)
+        /// <param name="list">Input list</param>
+        public MaterialEnumerator(List<Material> list)
         {
-            var list = new List<KeyValuePair<int, Material>>(dic);
             _array = list.ToArray();
         }
 
@@ -166,7 +164,7 @@ namespace Ariadne.Kernel
             {
                 try
                 {
-                    return _array[position].Value;
+                    return _array[position];
                 }
                 catch (IndexOutOfRangeException)
                 {
