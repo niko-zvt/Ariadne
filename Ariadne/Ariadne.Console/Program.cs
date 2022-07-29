@@ -20,7 +20,7 @@ namespace Ariadne.Console
             stdout.AutoFlush = true;
 
             // File path
-            var fullPathToFile = AppDomain.CurrentDomain.BaseDirectory + pathToFile + FileFormat.DAT.ToString();
+            var fullPathToFile = AppDomain.CurrentDomain.BaseDirectory + pathToFile;
 
             // Create FeResPost database
             var database = Kernel.DB.Create(fullPathToFile + FileFormat.DAT.ToString(),
