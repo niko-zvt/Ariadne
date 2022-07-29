@@ -56,6 +56,14 @@ Use the suffix `{package_name}:x64-windows` to build for a specific platform.
     ./vcpkg.exe install boost:x64-windows
     ./vcpkg.exe install eigen3:x64-windows
 
+### **5. Install [Ruby](https://www.ruby-lang.org/) for your platform (optional)**
+
+To work with ruby scripts, you will need a Ruby interpreter. The interpreter version depends on the version of the [`FeResPost` library](http://www.ferespost.eu/index.php?subpage=Install). At the moment, this is version 3.0.x ([v3.0.4-1 download link](https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.0.4-1/rubyinstaller-3.0.4-1-x64.exe)).
+
+To run the script, use the command:
+
+    ./ruby.exe filename.rb
+
 ### **Errors**
 
 If there are errors, see the log. The most common mistakes:
