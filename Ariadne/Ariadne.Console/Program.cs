@@ -29,7 +29,8 @@ namespace Ariadne.Console
                                             fullPathToFile + FileFormat.SES.ToString());
 
             // Create model
-            var model = Kernel.Model.CreateByDatabase(database);
+            var isForceRemappingResults = true;
+            var model = Kernel.Model.CreateByDatabase(database, isForceRemappingResults);
 
             // Test methods
             var stress = new Matrix3x3();

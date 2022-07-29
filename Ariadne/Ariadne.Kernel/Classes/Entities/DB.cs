@@ -11,9 +11,47 @@ namespace Ariadne.Kernel
     public class DB
     {
         /// <summary>
+        /// Enumeration specifying the correspondence between the keys
+        /// of the old Result object and the keys of the new Result object.
+        /// </summary>
+        private enum FromToMethod
+        {
+            CentersToCorners,
+            CentersToNodes,
+            NodesToCenters,
+            NodesToCorners,
+            CornersToCenters,
+            CornersToNodes,
+            MergeLayers,
+            MergeLayersKeepId,
+            MergeSubLayers,
+            MergeSubLayersKeepId,
+            MergeAll,
+            CentersToElemsAndNodes,
+            CornersToElemsAndNodes,
+            CentersToCornerNodes,
+            ElemsAndNodesToCenters,
+            ElemsAndNodesToNodes,
+            NodesToElemsAndNodes
+        }
+
+        /// <summary>
+        /// Enumeration used to specify the way values associated to
+        /// different keys are merged into a single value (if this happens).
+        /// </summary>
+        private enum RemappingMethod
+        {
+            Average,
+            Sum,
+            Min,
+            Max,
+            NONE
+        }
+
+        /// <summary>
         /// Nastran database
         /// </summary>
-        private NastranDb ExternalDB { get; set; }
+        private NastranDb _externalNastranDB;
 
         /// <summary>
         /// Private constructor of database object
@@ -30,29 +68,29 @@ namespace Ariadne.Kernel
             if (isNull || isEmpty)
                 throw new ArgumentException("Parameter cannot be null or empty", nameof(pathToBDF));
 
-            ExternalDB = new NastranDb
+            _externalNastranDB = new NastranDb
             {
                 Name = Path.GetFileNameWithoutExtension(pathToBDF)
             };
 
-            ExternalDB.readBdf(pathToBDF);
+            _externalNastranDB.readBdf(pathToBDF);
 
             if (!String.IsNullOrEmpty(pathToXDB) && File.Exists(pathToXDB))
             {
-                ExternalDB.readXdb(pathToXDB);
+                _externalNastranDB.readXdb(pathToXDB);
             }
 
             if (!String.IsNullOrEmpty(pathToSES) && File.Exists(pathToSES))
             {
-                ExternalDB.readGroupsFromPatranSession(pathToSES);
+                _externalNastranDB.readGroupsFromPatranSession(pathToSES);
             }
 
             if (!String.IsNullOrEmpty(pathToOP2) && File.Exists(pathToOP2))
             {
-                ExternalDB.readOp2(pathToOP2, "Results");
+                _externalNastranDB.readOp2(pathToOP2, "Results");
                 // TODO: WTF?!
-                //ExternalDB.generateCoordResults();
-                //ExternalDB.generateCoordResults("Fake Coords Case", "No SubCase", "coords");
+                //_externalNastranDB.generateCoordResults();
+                //_externalNastranDB.generateCoordResults("Fake Coords Case", "No SubCase", "coords");
             }
         }
 
@@ -96,7 +134,7 @@ namespace Ariadne.Kernel
 
                 // fillCard(...) -> fillCards(...)
 
-                var cards = ExternalDB.fillCards("Material", id);
+                var cards = _externalNastranDB.fillCards("Material", id);
 
                 if (cards != null && cards is object[] @objects)
                 {
@@ -143,7 +181,7 @@ namespace Ariadne.Kernel
 
             foreach (int id in ids)
             {
-                var card = ExternalDB.fillCard("Property", id);
+                var card = _externalNastranDB.fillCard("Property", id);
 
                 if (card != null && card[0] is string @string)
                 {
@@ -184,9 +222,9 @@ namespace Ariadne.Kernel
             {
                 parameters.ID = id;
                 parameters.TypeName = null; // TODO: Node type
-                parameters.RefCSysID = ExternalDB.getNodeRcId(id);
-                parameters.AnalysisCSysID = ExternalDB.getNodeAcId(id);
-                parameters.Coords = ExternalDB.getNodeCoords(id);
+                parameters.RefCSysID = _externalNastranDB.getNodeRcId(id);
+                parameters.AnalysisCSysID = _externalNastranDB.getNodeAcId(id);
+                parameters.Coords = _externalNastranDB.getNodeCoords(id);
                 parameters.ParentElementIDs = GetParentElementIDsForNode(id);
 
                 var creator = NodeCreator.GetNodeCreatorByParams(parameters);
@@ -220,11 +258,11 @@ namespace Ariadne.Kernel
             foreach (int id in ids)
             {
                 parameters.ID = id;
-                parameters.TypeName = ExternalDB.getElementTypeName(id);
-                parameters.Nodes = ExternalDB.getElementNodes(id);
-                parameters.Dim = ExternalDB.getElementDim(id);
-                parameters.CornerNodes = ExternalDB.getElementCornerNodes(id);
-                parameters.PropertyID = ExternalDB.getElementPropertyId(id);
+                parameters.TypeName = _externalNastranDB.getElementTypeName(id);
+                parameters.Nodes = _externalNastranDB.getElementNodes(id);
+                parameters.Dim = _externalNastranDB.getElementDim(id);
+                parameters.CornerNodes = _externalNastranDB.getElementCornerNodes(id);
+                parameters.PropertyID = _externalNastranDB.getElementPropertyId(id);
                 parameters.Coords = GetElementCoords(id);
 
                 var creator = ElementCreator.GetElementCreatorByParams(parameters);
@@ -244,7 +282,7 @@ namespace Ariadne.Kernel
         /// Build a set of all specific results
         /// </summary>
         /// <returns>Set of results</returns>
-        public ResultSet BuildAllResults()
+        public ResultSet BuildAllResults(bool isForceRemappingResults)
         {
             var results = new ResultSet();
 
@@ -255,9 +293,9 @@ namespace Ariadne.Kernel
             ResultParams parameters;
             ResultID resultID;
 
-            string[] lcNames = ExternalDB.getResultLoadCaseNames();
-            string[] scNames = ExternalDB.getResultSubCaseNames();
-            string[] resNames = ExternalDB.getResultTypeNames();
+            string[] lcNames = _externalNastranDB.getResultLoadCaseNames();
+            string[] scNames = _externalNastranDB.getResultSubCaseNames();
+            string[] resNames = _externalNastranDB.getResultTypeNames();
 
             // TODO: Remove nesting and design a normal class of results
             foreach (string lcName in lcNames)
@@ -269,8 +307,18 @@ namespace Ariadne.Kernel
                         resultID = ResultID.CreateByNames(lcName, scName, resName);
                         parameters.ID = resultID;
                         parameters.TypeName = "ExternalResult";
-                        var result = ExternalDB.getResultCopy(lcName, scName, resName);
-                        parameters.Data = (result.modifyRefCoordSys(ExternalDB, 0)).getData(); // Result in GlobalCSys
+                        var result = _externalNastranDB.getResultCopy(lcName, scName, resName);
+
+                        if (isForceRemappingResults) 
+                        {
+                            var fromToMethod = FromToMethod.CentersToElemsAndNodes;
+                            var remappingMethod = RemappingMethod.Average;
+                            var database = _externalNastranDB as DataBase;
+                            var remappingResult = DeriveResultByRemapping(fromToMethod, remappingMethod, in result, ref database);
+                            result = remappingResult;
+                        }
+
+                        parameters.Data = (result.modifyRefCoordSys(_externalNastranDB, 0)).getData(); // Result in GlobalCSys
 
                         ResultCreator resultCreator = ResultCreator.GetResultCreatorByParams(parameters);
                         resultCreators.Add(resultCreator);
@@ -299,7 +347,7 @@ namespace Ariadne.Kernel
 
             if (this.IsValid())
             {
-                var iters = ExternalDB.iter_materialId();
+                var iters = _externalNastranDB.iter_materialId();
                 foreach (var iter in iters)
                 {
                     if (iter is int @int)
@@ -339,7 +387,7 @@ namespace Ariadne.Kernel
 
             if(this.IsValid())
             {
-                var iters = ExternalDB.iter_propertyId();
+                var iters = _externalNastranDB.iter_propertyId();
                 foreach(var iter in iters)
                 {
                     if(iter is int @int)
@@ -379,7 +427,7 @@ namespace Ariadne.Kernel
 
             if (this.IsValid())
             {
-                var iters = ExternalDB.iter_nodeId();
+                var iters = _externalNastranDB.iter_nodeId();
                 foreach (var iter in iters)
                 {
                     if (iter is int @int)
@@ -403,7 +451,7 @@ namespace Ariadne.Kernel
 
             if (IsValid())
             {
-                nbrNodes = ExternalDB.getNbrNodes();
+                nbrNodes = _externalNastranDB.getNbrNodes();
             }
 
             return nbrNodes;
@@ -419,7 +467,7 @@ namespace Ariadne.Kernel
             
             if(this.IsValid())
             {
-                var iters = ExternalDB.iter_elemId();
+                var iters = _externalNastranDB.iter_elemId();
                 foreach (var iter in iters)
                 {
                     if(iter is int @int)
@@ -443,7 +491,7 @@ namespace Ariadne.Kernel
 
             if(IsValid())
             {
-                nbrElements = ExternalDB.getNbrElements();
+                nbrElements = _externalNastranDB.getNbrElements();
             }
 
             return nbrElements;
@@ -458,8 +506,8 @@ namespace Ariadne.Kernel
         {
             var coords = new float[3] { 0.0f, 0.0f, 0.0f };
 
-            var typeName = ExternalDB.getElementTypeName(eID);
-            var cornerNodeIDs = ExternalDB.getElementCornerNodes(eID);
+            var typeName = _externalNastranDB.getElementTypeName(eID);
+            var cornerNodeIDs = _externalNastranDB.getElementCornerNodes(eID);
             var cornerNodes = BuildNodes(IntSet.FromArray(cornerNodeIDs));
 
             var cornerNodesCount = cornerNodes.Count;
@@ -514,8 +562,8 @@ namespace Ariadne.Kernel
 
             foreach (var elementID in elementIDs)
             {
-                var nodeIDs = ExternalDB.getElementNodes(elementID);
-                var cornerNodeIDs = ExternalDB.getElementCornerNodes(elementID);
+                var nodeIDs = _externalNastranDB.getElementNodes(elementID);
+                var cornerNodeIDs = _externalNastranDB.getElementCornerNodes(elementID);
 
                 foreach (var nodeID in nodeIDs)
                 {
@@ -534,6 +582,20 @@ namespace Ariadne.Kernel
         }
 
         /// <summary>
+        /// Method returns a Result object obtained by remapping the values of the Result object to which the method is applied.
+        /// </summary>
+        /// <param name="resultToRemapping">Result object to remapping.</param>
+        /// <param name="fromToMethod">From-To method. See enum.</param>
+        /// <param name="remappingMethod">Remapping method. See enum.</param>
+        /// <param name="dataBase">DataBase object used by the method to recover the association of node and elements.
+        /// This association is often needed to perform the remapping</param>
+        /// <returns></returns>
+        private static FeResPost.Result DeriveResultByRemapping(FromToMethod fromToMethod, RemappingMethod remappingMethod, in FeResPost.Result resultToRemapping, ref DataBase dataBase)
+        {
+            return resultToRemapping.deriveByRemapping(fromToMethod.ToString(), remappingMethod.ToString(), dataBase);
+        }
+
+        /// <summary>
         /// Checking that the database is valid
         /// </summary>
         /// <returns>
@@ -541,7 +603,7 @@ namespace Ariadne.Kernel
         /// </returns>
         public bool IsValid()
         {
-            return ExternalDB != null;
+            return _externalNastranDB != null;
         }
 
         /// <summary>
@@ -552,7 +614,7 @@ namespace Ariadne.Kernel
         public NastranDb TEMP_GetDataBase()
         {
             // TODO: Remove this feature
-            return IsValid() ? ExternalDB : null;
+            return IsValid() ? _externalNastranDB : null;
         }
     }
 }
