@@ -9,5 +9,5 @@
   </trustInfo>
   <dependency>
   </dependency>
-  <file name="FeResPost.dll" hashalg="SHA1" hash="49eb3382e185050fdabf061742635c201c903324"><asmv2:hash xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>bkff1ztmhLQx8SftBV0Iu80i2+Q=</dsig:DigestValue></asmv2:hash></file>
+  <file name="OUTPUTS/NET/X64_CLR4/FeResPost.dll" hashalg="SHA1" hash="721fe106a37cf070cbc8e62b928584b8ed03f4aa"><asmv2:hash xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"><dsig:Transforms><dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity"></dsig:Transform></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></dsig:DigestMethod><dsig:DigestValue>8O3rYMDz9hiNwUCBWfj91CR9O98=</dsig:DigestValue></asmv2:hash></file>
 </assembly>

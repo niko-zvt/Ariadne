@@ -29,7 +29,7 @@ namespace Ariadne.Console
                                             fullPathToFile + FileFormat.SES.ToString());
 
             // Create model
-            var isForceRemappingResults = false; // TODO: Error in FeResPost
+            var isForceRemappingResults = true;
             var model = Kernel.Model.CreateByDatabase(database, isForceRemappingResults);
 
             // Test methods
