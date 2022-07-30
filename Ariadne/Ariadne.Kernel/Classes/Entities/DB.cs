@@ -41,10 +41,10 @@ namespace Ariadne.Kernel
         /// </summary>
         private enum RemappingMethod
         {
-            Average,
-            Sum,
-            Min,
-            Max,
+            average,
+            sum,
+            min,
+            max,
             NONE
         }
 
@@ -311,10 +311,10 @@ namespace Ariadne.Kernel
 
                         if (isForceRemappingResults) 
                         {
-                            var fromToMethod = FromToMethod.CentersToElemsAndNodes;
-                            var remappingMethod = RemappingMethod.Average;
+                            var fromToMethod = FromToMethod.CentersToNodes;
+                            var remappingMethod = RemappingMethod.NONE;
                             var database = _externalNastranDB as DataBase;
-                            var remappingResult = DeriveResultByRemapping(fromToMethod, remappingMethod, in result, ref database);
+                            var remappingResult = DeriveResultByRemapping(fromToMethod, remappingMethod, ref result, ref database);
                             result = remappingResult;
                         }
 
@@ -590,9 +590,12 @@ namespace Ariadne.Kernel
         /// <param name="dataBase">DataBase object used by the method to recover the association of node and elements.
         /// This association is often needed to perform the remapping</param>
         /// <returns></returns>
-        private static FeResPost.Result DeriveResultByRemapping(FromToMethod fromToMethod, RemappingMethod remappingMethod, in FeResPost.Result resultToRemapping, ref DataBase dataBase)
+        private static FeResPost.Result DeriveResultByRemapping(FromToMethod fromToMethod, RemappingMethod remappingMethod, ref FeResPost.Result resultToRemapping, ref DataBase dataBase)
         {
-            return resultToRemapping.deriveByRemapping(fromToMethod.ToString(), remappingMethod.ToString(), dataBase);
+            var strFromToMethod = fromToMethod.ToString();
+            var strRemappingMethod = remappingMethod.ToString();
+            var result = resultToRemapping.deriveByRemapping(strFromToMethod, strRemappingMethod, dataBase);
+            return result;
         }
 
         /// <summary>

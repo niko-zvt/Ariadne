@@ -7,7 +7,7 @@ namespace Ariadne.Console
     {
         // File formats and paths to the sample files
         enum FileFormat { DAT, OP2, SES, XDB }
-        private const string example = "001";
+        private const string example = "000";
         private const string pathToFile = $"Examples\\Ex-{example}\\model-{example}.";
 
         delegate bool FuncCalculate(Vector3D coords, out Matrix3x3 stress);
@@ -29,7 +29,7 @@ namespace Ariadne.Console
                                             fullPathToFile + FileFormat.SES.ToString());
 
             // Create model
-            var isForceRemappingResults = true;
+            var isForceRemappingResults = false; // TODO: Error in FeResPost
             var model = Kernel.Model.CreateByDatabase(database, isForceRemappingResults);
 
             // Test methods
