@@ -286,12 +286,11 @@ namespace Ariadne.Kernel
         {
             var results = new ResultSet();
 
-            if (!IsValid())
+            if (IsValid() == false)
                 return results;
 
-            List<ResultCreator> resultCreators = new List<ResultCreator>();
-            ResultParams parameters;
-            ResultID resultID;
+            var resultCreators = new List<ResultCreator>();
+            var parameters = new ResultParams();
 
             string[] lcNames = _externalNastranDB.getResultLoadCaseNames();
             string[] scNames = _externalNastranDB.getResultSubCaseNames();
@@ -304,7 +303,7 @@ namespace Ariadne.Kernel
                 {
                     foreach (string resName in resNames)
                     {
-                        resultID = ResultID.CreateByNames(lcName, scName, resName);
+                        var resultID = ResultID.CreateByNames(lcName, scName, resName);
                         parameters.ID = resultID;
                         parameters.TypeName = "ExternalResult";
                         var result = _externalNastranDB.getResultCopy(lcName, scName, resName);
