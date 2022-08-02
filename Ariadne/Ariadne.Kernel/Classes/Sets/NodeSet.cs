@@ -50,13 +50,13 @@ namespace Ariadne.Kernel
             return list;
         }
 
-        public List<float[]> GetAllCoords()
+        public List<Math.Vector3D> GetAllCoords()
         {
-            var list = new List<float[]>();
+            var list = new List<Math.Vector3D>();
             foreach(int id in _collection.Keys)
             {
                 var item = _collection.TryGetValue(id, out Node value) ? value : null;
-                list.Add(new float[] { item.Coords.X, item.Coords.Y, item.Coords.Z });
+                list.Add(new Math.Vector3D ( item.Coords.X, item.Coords.Y, item.Coords.Z ));
             }
             return list;
         }

@@ -182,7 +182,15 @@ namespace Ariadne.Kernel
         public bool GetStressInNode(int nodeID, out Matrix3x3 stress, out Vector3D location)
         {
             stress = new Matrix3x3();
-            location = Nodes[nodeID].Coords;
+            location = new Vector3D(float.NaN);
+
+            var node = Nodes[nodeID];
+            if (node == null)
+                return false;
+
+            location = node.Coords;
+            if (!location.IsValid())
+                return false;
 
             if (Results == null || Results.Count <= 0)
                 return false;

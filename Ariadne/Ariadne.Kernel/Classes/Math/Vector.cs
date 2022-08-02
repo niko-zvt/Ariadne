@@ -40,9 +40,11 @@ namespace Ariadne.Kernel.Math
         /// <returns>True if success result, otherwise - false.</returns>
         public bool IsValid()
         {
-            if (_vectorData == null ||
-                _vectorData.Count < 0 ||
-                IsContain(float.NaN))
+            var checkNull = _vectorData == null;
+            var checkCount = _vectorData.Count <= 0;
+            var checkNaN = IsNaN();
+
+            if (checkNull || checkCount || checkNaN)
                 return false;
 
             return true;
@@ -58,11 +60,31 @@ namespace Ariadne.Kernel.Math
             if (_vectorData == null)
                 return false;
 
+            var items = _vectorData.AsArray();
+            foreach(var item in items)
+                if (item == value)
+                    return true;    
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check the vector for the content of a NaN value.
+        /// </summary>
+        /// <returns>true - if vector contain NaN value.</returns>
+        public bool IsNaN()
+        {
+            if (_vectorData == null)
+                return true;
+
             var vector = _vectorData.AsArray();
+            foreach (var v in vector)
+            {
+                if(Utils.IsNaN(v))
+                    return true;
+            }
 
-            bool exists = System.Array.Exists(vector, element => element == value);
-
-            return exists;
+            return false;
         }
 
         /// <summary>

@@ -58,12 +58,54 @@ namespace Ariadne.Kernel
         public abstract bool IsPointBelong(Vector3D point);
 
         /// <summary>
-        /// Get UV-coords by point location in 3D space.
+        /// Get UVW-coords by point location in 3D space.
         /// </summary>
         /// <param name="point">Target point.</param>
         /// <param name="isCalculateByLCS">true - if you need to calculate UVW-coords by local CS, false - by global CS.</param>
         /// <returns>UVW-coords or NULL.</returns>
-        public abstract Vector3D GetUVWCoordsByPoint(Vector3D point, bool isCalculateByLCS = false);
+        public Vector3D GetUVWCoordsByPoint(Vector3D point, bool isCalculateByLCS = false)
+        {
+            var tolerance = 1e-4f;
+
+            // 1. Check point
+            if (IsPointBelong(point) != true)
+                return null;
+
+            // 2. Calculate coords of nodes in LCS
+            var coorsOfNodes = GetNodes().GetAllCoords();
+
+            // 3. Points GCS -> LCS (optional)
+            if (isCalculateByLCS)
+            {
+                var map = new AffineMap3D(GetElementLCSAsRef());
+                point = map.TransformPoint(point);
+                coorsOfNodes = map.TransformPoints(coorsOfNodes);
+            }
+
+            // 4. Calculate UVW-coords
+            var uvw = ShapeFunction.GetUVWByPoint(point, coorsOfNodes);
+            if (uvw.IsValid() == false)
+                throw new System.ArgumentNullException("Natural coords is NAN!");
+
+            // 5. Calculate prob - the difference between a real point and its approximation
+            var prob = GetPointByUVWCoords(uvw);
+            if ((point - prob).Length > tolerance)
+                throw new System.ArgumentNullException("Natural coords is invalid!");
+
+            return uvw;
+        }
+
+        /// <summary>
+        /// Get point location in 3D space by UVW-coords.
+        /// </summary>
+        /// <param name="point">Target UVW-coords.</param>
+        /// <returns>Point or NULL.</returns>
+        public Vector3D GetPointByUVWCoords(Vector3D uvw)
+        {
+            var coorsOfNodes = GetNodes().GetAllCoords();
+            var point = ShapeFunction.GetPointByUVW(uvw, coorsOfNodes);
+            return point;
+        }
 
         /// <summary>
         /// Build a centroid coords of current element.

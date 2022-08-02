@@ -15,9 +15,11 @@ namespace Ariadne.Console
         static void Main(string[] args)
         {
             // Configuring the standard output stream
+            var streams = new List<StreamWriter>();
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             StreamWriter stdout = new StreamWriter(System.Console.OpenStandardOutput());
             stdout.AutoFlush = true;
+            streams.Add(stdout);
 
             // File path
             var fullPathToFile = AppDomain.CurrentDomain.BaseDirectory + pathToFile;
@@ -32,13 +34,8 @@ namespace Ariadne.Console
             var isForceRemappingResults = true;
             var model = Kernel.Model.CreateByDatabase(database, isForceRemappingResults);
 
-            // Test methods
-            var stress = new Matrix3x3();
-            var resultNode = model.GetStressInNode(39, out stress, out var nCoords);
-            resultNode = model.GetStressInNode(87, out stress, out nCoords);
-            var resultElement = model.GetStressInElement(39, out stress, out var eCoords);
-            resultElement = model.GetStressInElement(126, out stress, out eCoords);
 
+            // Test vectors
             var testVectors = new List<Vector3D>()
             {
                 new Vector3D(8, 16, 0),             //CQUAD4 eID = 26
@@ -48,19 +45,113 @@ namespace Ariadne.Console
                 new Vector3D(7.89, -50, 0.0)        //VOID VOLUME
             };
 
-            stdout.WriteLine($"ID\tType\tX\tY\tZ\tSxx\tSxy\tSxz\tSyx\tSyy\tSyz\tSzx\tSzy\tSzz");
-            foreach (var vector in testVectors)
+            // Test UVW-coords
+            var step = 0.25f;
+            var uvwCoords = GetTestListOfUVWCoords(step);
+            
+            // RunTests
+            RunTestForAllNodesAndElements(model, streams);
+            // RunTestForHandmadeVectors(model, streams, testVectors);
+            // RunTestForAllElementsInUVPoints(model, streams, uvwCoords);
+        }
+
+        static private bool RunTestForAllNodesAndElements(Kernel.Model model, List<StreamWriter> streams)
+        {
+            var results = new List<bool>();
+
+            foreach (var stream in streams)
+                stream.WriteLine($"Result\tID\tType\tX\tY\tZ\tSxx\tSxy\tSxz\tSyx\tSyy\tSyz\tSzx\tSzy\tSzz");
+
+            foreach (var node in model.Nodes)
             {
-                var result = model.GetStressInPoint(vector, out stress);
+                var result = model.GetStressInNode(node.ID, out var stress, out var coords);
+
+                foreach (var stream in streams)
+                    stream.WriteLine($"{result}\t{node.ID}\t{node.GetNodeType()}\t{coords.X}\t{coords.Y}\t{coords.Z}\t{stress.XX}\t{stress.XY}\t{stress.XZ}\t{stress.YX}\t{stress.YY}\t{stress.YZ}\t{stress.ZX}\t{stress.ZY}\t{stress.ZZ}");
+
+                results.Add(result);
+            }
+
+            foreach(var element in model.Elements)
+            {
+                var result = model.GetStressInNode(element.ID, out var stress, out var coords);
+
+                foreach (var stream in streams)
+                    stream.WriteLine($"{result}\t{element.ID}\t{element.GetElementType()}\t{coords.X}\t{coords.Y}\t{coords.Z}\t{stress.XX}\t{stress.XY}\t{stress.XZ}\t{stress.YX}\t{stress.YY}\t{stress.YZ}\t{stress.ZX}\t{stress.ZY}\t{stress.ZZ}");
+
+                results.Add(result);
+            }
+
+            return !results.Any(value => value == false);
+        }
+
+        static private bool RunTestForHandmadeVectors(Kernel.Model model, List<StreamWriter> streams, List<Vector3D> vectors)
+        {
+            var results = new List<bool>();
+
+            foreach (var stream in streams)
+                stream.WriteLine($"ID\tType\tX\tY\tZ\tSxx\tSxy\tSxz\tSyx\tSyy\tSyz\tSzx\tSzy\tSzz");
+
+            foreach (var vector in vectors)
+            {
+                var result = model.GetStressInPoint(vector, out var stress);
                 if (result)
                 {
-                    model.GetElementIDFromPoint(vector, out var id);
-                    var type = model.Elements.GetByID(id).GetElementType();
-                    stdout.WriteLine($"{id}\t{type}\t{vector.X}\t{vector.Y}\t{vector.Z}\t{stress.XX}\t{stress.XY}\t{stress.XZ}\t{stress.YX}\t{stress.YY}\t{stress.YZ}\t{stress.ZX}\t{stress.ZY}\t{stress.ZZ}");
+                    var elementIsExist = model.GetElementIDFromPoint(vector, out var id);
+                    if (elementIsExist)
+                    {
+                        var type = model.Elements.GetByID(id).GetElementType();
+                        foreach (var stream in streams)
+                            stream.WriteLine($"{id}\t{type}\t{vector.X}\t{vector.Y}\t{vector.Z}\t{stress.XX}\t{stress.XY}\t{stress.XZ}\t{stress.YX}\t{stress.YY}\t{stress.YZ}\t{stress.ZX}\t{stress.ZY}\t{stress.ZZ}");
+                    }
+                }
+                results.Add(result);
+            }
+
+            return !results.Any(value => value == false);
+        }
+
+        static private bool RunTestForAllElementsInUVPoints(Kernel.Model model, List<StreamWriter> streams, List<Vector3D> uvwCoords)
+        {
+            var results = new List<bool>();
+
+            foreach (var stream in streams)
+                stream.WriteLine($"Result\tID\tType\tU\tV\tW\tX\tY\tZ\tSxx\tSxy\tSxz\tSyx\tSyy\tSyz\tSzx\tSzy\tSzz");
+
+            foreach (var element in model.Elements)
+            {
+                foreach(var uvw in uvwCoords)
+                {
+                    var location = element.GetPointByUVWCoords(uvw);                  
+                    if(location.IsValid())
+                    {
+                        var result = model.GetStressInPoint(location, out var stress);
+                        foreach (var stream in streams)
+                            stream.WriteLine($"{element.ID}\t{element.GetElementType()}\t{uvw.X}\t{uvw.Y}\t{uvw.Z}\t{location.X}\t{location.Y}\t{location.Z}\t{stress.XX}\t{stress.XY}\t{stress.XZ}\t{stress.YX}\t{stress.YY}\t{stress.YZ}\t{stress.ZX}\t{stress.ZY}\t{stress.ZZ}");
+                        results.Add(result);
+                    }
                 }
             }
-          
 
+            return !results.Any(value => value == false);
+        }
+
+        static private List<Vector3D> GetTestListOfUVWCoords(float step)
+        {
+            var uvwCoords = new List<Vector3D>();
+
+            for (float u = -1; u <= 1; u += step)
+            {
+                for (float v = -1; v <= 1; v += step)
+                {
+                    for (float w = -1; w <= 1; w += step)
+                    {
+                        uvwCoords.Add(new Vector3D(u, v, w));
+                    }
+                }
+            }
+
+            return uvwCoords;
         }
     }
 }

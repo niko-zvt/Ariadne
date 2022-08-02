@@ -22,7 +22,7 @@ namespace Ariadne.Kernel
             _localFunctors.Add(new ShapeFunctor(LocalN2));
             _localFunctors.Add(new ShapeFunctor(LocalN3));
             _localFunctors.Add(new ShapeFunctor(LocalN4));
-            _globalFunctor = new GlobalShapeFunctor(FindUVCoords);
+            _globalFunctor = new GlobalShapeFunctor(FindUVWCoords);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Ariadne.Kernel
         /// <param name="point">Target point in XYZ-space.</param>
         /// <param name="nodalCoords">Nodal coordinates from a specific CQUAD4 element.</param>
         /// <returns>UV-coords.</returns>
-        private Vector3D FindUVCoords(Vector3D point, List<Vector3D> nodalCoords)
+        private Vector3D FindUVWCoords(Vector3D point, List<Vector3D> nodalCoords)
         {
             // 1. Check size
             if (nodalCoords.Count != Size)
@@ -105,7 +105,7 @@ namespace Ariadne.Kernel
             System.Func<float, float, float> f = (u,v) =>
             {
                 var uvw = new Vector3D(u, v, 0);
-                var probPoint = Calculate(uvw, nodalCoords);
+                var probPoint = GetPointByUVW(uvw, nodalCoords);
                 return (probPoint - point).Length;
             };
 

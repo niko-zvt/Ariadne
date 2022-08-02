@@ -45,7 +45,7 @@ namespace Ariadne.Kernel
         /// <param name="xyz">Target point in XYZ-space.</param>
         /// <param name="nodalCoords">Nodal coordinates from a specific element.</param>
         /// <returns>UVW-coords.</returns>
-        public Vector3D FindUVW(Vector3D xyz, List<Vector3D> nodalCoords)
+        public Vector3D GetUVWByPoint(Vector3D xyz, List<Vector3D> nodalCoords)
         {
             if (_globalFunctor != null)
                 return _globalFunctor(xyz, nodalCoords);
@@ -59,12 +59,12 @@ namespace Ariadne.Kernel
         /// <param name="uvw">Target point in UVW-space.</param>
         /// <param name="nodalValues">Nodal values from a specific element.</param>
         /// <returns>Specific vector.</returns>
-        public Vector3D Calculate(Vector3D uvw, List<Vector3D> nodalValues)
+        public Vector3D GetPointByUVW(Vector3D uvw, List<Vector3D> nodalValues)
         {
             if (Size != nodalValues.Count)
                 throw new System.IndexOutOfRangeException("Size != number of nodes!");
 
-            var value = new Vector3D();
+            var value = new Vector3D(float.NaN);
             for (int i = 0; i < Size; i++)
             {
                 value.X += _localFunctors[i](uvw.X, uvw.Y, uvw.Z) * nodalValues[i].X;
