@@ -372,5 +372,16 @@ namespace Ariadne.Kernel.Math
                 throw new System.IndexOutOfRangeException();
             }
         }
+
+        /// <summary>
+        /// Method of checking the float number is NaN.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        /// <returns>true - if value is NaN, overwise - false.</returns>
+        public static unsafe bool IsNaN(float f)
+        {
+            int binary = *(int*)(&f);
+            return ((binary & 0x7F800000) == 0x7F800000) && ((binary & 0x007FFFFF) != 0);
+        }
     }
 }
