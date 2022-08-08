@@ -77,7 +77,7 @@ namespace Ariadne.Kernel
         /// </summary>
         /// <param name="database">Database</param>
         /// <returns>Specific model</returns>
-        public static Model CreateByDatabase(DB database, bool isForceRemappingResults)
+        public static Model CreateByDatabase(DB database)
         {
             // Check database
             if (database != null && !database.IsValid())
@@ -100,6 +100,7 @@ namespace Ariadne.Kernel
             var elements = database.BuildElements(elementIDs);
 
             // Get all results
+            var isForceRemappingResults = true;
             var results = database.BuildAllResults(isForceRemappingResults);
 
             // Return new model

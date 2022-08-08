@@ -310,7 +310,7 @@ namespace Ariadne.Kernel
 
                         if (isForceRemappingResults) 
                         {
-                            var fromToMethod = FromToMethod.CentersToNodes;
+                            var fromToMethod = FromToMethod.CentersToElemsAndNodes;
                             var remappingMethod = RemappingMethod.NONE;
                             var database = _externalNastranDB as DataBase;
                             var remappingResult = DeriveResultByRemapping(fromToMethod, remappingMethod, ref result, ref database);

@@ -31,8 +31,7 @@ namespace Ariadne.Console
                                             fullPathToFile + FileFormat.SES.ToString());
 
             // Create model
-            var isForceRemappingResults = true;
-            var model = Kernel.Model.CreateByDatabase(database, isForceRemappingResults);
+            var model = Kernel.Model.CreateByDatabase(database);
 
 
             // Test vectors
@@ -50,34 +49,49 @@ namespace Ariadne.Console
             var uvwCoords = GetTestListOfUVWCoords(step);
             
             // RunTests
-            RunTestForAllNodesAndElements(model, streams);
+            RunTestForAllNodes(in model, streams);
+            //RunTestForAllElements(in model, streams);
             // RunTestForHandmadeVectors(model, streams, testVectors);
             // RunTestForAllElementsInUVPoints(model, streams, uvwCoords);
         }
 
-        static private bool RunTestForAllNodesAndElements(Kernel.Model model, List<StreamWriter> streams)
+        static private bool RunTestForAllNodes(in Kernel.Model model, List<StreamWriter> streams)
         {
             var results = new List<bool>();
 
             foreach (var stream in streams)
                 stream.WriteLine($"Result\tID\tType\tX\tY\tZ\tSxx\tSxy\tSxz\tSyx\tSyy\tSyz\tSzx\tSzy\tSzz");
 
+            var sep = "##";
+
             foreach (var node in model.Nodes)
             {
                 var result = model.GetStressInNode(node.ID, out var stress, out var coords);
 
                 foreach (var stream in streams)
-                    stream.WriteLine($"{result}\t{node.ID}\t{node.GetNodeType()}\t{coords.X}\t{coords.Y}\t{coords.Z}\t{stress.XX}\t{stress.XY}\t{stress.XZ}\t{stress.YX}\t{stress.YY}\t{stress.YZ}\t{stress.ZX}\t{stress.ZY}\t{stress.ZZ}");
+                    stream.WriteLine($"{result}{sep}{node.ID}{sep}{node.GetNodeType()}{sep}{coords.X}{sep}{coords.Y}{sep}{coords.Z}{sep}{stress.XX}{sep}{stress.YY}{sep}{stress.XY}");
 
                 results.Add(result);
             }
 
-            foreach(var element in model.Elements)
+            return !results.Any(value => value == false);
+        }
+
+        static private bool RunTestForAllElements(in Kernel.Model model, List<StreamWriter> streams)
+        {
+            var results = new List<bool>();
+
+            foreach (var stream in streams)
+                stream.WriteLine($"Result\tID\tType\tX\tY\tZ\tSxx\tSxy\tSxz\tSyx\tSyy\tSyz\tSzx\tSzy\tSzz");
+
+            var sep = "##";
+
+            foreach (var element in model.Elements)
             {
-                var result = model.GetStressInNode(element.ID, out var stress, out var coords);
+                var result = model.GetStressInElement(element.ID, out var stress, out var coords);
 
                 foreach (var stream in streams)
-                    stream.WriteLine($"{result}\t{element.ID}\t{element.GetElementType()}\t{coords.X}\t{coords.Y}\t{coords.Z}\t{stress.XX}\t{stress.XY}\t{stress.XZ}\t{stress.YX}\t{stress.YY}\t{stress.YZ}\t{stress.ZX}\t{stress.ZY}\t{stress.ZZ}");
+                    stream.WriteLine($"{result}{sep}{element.ID}{sep}{element.GetElementType()}{sep}{coords.X}{sep}{coords.Y}{sep}{coords.Z}{sep}{stress.XX}{sep}{stress.YY}{sep}{stress.XY}");
 
                 results.Add(result);
             }
