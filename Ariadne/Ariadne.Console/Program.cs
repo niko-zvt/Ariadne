@@ -25,10 +25,10 @@ namespace Ariadne.Console
             var fullPathToFile = AppDomain.CurrentDomain.BaseDirectory + pathToFile;
 
             // Create FeResPost database
-            var database = Kernel.DB.Create(fullPathToFile + FileFormat.DAT.ToString(),
-                                            fullPathToFile + FileFormat.OP2.ToString(),
-                                            fullPathToFile + FileFormat.XDB.ToString(),
-                                            fullPathToFile + FileFormat.SES.ToString());
+            var database = Kernel.DB.Create(fullPathToFile + FileFormat.DAT,
+                                            fullPathToFile + FileFormat.OP2,
+                                            fullPathToFile + FileFormat.XDB,
+                                            fullPathToFile + FileFormat.SES);
 
             // Create model
             var model = Kernel.Model.CreateByDatabase(database);
