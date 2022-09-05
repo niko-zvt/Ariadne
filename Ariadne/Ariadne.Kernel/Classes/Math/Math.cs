@@ -294,6 +294,12 @@ namespace Ariadne.Kernel.Math
             return result;
         }
 
+        public static bool CalculateTranformationOfPoint(Vector3D point, CoordinateSystem sourceCS, CoordinateSystem targetCS, out Vector3D tPoint)
+        {
+            var result = LibraryImport.SelectCGAL().CGAL_TransformPoint(point, sourceCS, targetCS, out tPoint);
+            return result;
+        }
+
         /// <summary>
         /// Calculate intersection of bisector and base.
         /// </summary>
