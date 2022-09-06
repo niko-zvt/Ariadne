@@ -1,4 +1,8 @@
-﻿using MathNet.Numerics.LinearAlgebra.Double.Solvers;
+﻿// Copyright 2022 Nikolay V. Zhivotenko
+// Licensed under the Apache License, Version 2.0
+// E-mail: niko.zvt@gmail.com
+
+using MathNet.Numerics.LinearAlgebra.Double.Solvers;
 using MathNet.Numerics.LinearAlgebra.Solvers;
 using System;
 using System.Collections;

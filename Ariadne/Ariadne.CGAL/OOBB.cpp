@@ -1,3 +1,7 @@
+// Copyright 2022 Nikolay V. Zhivotenko
+// Licensed under the Apache License, Version 2.0
+// E-mail: niko.zvt@gmail.com
+
 // OOBB.cpp : Defines the exported functions for the DLL application.
 #include "pch.h"
 #include "OOBB.h"

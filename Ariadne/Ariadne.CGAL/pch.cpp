@@ -1,5 +1,9 @@
-﻿// pch.cpp: файл исходного кода, соответствующий предварительно скомпилированному заголовочному файлу
+﻿// Copyright 2022 Nikolay V. Zhivotenko
+// Licensed under the Apache License, Version 2.0
+// E-mail: niko.zvt@gmail.com
+
+// pch.cpp: source code file corresponding to the precompiled header file
 
 #include "pch.h"
 
-// При использовании предварительно скомпилированных заголовочных файлов необходим следующий файл исходного кода для выполнения сборки.
+// When using precompiled header files, the following source code file is required to complete the build.

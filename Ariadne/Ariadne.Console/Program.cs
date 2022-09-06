@@ -1,4 +1,8 @@
-﻿using System.Globalization;
+﻿// Copyright 2022 Nikolay V. Zhivotenko
+// Licensed under the Apache License, Version 2.0
+// E-mail: niko.zvt@gmail.com
+
+using System.Globalization;
 using Ariadne.Kernel.Math;
 
 namespace Ariadne.Console

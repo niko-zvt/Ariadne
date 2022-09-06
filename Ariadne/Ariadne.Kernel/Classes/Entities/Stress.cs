@@ -1,4 +1,8 @@
-﻿using Ariadne.Kernel.Math;
+﻿// Copyright 2022 Nikolay V. Zhivotenko
+// Licensed under the Apache License, Version 2.0
+// E-mail: niko.zvt@gmail.com
+
+using Ariadne.Kernel.Math;
 
 namespace Ariadne.Kernel
 {

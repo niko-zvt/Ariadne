@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// Copyright 2022 Nikolay V. Zhivotenko
+// Licensed under the Apache License, Version 2.0
+// E-mail: niko.zvt@gmail.com
+
+using System.Collections.Generic;
 
 namespace Ariadne.Kernel
 {
