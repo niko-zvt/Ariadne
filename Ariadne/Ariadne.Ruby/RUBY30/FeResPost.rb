@@ -1,3 +1,8 @@
+# Copyright 2022 Renaud Sizaire
+# Project: FeResPost (www.ferespost.eu)
+# Licensed under the GNU Lesser General Public License version 3
+# E-mail: ferespost@googlegroups.com
+
 # encoding: utf-8
 require "FeResPost.so"
 
