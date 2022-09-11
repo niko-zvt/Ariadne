@@ -2,8 +2,8 @@
 
 ![image info](./Images/Ariadne-Plate.png)
 
-[![License](https://img.shields.io/github/license/niko-zvt/Ariadne?label=License)](LICENSE.md)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![License](https://img.shields.io/github/license/niko-zvt/Ariadne?label=License)](https://github.com/niko-zvt/Ariadne/LICENSE)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](https://github.com/niko-zvt/Ariadne/CODE_OF_CONDUCT.md)
 ![Repo Size](https://img.shields.io/github/repo-size/niko-zvt/Ariadne?label=Repo%20Size)
 
 ## About project
