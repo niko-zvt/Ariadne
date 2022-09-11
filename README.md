@@ -1,4 +1,4 @@
-# [Ariadne](https://github.com/niko-zvt/Ariadne) | [Website](https://niko-zvt.github.io/Ariadne)
+## [GitHub](https://github.com/niko-zvt/Ariadne) | [Website](https://niko-zvt.github.io/Ariadne)
 
 ![image info](./Images/Ariadne-Plate.png)
 
